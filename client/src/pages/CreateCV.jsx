@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import "../scss/CreateCV.scss";
 
 const defaultData = {
@@ -197,6 +195,11 @@ const CreateCV = () => {
 
     setExporting(true);
     try {
+      // Chỉ tải thư viện xuất PDF khi người dùng bấm xuất, giúp bundle chính nhẹ hơn
+      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+        import("html2canvas"),
+        import("jspdf"),
+      ]);
       const canvas = await html2canvas(previewRef.current, {
         scale: 2,
         useCORS: true,
