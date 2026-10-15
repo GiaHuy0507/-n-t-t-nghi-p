@@ -1,0 +1,199 @@
+$primary: #1a73e8;
+
+.main-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  min-height: 76px;
+  padding: 10px clamp(18px, 5vw, 72px);
+  background-color: #fff;
+  border-bottom: 1px solid #e5eaf1;
+  box-shadow: 0 4px 18px rgba(24, 39, 60, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  font-family: "Inter", "Segoe UI", sans-serif;
+
+  .nav-brand {
+    flex: 0 0 auto;
+
+    .nav-brand-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: $primary;
+
+      .nav-logo {
+        display: block;
+        flex: 0 0 42px;
+        width: 42px;
+        height: 42px;
+        object-fit: contain;
+        object-position: center;
+      }
+
+      .brand-name {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 4px;
+        color: #172b4d;
+        font-size: 19px;
+        font-weight: 700;
+        white-space: nowrap;
+
+        strong {
+          color: $primary;
+        }
+      }
+    }
+  }
+
+  .nav-links {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+
+    a {
+      padding: 10px 13px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #4b5563;
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition:
+        color 0.18s ease,
+        background-color 0.18s ease;
+
+      &:hover {
+        color: $primary;
+        background-color: #f3f7ff;
+      }
+
+      &.active {
+        color: $primary;
+        background-color: #eaf2ff;
+      }
+    }
+  }
+
+  .nav-auth {
+    flex: 0 0 auto;
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: #374151;
+
+      .btn-logout {
+        padding: 6px 12px;
+        background-color: #fee2e2;
+        color: #b91c1c;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+
+        &:hover {
+          background-color: #fecaca;
+        }
+      }
+    }
+
+    .auth-buttons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      a {
+        padding: 9px 15px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition:
+          color 0.18s ease,
+          background-color 0.18s ease,
+          border-color 0.18s ease,
+          transform 0.18s ease;
+
+        &:hover {
+          transform: translateY(-1px);
+        }
+      }
+
+      .btn-login {
+        color: $primary;
+        border: 1px solid #d6e5fb;
+
+        &:hover {
+          background-color: #eff6ff;
+          border-color: #a9cbf7;
+        }
+      }
+
+      .btn-register {
+        background-color: $primary;
+        color: white;
+        box-shadow: 0 4px 10px rgba(26, 115, 232, 0.18);
+
+        &:hover {
+          background-color: #0e5ed7;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 760px) {
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    padding: 10px 20px 8px;
+
+    .nav-links {
+      order: 3;
+      flex-basis: 100%;
+      justify-content: flex-start;
+      overflow-x: auto;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
+
+  @media (max-width: 420px) {
+    padding-right: 14px;
+    padding-left: 14px;
+
+    .nav-brand .nav-brand-link {
+      gap: 6px;
+
+      .nav-logo {
+        flex-basis: 38px;
+        width: 38px;
+        height: 38px;
+      }
+
+      .brand-name {
+        font-size: 16px;
+      }
+    }
+
+    .nav-auth .auth-buttons {
+      gap: 6px;
+
+      a {
+        padding: 8px 10px;
+        font-size: 13px;
+      }
+    }
+  }
+}

@@ -1,0 +1,498 @@
+$primary: #2563eb;
+$bg-sidebar: #172033;
+$bg-main: #f3f4f6;
+
+.loading-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 20px;
+  color: $primary;
+}
+
+.hr-dashboard {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  background-color: $bg-main;
+  display: block;
+  min-height: 100vh;
+  font-family: "Inter", "Segoe UI", sans-serif;
+
+  .hr-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    min-height: 76px;
+    padding: 8px clamp(18px, 5vw, 72px);
+    background: #fff;
+    border-bottom: 1px solid #e5eaf1;
+    box-shadow: 0 4px 18px rgba(24, 39, 60, 0.05);
+
+    .hr-brand {
+      display: flex;
+      flex: 0 0 auto;
+      align-items: center;
+      gap: 10px;
+      color: #172b4d;
+      font-size: 18px;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .hr-brand-logo {
+      width: 92px;
+      height: 60px;
+      object-fit: cover;
+      object-position: top;
+    }
+
+    .hr-nav-links {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+
+      button,
+      .hr-nav-link {
+        padding: 10px 12px;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: #4b5563;
+        cursor: pointer;
+        font: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+        transition:
+          color 0.18s ease,
+          background-color 0.18s ease;
+
+        &:hover,
+        &.active {
+          background: #eaf2ff;
+          color: $primary;
+        }
+      }
+    }
+
+    .hr-nav-account {
+      display: flex;
+      flex: 0 0 auto;
+      align-items: center;
+      gap: 12px;
+      color: #374151;
+      font-size: 14px;
+      white-space: nowrap;
+
+      button {
+        padding: 9px 15px;
+        border: 0;
+        border-radius: 8px;
+        background: $primary;
+        color: #fff;
+        cursor: pointer;
+        font: inherit;
+        font-weight: 600;
+        transition: background-color 0.18s ease;
+
+        &:hover {
+          background: #0e5ed7;
+        }
+      }
+    }
+  }
+
+  .main-content {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    background-color: $bg-main;
+    padding: 40px;
+
+    .header {
+      margin-bottom: 30px;
+      h1 {
+        margin: 0 0 10px 0;
+        color: #111827;
+      }
+      p {
+        color: #6b7280;
+        margin: 0;
+      }
+    }
+
+    /* CSS CHO KHU VỰC THỐNG KÊ BẠN VỪA THÊM */
+    .dashboard-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+
+      .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+        text-align: center;
+
+        h3 {
+          margin: 0 0 10px 0;
+          color: #6b7280;
+          font-size: 15px;
+          font-weight: 500;
+        }
+
+        strong {
+          font-size: 28px;
+          color: #111827;
+
+          &.text-blue {
+            color: #3b82f6;
+          }
+          &.text-orange {
+            color: #2563eb;
+          }
+          &.text-red {
+            color: #ef4444;
+          }
+        }
+      }
+    }
+
+    /* CSS CHO BẢNG ỨNG VIÊN */
+    .dashboard-section {
+      h2 {
+        color: #1f2937;
+        margin-bottom: 20px;
+      }
+
+      .application-table {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+
+        .table-header,
+        .table-row {
+          display: grid;
+          grid-template-columns: 2fr 2.5fr 3fr 1.5fr;
+          padding: 15px 20px;
+          align-items: center;
+        }
+
+        .table-header {
+          background-color: #f9fafb;
+          font-weight: 600;
+          color: #4b5563;
+          border-bottom: 2px solid #e5e7eb;
+        }
+
+        .table-row {
+          border-bottom: 1px solid #f3f4f6;
+          color: #111827;
+
+          &:last-child {
+            border-bottom: none;
+          }
+          &:hover {
+            background-color: #f9fafb;
+          }
+
+          .status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+            width: fit-content;
+
+            &.pending {
+              background: #fef3c7;
+              color: #d97706;
+            }
+            &.accepted {
+              background: #dbeafe;
+              color: #1d4ed8;
+            }
+            &.rejected {
+              background: #fee2e2;
+              color: #b91c1c;
+            }
+          }
+        }
+      }
+    }
+
+    /* CSS CHO FORM ĐĂNG BÀI */
+    .job-form {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+
+      .form-row {
+        display: flex;
+        gap: 20px;
+      }
+      .form-group {
+        flex: 1;
+        margin-bottom: 20px;
+        label {
+          display: block;
+          margin-bottom: 8px;
+          font-weight: 600;
+          color: #374151;
+        }
+        input,
+        textarea {
+          width: 100%;
+          padding: 12px;
+          border: 1px solid #d1d5db;
+          border-radius: 6px;
+          font-size: 15px;
+          box-sizing: border-box;
+          &:focus {
+            outline: none;
+            border-color: $primary;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+          }
+        }
+      }
+      .form-actions-row {
+        display: flex;
+        gap: 20px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .btn-submit {
+        flex: 1;
+        min-width: 220px;
+        background-color: $primary;
+        color: white;
+        border: none;
+        padding: 14px 30px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.3s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          background-color: #1d4ed8;
+        }
+      }
+
+      .btn-submit.secondary {
+        background-color: $primary;
+      }
+    }
+
+    .jobs-empty-state {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      padding: 42px 30px;
+      text-align: center;
+
+      h2 {
+        color: #1f2937;
+        margin: 0 0 8px;
+      }
+
+      p {
+        color: #6b7280;
+        margin: 0 0 20px;
+      }
+
+      button {
+        background: $primary;
+        border: 0;
+        border-radius: 6px;
+        color: white;
+        cursor: pointer;
+        font-weight: 700;
+        padding: 12px 18px;
+      }
+    }
+
+    .posted-jobs-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .posted-job-card {
+      align-items: center;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+      display: flex;
+      gap: 20px;
+      justify-content: space-between;
+      padding: 22px 24px;
+    }
+
+    .posted-job-main {
+      min-width: 0;
+    }
+
+    .posted-job-title-row {
+      align-items: center;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+
+      h2 {
+        color: #111827;
+        font-size: 20px;
+        margin: 0;
+      }
+    }
+
+    .job-status {
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 10px;
+
+      &.open {
+        background: #dbeafe;
+        color: #1d4ed8;
+      }
+
+      &.closed {
+        background: #fee2e2;
+        color: #b91c1c;
+      }
+    }
+
+    .posted-job-company,
+    .posted-job-salary {
+      color: #6b7280;
+      font-size: 14px;
+      margin: 8px 0 0;
+    }
+
+    .posted-job-salary {
+      color: #374151;
+      font-weight: 600;
+    }
+
+    .posted-job-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 13px;
+
+      span {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 4px;
+        color: #1d4ed8;
+        font-size: 12px;
+        padding: 4px 8px;
+      }
+    }
+
+    .posted-job-actions {
+      display: flex;
+      flex-shrink: 0;
+      gap: 8px;
+
+      a {
+        border: 1px solid $primary;
+        border-radius: 6px;
+        color: #1d4ed8;
+        font-size: 13px;
+        font-weight: 700;
+        padding: 8px 11px;
+        text-decoration: none;
+
+        &:hover {
+          background: #eff6ff;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 1000px) {
+  .hr-dashboard .hr-navbar {
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    padding: 8px 20px;
+
+    .hr-nav-links {
+      order: 3;
+      flex-basis: 100%;
+      justify-content: flex-start;
+      overflow-x: auto;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .hr-nav-account {
+      margin-left: auto;
+    }
+  }
+}
+
+@media (max-width: 700px) {
+  .hr-dashboard {
+    .main-content {
+      padding: 24px 16px;
+    }
+
+    .hr-navbar {
+      padding: 8px 16px;
+    }
+
+    .posted-job-card {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .posted-job-actions {
+      a {
+        flex: 1;
+        text-align: center;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .hr-dashboard .hr-navbar {
+    .hr-brand-logo {
+      width: 76px;
+      height: 52px;
+    }
+
+    .hr-brand {
+      gap: 6px;
+      font-size: 16px;
+    }
+
+    .hr-nav-account > span {
+      display: none;
+    }
+  }
+}

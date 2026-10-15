@@ -1,0 +1,93 @@
+.edit-job {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px;
+}
+
+.edit-job h1 {
+  margin-bottom: 30px;
+  color: #1e293b;
+}
+
+.edit-job-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  background: white;
+  padding: 30px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.edit-job-form > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.edit-job-form label {
+  font-weight: 600;
+  color: #334155;
+}
+
+.edit-job-form input,
+.edit-job-form select,
+.edit-job-form textarea {
+  padding: 11px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  font-size: 15px;
+}
+
+.edit-job-form textarea {
+  resize: vertical;
+}
+
+.description-field {
+  grid-column: 1 / -1;
+}
+
+.edit-job-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row !important;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.edit-job-actions button {
+  padding: 11px 20px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.edit-job-actions button:first-child {
+  background: #e2e8f0;
+}
+
+.edit-job-actions button:last-child {
+  background: #2563eb;
+  color: white;
+}
+
+.edit-job-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 700px) {
+  .edit-job {
+    padding: 20px;
+  }
+
+  .edit-job-form {
+    grid-template-columns: 1fr;
+  }
+
+  .description-field,
+  .edit-job-actions {
+    grid-column: auto;
+  }
+}
