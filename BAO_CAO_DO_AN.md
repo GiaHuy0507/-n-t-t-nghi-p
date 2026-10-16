@@ -91,41 +91,47 @@ The frontend is built with React and SCSS. The backend uses Node.js, Express, an
 
 ## DANH MỤC HÌNH ẢNH
 
-| Mã hình | Tên hình | Gợi ý bổ sung |
-|---|---|---|
-| Hình 3.1 | Sơ đồ ca sử dụng tổng quát | Vẽ từ các tác nhân và ca sử dụng tại Chương 3 |
-| Hình 3.2 | Mô hình quan hệ các collection | Vẽ theo các tham chiếu trong MongoDB |
-| Hình 3.3 | Luồng tải CV và nhận phân tích | Có thể dùng sơ đồ tuần tự |
-| Hình 4.1 | Trang chủ | Chèn ảnh chụp ứng dụng chạy thực tế |
-| Hình 4.2 | Danh sách và chi tiết việc làm | Chèn ảnh chụp ứng dụng chạy thực tế |
-| Hình 4.3 | Trang tải CV và kết quả AI | Che thông tin cá nhân trong ảnh |
-| Hình 4.4 | Khu vực quản lý tuyển dụng | Chèn ảnh HR Dashboard/Applications |
-| Hình 4.5 | Khu vực quản trị | Chèn ảnh Admin Dashboard |
+| Mã hình  | Tên hình                        | Gợi ý bổ sung                                          |
+| -------- | ------------------------------- | ------------------------------------------------------ |
+| Hình 3.1 | Sơ đồ ca sử dụng tổng quát      | Các tác nhân ứng viên, HR, quản trị viên và Gemini API |
+| Hình 3.2 | Mô hình quan hệ các collection  | Vẽ theo các tham chiếu trong MongoDB                   |
+| Hình 3.3 | Sequence tải CV và phân tích AI | Thể hiện nhận diện tệp trùng và lỗi AI                 |
+| Hình 3.4 | Sequence ứng tuyển việc làm     | Thể hiện kiểm tra đơn trùng, trạng thái tin và CV      |
+| Hình 3.5 | Sequence HR xử lý hồ sơ         | Thể hiện tải danh sách và cập nhật trạng thái          |
+| Hình 4.1 | Trang chủ                       | Chèn ảnh chụp ứng dụng chạy thực tế                    |
+| Hình 4.2 | Danh sách và chi tiết việc làm  | Chèn ảnh chụp ứng dụng chạy thực tế                    |
+| Hình 4.3 | Trang tải CV và kết quả AI      | Che thông tin cá nhân trong ảnh                        |
+| Hình 4.4 | Khu vực quản lý tuyển dụng      | Chèn ảnh HR Dashboard/Applications                     |
+| Hình 4.5 | Khu vực quản trị                | Chèn ảnh Admin Dashboard                               |
 
 ## DANH MỤC BẢNG BIỂU
 
-| Mã bảng | Tên bảng |
-|---|---|
-| Bảng 2.1 | Công nghệ sử dụng trong dự án |
-| Bảng 3.1 | Tác nhân và quyền chính |
-| Bảng 3.2 | Các collection dữ liệu chính |
-| Bảng 3.3 | Đặc tả một số API |
+| Mã bảng  | Tên bảng                        |
+| -------- | ------------------------------- |
+| Bảng 2.1 | Công nghệ sử dụng trong dự án   |
+| Bảng 3.1 | Tác nhân và quyền chính         |
+| Bảng 3.2 | Đặc tả chức năng hệ thống       |
+| Bảng 3.3 | Mô tả collection User           |
+| Bảng 3.4 | Mô tả collection Job            |
+| Bảng 3.5 | Mô tả collection CV             |
+| Bảng 3.6 | Mô tả collection Application    |
+| Bảng 3.7 | Đặc tả một số API               |
 | Bảng 5.1 | Các trường hợp kiểm thử đề xuất |
 
 ## DANH MỤC CHỮ VIẾT TẮT
 
-| Chữ viết tắt | Diễn giải |
-|---|---|
-| AI | Artificial Intelligence – Trí tuệ nhân tạo |
-| API | Application Programming Interface |
-| ATS | Applicant Tracking System |
-| CV | Curriculum Vitae – Hồ sơ ứng viên |
-| HR | Human Resources – Nhân sự / nhà tuyển dụng |
-| HTTP | Hypertext Transfer Protocol |
-| JSON | JavaScript Object Notation |
-| LLM | Large Language Model – Mô hình ngôn ngữ lớn |
-| REST | Representational State Transfer |
-| UI/UX | User Interface / User Experience |
+| Chữ viết tắt | Diễn giải                                   |
+| ------------ | ------------------------------------------- |
+| AI           | Artificial Intelligence – Trí tuệ nhân tạo  |
+| API          | Application Programming Interface           |
+| ATS          | Applicant Tracking System                   |
+| CV           | Curriculum Vitae – Hồ sơ ứng viên           |
+| HR           | Human Resources – Nhân sự / nhà tuyển dụng  |
+| HTTP         | Hypertext Transfer Protocol                 |
+| JSON         | JavaScript Object Notation                  |
+| LLM          | Large Language Model – Mô hình ngôn ngữ lớn |
+| REST         | Representational State Transfer             |
+| UI/UX        | User Interface / User Experience            |
 
 # CHƯƠNG 1. GIỚI THIỆU CHUNG VÀ TỔNG QUAN ĐỀ TÀI
 
@@ -180,17 +186,17 @@ Mô hình ngôn ngữ nhận nội dung CV và trả về các trường như th
 
 ## 2.2. Công nghệ và công cụ phát triển
 
-| Thành phần | Công nghệ trong mã nguồn | Vai trò |
-|---|---|---|
-| Frontend | React, React Router, JavaScript, SCSS, Vite | Xây dựng trang, điều hướng, giao diện và biểu mẫu |
-| Gọi API | Axios và Fetch API | Gửi yêu cầu đến backend; gắn JWT ở các yêu cầu Axios |
-| Backend | Node.js, Express 5 | Xây dựng REST API và xử lý nghiệp vụ |
-| Cơ sở dữ liệu | MongoDB, Mongoose | Lưu người dùng, việc làm, CV và đơn ứng tuyển |
-| Tải tệp | Multer | Nhận tệp PDF, giới hạn 10 MB, lưu tạm trước khi xử lý |
-| PDF | `pdf-parse` | Trích xuất văn bản từ PDF có lớp chữ |
-| AI | Google GenAI SDK, Gemini API | Phân tích CV thành JSON; tạo mô tả công việc theo logic hiện tại |
-| Bảo mật hỗ trợ | `jsonwebtoken`, `bcryptjs`, `helmet`, CORS | Token xác thực, băm mật khẩu, header bảo mật và cấu hình chia sẻ nguồn |
-| Lưu trạng thái trình duyệt | `localStorage`, `sessionStorage` | Lưu token/người dùng; giữ kết quả tải CV trong phiên trình duyệt |
+| Thành phần                 | Công nghệ trong mã nguồn                    | Vai trò                                                                |
+| -------------------------- | ------------------------------------------- | ---------------------------------------------------------------------- |
+| Frontend                   | React, React Router, JavaScript, SCSS, Vite | Xây dựng trang, điều hướng, giao diện và biểu mẫu                      |
+| Gọi API                    | Axios và Fetch API                          | Gửi yêu cầu đến backend; gắn JWT ở các yêu cầu Axios                   |
+| Backend                    | Node.js, Express 5                          | Xây dựng REST API và xử lý nghiệp vụ                                   |
+| Cơ sở dữ liệu              | MongoDB, Mongoose                           | Lưu người dùng, việc làm, CV và đơn ứng tuyển                          |
+| Tải tệp                    | Multer                                      | Nhận tệp PDF, giới hạn 10 MB, lưu tạm trước khi xử lý                  |
+| PDF                        | `pdf-parse`                                 | Trích xuất văn bản từ PDF có lớp chữ                                   |
+| AI                         | Google GenAI SDK, Gemini API                | Phân tích CV thành JSON; tạo mô tả công việc theo logic hiện tại       |
+| Bảo mật hỗ trợ             | `jsonwebtoken`, `bcryptjs`, `helmet`, CORS  | Token xác thực, băm mật khẩu, header bảo mật và cấu hình chia sẻ nguồn |
+| Lưu trạng thái trình duyệt | `localStorage`, `sessionStorage`            | Lưu token/người dùng; giữ kết quả tải CV trong phiên trình duyệt       |
 
 Dự án không sử dụng TypeScript, Tailwind CSS hoặc FastAPI theo cấu hình và mã nguồn được khảo sát. Backend hiện là một ứng dụng Node.js duy nhất; Python/FastAPI không tham gia luồng xử lý. Phân tích CV được gọi qua Gemini API bằng SDK `@google/genai`.
 
@@ -214,68 +220,316 @@ Máy chủ gửi văn bản PDF đã trích xuất hoặc gửi PDF trực tiế
 
 ## 3.1. Khảo sát yêu cầu và tác nhân
 
-| Tác nhân | Nhu cầu và quyền chính |
-|---|---|
-| Ứng viên | Đăng ký/đăng nhập; tìm việc; tải và phân tích CV; xem việc làm gợi ý; ứng tuyển; theo dõi đơn; tạo CV từ giao diện hỗ trợ |
-| Nhà tuyển dụng (HR) | Quản lý tin do mình tạo; xem hồ sơ ứng tuyển; xem CV; tham khảo shortlist; ghi chú và cập nhật trạng thái ứng viên |
-| Quản trị viên | Xem tổng quan, người dùng và việc làm; thay đổi vai trò người dùng; đổi trạng thái hoặc xóa tin tuyển dụng |
+| Tác nhân            | Nhu cầu và quyền chính                                                                                                    |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Ứng viên            | Đăng ký/đăng nhập; tìm việc; tải và phân tích CV; xem việc làm gợi ý; ứng tuyển; theo dõi đơn; tạo CV từ giao diện hỗ trợ |
+| Nhà tuyển dụng (HR) | Quản lý tin do mình tạo; xem hồ sơ ứng tuyển; xem CV; tham khảo shortlist; ghi chú và cập nhật trạng thái ứng viên        |
+| Quản trị viên       | Xem tổng quan, người dùng và việc làm; thay đổi vai trò người dùng; đổi trạng thái hoặc xóa tin tuyển dụng                |
+
+### 3.1.1. Đặc tả chức năng hệ thống
+
+Bảng 3.2 mô tả đầu vào, đầu ra, xử lý chính và nơi lưu dữ liệu của các chức năng. “Dữ liệu cần lưu” phân biệt dữ liệu bền vững phía máy chủ với dữ liệu tạm/lưu cục bộ trên trình duyệt.
+
+| Chức năng                  | Đầu vào                                                                                                       | Đầu ra                                                                               | Xử lý                                                                                                                                  | Dữ liệu cần lưu                                                                                                                                  |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Đăng ký và đăng nhập       | Đăng ký: họ tên, email, mật khẩu, vai trò tùy chọn. Đăng nhập: email, mật khẩu.                               | Đăng ký trả thông tin tài khoản; đăng nhập trả thông tin người dùng và JWT.          | Kiểm tra dữ liệu và email trùng; băm mật khẩu bằng bcrypt; đối chiếu mật khẩu khi đăng nhập; phát JWT có thời hạn 7 ngày.              | MongoDB `User`: họ tên, email, mật khẩu đã băm, vai trò. Trình duyệt lưu JWT và thông tin người dùng trong `localStorage`.                       |
+| Tìm kiếm và xem việc làm   | Yêu cầu lấy danh sách hoặc mã tin tuyển dụng.                                                                 | Danh sách tin hoặc nội dung chi tiết một tin.                                        | Backend truy vấn collection `Job`; giao diện hiển thị thông tin tin tuyển dụng.                                                        | Không tạo dữ liệu mới; đọc dữ liệu `Job` đã có trong MongoDB.                                                                                    |
+| HR quản lý tin tuyển dụng  | Tiêu đề, mô tả, công ty, địa điểm, khoảng lương, kỹ năng, hình thức làm việc, trạng thái; mã tin khi sửa/xóa. | Tin được tạo/cập nhật, danh sách tin của HR hoặc thông báo kết quả thao tác.         | Xác thực vai trò HR và quyền sở hữu tin; tạo, sửa trường cho phép hoặc xóa tin. Khi xóa tin, các đơn ứng tuyển liên quan cũng bị xóa.  | MongoDB `Job`: nội dung tin, `createdBy`, trạng thái và thời gian. Các `Application` liên quan bị xóa khi xóa tin.                               |
+| Tải và phân tích CV        | Tệp PDF tối đa 10 MB và JWT của ứng viên.                                                                     | CV đã lưu, văn bản trích xuất, kết quả phân tích hoặc trạng thái phân tích thất bại. | Kiểm tra tệp; tính SHA-256 để tìm bản trùng của cùng ứng viên; trích xuất văn bản; gọi Gemini; lưu kết quả hoặc `FAILED`.              | Tệp PDF trong `uploads/cv`; MongoDB `CV`: ứng viên, tên/đường dẫn tệp, hash, văn bản, trạng thái và kết quả AI.                                  |
+| Gợi ý việc làm phù hợp     | Kỹ năng từ kết quả phân tích CV và danh sách tin tuyển dụng.                                                  | Tối đa 5 tin được xếp hạng theo mức độ trùng kỹ năng.                                | Giao diện so khớp kỹ năng với tiêu đề, mô tả, yêu cầu và kỹ năng của tin; sắp xếp điểm giảm dần.                                       | Không lưu điểm gợi ý vào MongoDB; kết quả phân tích và danh sách gợi ý được giữ trong `sessionStorage` của trình duyệt.                          |
+| Ứng tuyển và theo dõi đơn  | Mã tin, CV PDF, thư giới thiệu (nếu có) và JWT ứng viên.                                                      | Đơn ứng tuyển được tạo; ứng viên nhận danh sách và trạng thái các đơn của mình.      | Kiểm tra đơn trùng và tin còn mở; lưu hoặc tái sử dụng CV; tạo đơn; thử phân tích CV nếu chưa có kết quả. Lỗi AI không hủy đơn đã tạo. | MongoDB `Application`: ứng viên, tin, CV tham chiếu, thư giới thiệu, trạng thái. Thông tin tệp và phân tích được lưu trong `CV` và hệ thống tệp. |
+| HR xem và xử lý hồ sơ      | Yêu cầu lấy đơn; mã tin/mã đơn; trạng thái mới hoặc ghi chú đánh giá.                                         | Danh sách đơn, CV, shortlist có điểm so khớp; kết quả cập nhật trạng thái/ghi chú.   | Chỉ truy cập đơn thuộc tin do HR tạo; kiểm tra trạng thái hợp lệ; ghi chú tối đa 2.000 ký tự. Điểm shortlist được tính khi yêu cầu.    | MongoDB `Application`: `status` và `hrNote`. Điểm shortlist được tính tại thời điểm truy vấn, không lưu thành trường riêng.                      |
+| Quản trị người dùng và tin | Yêu cầu tổng quan/danh sách; mã người dùng và vai trò; mã tin và trạng thái hoặc yêu cầu xóa.                 | Số liệu tổng quan, danh sách người dùng/tin và kết quả cập nhật.                     | Chỉ ADMIN được gọi; kiểm tra vai trò/trạng thái thuộc danh sách hợp lệ; khi xóa tin, xóa các đơn liên quan.                            | MongoDB `User.role`, `Job.status`; tin và đơn liên quan bị xóa theo thao tác quản trị. Số liệu tổng quan được truy vấn từ dữ liệu hiện có.       |
+| Tạo CV và xuất PDF         | Thông tin cá nhân, tóm tắt, kỹ năng, kinh nghiệm, học vấn, mẫu CV và gợi ý AI nếu có.                         | Bản nháp có thể chỉnh sửa và tệp PDF tải về.                                         | Giao diện tạo bản xem trước; lưu/đọc/xóa bản nháp cục bộ; kết xuất PDF trên trình duyệt.                                               | Bản nháp lưu trong `localStorage` với khóa `cvDrafts`; PDF được tải về thiết bị. Chức năng này không ghi bản nháp vào MongoDB.                   |
+
+**Lưu ý về đăng ký:** API hiện nhận trường `role` từ yêu cầu đăng ký nếu giá trị thuộc enum hợp lệ; nếu bỏ trống thì mặc định là `CANDIDATE`. Khi triển khai thực tế, nên giới hạn tài khoản tự đăng ký ở vai trò ứng viên và cấp quyền HR/ADMIN qua quy trình quản trị.
+
+### 3.1.2. Yêu cầu phi chức năng
 
 Yêu cầu phi chức năng gồm giao diện dễ hiểu, kiểm tra dữ liệu đầu vào, phân quyền phía máy chủ, thông báo lỗi phù hợp và lưu trữ dữ liệu nhất quán. Các yêu cầu về tải đồng thời, thời gian phản hồi, khả năng truy cập và tiêu chuẩn bảo mật cần được đo/đặc tả thêm nếu dùng trong môi trường thực tế.
 
 ## 3.2. Sơ đồ ca sử dụng
 
-Sơ đồ khái quát dưới đây có thể chuyển thành hình UML trong bản Word:
+### 3.2.1. Sơ đồ ca sử dụng tổng quát
+
+Sơ đồ thể hiện các chức năng chính theo vai trò. Gemini API là hệ thống ngoài được gọi khi phân tích CV; kết quả phân tích chỉ mang tính hỗ trợ.
 
 ```mermaid
 flowchart LR
   C[Ứng viên]
   H[Nhà tuyển dụng / HR]
   A[Quản trị viên]
-  S((Nền tảng tuyển dụng))
-  C -->|Đăng ký / đăng nhập| S
-  C -->|Tìm và xem việc làm| S
-  C -->|Tải CV, xem phân tích AI| S
-  C -->|Ứng tuyển, theo dõi đơn| S
-  H -->|Tạo và quản lý tin| S
-  H -->|Xem CV, shortlist ứng viên| S
-  H -->|Ghi chú, cập nhật trạng thái| S
-  A -->|Quản lý người dùng và tin| S
+  G[Gemini API]
+
+  subgraph SYS["Nền tảng tuyển dụng"]
+    direction TB
+    UC1([Đăng ký / đăng nhập])
+    UC2([Tìm kiếm và xem việc làm])
+    UC3([Tải CV và xem phân tích AI])
+    UC4([Xem việc làm phù hợp])
+    UC5([Ứng tuyển và theo dõi đơn])
+    UC10([Tạo CV từ gợi ý phân tích])
+    UC6([Tạo và quản lý tin tuyển dụng])
+    UC7([Xem hồ sơ và shortlist ứng viên])
+    UC8([Ghi chú và cập nhật trạng thái])
+    UC9([Quản lý người dùng và tin tuyển dụng])
+  end
+
+  C --- UC1
+  H --- UC1
+  A --- UC1
+  C --- UC2
+  C --- UC3
+  C --- UC4
+  C --- UC5
+  C --- UC10
+  H --- UC6
+  H --- UC7
+  H --- UC8
+  A --- UC9
+  G --- UC3
+```
+
+### 3.2.2. Sequence tải CV và phân tích AI
+
+Ứng viên tải PDF qua API có xác thực. Máy chủ nhận diện CV trùng theo ứng viên và SHA-256; CV đã phân tích thành công được trả lại mà không gọi AI lần nữa. Nếu Gemini lỗi, CV vẫn được lưu với trạng thái `FAILED` để có thể xử lý lại.
+
+```mermaid
+sequenceDiagram
+  actor C as Ứng viên
+  participant UI as Giao diện React
+  participant API as Express API
+  participant Auth as Middleware xác thực / vai trò
+  participant CV as CV Controller
+  participant Store as Dịch vụ lưu CV
+  participant FS as Hệ thống tệp
+  participant DB as MongoDB
+  participant PDF as PDF Service
+  participant AI as Gemini API
+
+  C->>UI: Chọn PDF và tải lên
+  UI->>UI: Kiểm tra dung lượng tối đa 10 MB
+  UI->>API: POST /api/cv/upload (PDF, JWT)
+  API->>Auth: Xác thực token và vai trò CANDIDATE
+  Auth-->>API: Cho phép yêu cầu
+  API->>CV: Chuyển tệp đã nhận
+  CV->>Store: Lưu CV cho ứng viên
+  Store->>FS: Đọc tệp tạm, tính SHA-256
+  Store->>DB: Tìm CV trùng theo ứng viên và hash
+
+  alt CV trùng đã phân tích thành công
+    DB-->>Store: Trả CV hiện có
+    Store->>FS: Xóa tệp tạm
+    Store-->>CV: CV hiện có, duplicate = true
+    CV-->>UI: 200, kết quả phân tích hiện có
+  else CV mới hoặc CV trùng chưa phân tích xong
+    opt CV mới
+      Store->>PDF: Trích xuất văn bản từ PDF
+      PDF-->>Store: Văn bản trích xuất (có thể rỗng)
+      Store->>FS: Chuyển tệp vào thư mục lưu CV
+      Store->>DB: Tạo CV, aiStatus = PENDING
+    end
+    Store-->>CV: CV cần phân tích
+    CV->>AI: Phân tích văn bản hoặc PDF
+    alt Gemini phân tích thành công
+      AI-->>CV: Kết quả JSON
+      CV->>DB: Lưu kết quả, aiStatus = COMPLETED
+    else Gemini lỗi
+      AI-->>CV: Lỗi phân tích
+      CV->>DB: Lưu aiStatus = FAILED
+    end
+    CV-->>UI: 201, CV và trạng thái phân tích
+  end
+  UI-->>C: Hiển thị kết quả hoặc thông báo trạng thái
+```
+
+### 3.2.3. Sequence ứng tuyển việc làm
+
+Ứng viên gửi mã việc làm, CV PDF và thư giới thiệu. Máy chủ từ chối đơn trùng hoặc tin đã đóng; nếu hợp lệ, hệ thống tạo đơn trước khi phân tích CV. Phân tích AI thất bại không hủy đơn ứng tuyển.
+
+```mermaid
+sequenceDiagram
+  actor C as Ứng viên
+  participant UI as Giao diện React
+  participant API as Express API
+  participant Auth as Middleware xác thực / vai trò
+  participant Controller as Application Controller
+  participant Service as Application Service
+  participant DB as MongoDB
+  participant CVStore as Dịch vụ lưu CV
+  participant AI as Gemini API
+
+  C->>UI: Gửi hồ sơ ứng tuyển
+  UI->>API: POST /api/applications (jobId, CV, thư giới thiệu, JWT)
+  API->>Auth: Xác thực token và vai trò CANDIDATE
+  Auth-->>API: Cho phép yêu cầu
+  API->>Controller: Chuyển dữ liệu và tệp đã nhận
+  Controller->>Service: Tạo đơn ứng tuyển
+  Service->>DB: Kiểm tra đơn trùng của ứng viên với việc làm
+  alt Đã ứng tuyển trước đó
+    DB-->>Service: Tìm thấy đơn hiện có
+    Service-->>Controller: Lỗi đơn trùng
+    Controller-->>UI: 400, thông báo đã ứng tuyển
+  else Chưa có đơn
+    Service->>DB: Kiểm tra việc làm tồn tại và đang OPEN
+    alt Tin không tồn tại hoặc đã đóng
+      DB-->>Service: Không hợp lệ
+      Service-->>Controller: Lỗi việc làm
+      Controller-->>UI: 400, thông báo lỗi
+    else Tin đang mở
+      Service->>CVStore: Lưu hoặc nhận diện CV trùng
+      CVStore-->>Service: CV đã lưu
+      Service->>DB: Tạo đơn ứng tuyển
+      opt CV chưa có kết quả phân tích thành công
+        Service->>AI: Phân tích nội dung CV
+        alt Phân tích thành công
+          AI-->>Service: Kết quả JSON
+          Service->>DB: Lưu kết quả và aiStatus = COMPLETED
+        else Phân tích thất bại
+          AI-->>Service: Lỗi
+          Service->>DB: Lưu aiStatus = FAILED
+        end
+      end
+      Service-->>Controller: Đơn ứng tuyển đã tạo
+      Controller-->>UI: 201, ứng tuyển thành công
+    end
+  end
+  UI-->>C: Hiển thị kết quả thao tác
+```
+
+### 3.2.4. Sequence HR xem và cập nhật hồ sơ
+
+HR chỉ xem các đơn thuộc tin do chính mình tạo. Khi cập nhật trạng thái, máy chủ kiểm tra quyền sở hữu tin và giá trị trạng thái trước khi lưu.
+
+```mermaid
+sequenceDiagram
+  actor H as Nhà tuyển dụng / HR
+  participant UI as Giao diện HR
+  participant API as Express API
+  participant Auth as Middleware xác thực / vai trò
+  participant Controller as Application Controller
+  participant Service as Application Service
+  participant DB as MongoDB
+
+  H->>UI: Mở danh sách hồ sơ
+  UI->>API: GET /api/applications/hr (JWT)
+  API->>Auth: Xác thực token và vai trò HR
+  Auth-->>API: Cho phép yêu cầu
+  API->>Controller: Lấy danh sách hồ sơ
+  Controller->>Service: getApplicationsForHR(hrId)
+  Service->>DB: Tìm tin do HR tạo
+  DB-->>Service: Danh sách mã tin
+  Service->>DB: Tìm đơn ứng tuyển thuộc các tin đó
+  DB-->>Service: Đơn, ứng viên, tin và thông tin CV
+  Service-->>Controller: Danh sách hồ sơ
+  Controller-->>UI: 200, danh sách hồ sơ
+  UI-->>H: Hiển thị ứng viên
+
+  H->>UI: Chọn trạng thái mới
+  UI->>API: PATCH /api/applications/:id/status (status, JWT)
+  API->>Auth: Xác thực token và vai trò HR
+  Auth-->>API: Cho phép yêu cầu
+  API->>Controller: Cập nhật trạng thái
+  Controller->>Service: updateApplicationStatus(id, hrId, status)
+  Service->>DB: Tìm đơn và kiểm tra HR sở hữu tin
+  alt HR có quyền và trạng thái hợp lệ
+    Service->>DB: Lưu trạng thái mới
+    DB-->>Service: Đơn đã cập nhật
+    Service-->>Controller: Đơn đã cập nhật
+    Controller-->>UI: 200, cập nhật thành công
+  else Không có quyền hoặc trạng thái không hợp lệ
+    Service-->>Controller: Lỗi kiểm tra
+    Controller-->>UI: 400, thông báo lỗi
+  end
+  UI-->>H: Cập nhật giao diện
 ```
 
 ## 3.3. Thiết kế cơ sở dữ liệu
 
-Hệ thống dùng bốn collection nghiệp vụ chính. Các trường `_id`, `createdAt`, `updatedAt` do MongoDB/Mongoose quản lý theo cấu hình schema.
+Hệ thống sử dụng MongoDB với bốn collection nghiệp vụ. Các bảng dưới đây mô tả schema Mongoose; kiểu dữ liệu là kiểu tương ứng trong MongoDB, không phải kiểu cột SQL. Mỗi collection có `_id` kiểu `ObjectId`; tùy chọn `timestamps: true` tự tạo `createdAt` và `updatedAt`. Tham chiếu `ref` được Mongoose dùng để liên kết document, không phải khóa ngoại SQL.
 
 ### 3.3.1. Collection `User`
 
-| Trường | Kiểu / ràng buộc | Ý nghĩa |
-|---|---|---|
-| `name` | String, bắt buộc | Tên hiển thị |
-| `email` | String, bắt buộc, duy nhất, chữ thường | Định danh đăng nhập |
-| `password` | String, bắt buộc, tối thiểu 6 ký tự | Mật khẩu đã băm trước khi lưu theo luồng xác thực |
-| `role` | `ADMIN`, `HR`, `CANDIDATE` | Vai trò tài khoản |
+**Bảng 3.3. Mô tả collection User (người dùng)**
+
+| STT | Thuộc tính  | Kiểu dữ liệu | Ràng buộc                                                             | Ý nghĩa                                                 |
+| --: | ----------- | ------------ | --------------------------------------------------------------------- | ------------------------------------------------------- |
+|   1 | `_id`       | ObjectId     | Khóa định danh MongoDB, tự tạo                                        | Mã định danh duy nhất của người dùng.                   |
+|   2 | `name`      | String       | Bắt buộc, loại bỏ khoảng trắng đầu/cuối                               | Tên hiển thị của người dùng.                            |
+|   3 | `email`     | String       | Bắt buộc, duy nhất, chuyển chữ thường, loại bỏ khoảng trắng           | Email dùng để đăng nhập và liên hệ.                     |
+|   4 | `password`  | String       | Bắt buộc, tối thiểu 6 ký tự; được băm bằng bcrypt trong luồng đăng ký | Mật khẩu đã băm, không lưu mật khẩu rõ qua API đăng ký. |
+|   5 | `role`      | String       | Enum `ADMIN`, `HR`, `CANDIDATE`; mặc định `CANDIDATE`                 | Vai trò và quyền truy cập của người dùng.               |
+|   6 | `createdAt` | Date         | Tự tạo bởi Mongoose timestamps                                        | Thời điểm tạo tài khoản.                                |
+|   7 | `updatedAt` | Date         | Tự cập nhật bởi Mongoose timestamps                                   | Thời điểm cập nhật tài khoản gần nhất.                  |
 
 ### 3.3.2. Collection `Job`
 
-Các trường chính gồm `title`, `description`, `company`, `location`, `salaryMin`, `salaryMax`, `skills`, `employmentType` (`FULL_TIME`, `PART_TIME`, `INTERNSHIP`), `status` (`OPEN`, `CLOSED`) và `createdBy` tham chiếu `User` tạo tin.
+**Bảng 3.4. Mô tả collection Job (tin tuyển dụng)**
+
+| STT | Thuộc tính       | Kiểu dữ liệu    | Ràng buộc                                                         | Ý nghĩa                                    |
+| --: | ---------------- | --------------- | ----------------------------------------------------------------- | ------------------------------------------ |
+|   1 | `_id`            | ObjectId        | Khóa định danh MongoDB, tự tạo                                    | Mã định danh của tin tuyển dụng.           |
+|   2 | `title`          | String          | Bắt buộc, loại bỏ khoảng trắng đầu/cuối                           | Chức danh tuyển dụng.                      |
+|   3 | `description`    | String          | Bắt buộc                                                          | Nội dung mô tả công việc và yêu cầu.       |
+|   4 | `company`        | String          | Bắt buộc, loại bỏ khoảng trắng đầu/cuối                           | Tên công ty tuyển dụng.                    |
+|   5 | `location`       | String          | Bắt buộc, loại bỏ khoảng trắng đầu/cuối                           | Địa điểm làm việc.                         |
+|   6 | `salaryMin`      | Number          | Bắt buộc                                                          | Mức lương thấp nhất trong khoảng lương.    |
+|   7 | `salaryMax`      | Number          | Bắt buộc                                                          | Mức lương cao nhất trong khoảng lương.     |
+|   8 | `skills`         | Array of String | Mặc định mảng rỗng                                                | Danh sách kỹ năng liên quan đến công việc. |
+|   9 | `employmentType` | String          | Enum `FULL_TIME`, `PART_TIME`, `INTERNSHIP`; mặc định `FULL_TIME` | Hình thức làm việc.                        |
+|  10 | `status`         | String          | Enum `OPEN`, `CLOSED`; mặc định `OPEN`                            | Trạng thái nhận hồ sơ của tin.             |
+|  11 | `createdBy`      | ObjectId        | Bắt buộc, tham chiếu `User`                                       | HR tạo và sở hữu tin tuyển dụng.           |
+|  12 | `createdAt`      | Date            | Tự tạo bởi Mongoose timestamps                                    | Thời điểm đăng tin.                        |
+|  13 | `updatedAt`      | Date            | Tự cập nhật bởi Mongoose timestamps                               | Thời điểm chỉnh sửa tin gần nhất.          |
 
 ### 3.3.3. Collection `CV`
 
-| Trường | Ý nghĩa |
-|---|---|
-| `candidate` | Tham chiếu ứng viên sở hữu CV |
-| `originalName`, `fileName`, `filePath` | Tên gốc, tên lưu và đường dẫn tệp |
-| `fileHash` | SHA-256 phục vụ nhận diện tệp trùng theo ứng viên |
-| `extractedText` | Văn bản lấy từ PDF hoặc văn bản gốc được AI đọc |
-| `aiStatus` | `PENDING`, `COMPLETED` hoặc `FAILED` |
-| `aiAnalysis` | Thông tin cá nhân, tóm tắt, điểm mạnh, đề xuất, kỹ năng, học vấn, kinh nghiệm, ngoại ngữ, chứng chỉ và thông tin thiếu |
-| `uploadedAt` | Thời điểm tải lên |
+**Bảng 3.5. Mô tả collection CV (hồ sơ ứng viên)**
 
-Schema có index ghép `{ candidate: 1, fileHash: 1 }`. Logic tìm trùng chỉ xét cùng ứng viên. Khi gặp CV cũ thiếu hash, dịch vụ có thể tính lại hash từ tệp hiện hữu.
+| STT | Thuộc tính                          | Kiểu dữ liệu               | Ràng buộc                                                                            | Ý nghĩa                                                    |
+| --: | ----------------------------------- | -------------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+|   1 | `_id`                               | ObjectId                   | Khóa định danh MongoDB, tự tạo                                                       | Mã định danh hồ sơ CV.                                     |
+|   2 | `candidate`                         | ObjectId                   | Bắt buộc, tham chiếu `User`                                                          | Ứng viên sở hữu CV.                                        |
+|   3 | `originalName`                      | String                     | Bắt buộc                                                                             | Tên tệp gốc do ứng viên tải lên.                           |
+|   4 | `fileName`                          | String                     | Bắt buộc                                                                             | Tên tệp được lưu trên máy chủ.                             |
+|   5 | `filePath`                          | String                     | Bắt buộc                                                                             | Đường dẫn tệp PDF trong hệ thống tệp máy chủ.              |
+|   6 | `fileHash`                          | String                     | Không bắt buộc; tham gia index ghép với `candidate`                                  | Giá trị SHA-256 dùng nhận diện CV trùng của cùng ứng viên. |
+|   7 | `extractedText`                     | String                     | Mặc định chuỗi rỗng                                                                  | Văn bản trích xuất từ PDF hoặc nội dung văn bản CV.        |
+|   8 | `aiStatus`                          | String                     | Enum `PENDING`, `COMPLETED`, `FAILED`; mặc định `PENDING`                            | Trạng thái phân tích CV bằng AI.                           |
+|   9 | `aiAnalysis`                        | Embedded document          | Không bắt buộc; các trường con có giá trị mặc định                                   | Kết quả phân tích có cấu trúc từ Gemini.                   |
+|  10 | `aiAnalysis.personalInfo`           | Embedded document          | Gồm `fullName`, `email`, `phone`, `location`; mặc định chuỗi rỗng                    | Thông tin liên hệ trích xuất từ CV.                        |
+|  11 | `aiAnalysis.summary`                | String                     | Mặc định chuỗi rỗng                                                                  | Tóm tắt hồ sơ ứng viên.                                    |
+|  12 | `aiAnalysis.strengths`              | Array of String            | Mặc định mảng rỗng                                                                   | Các điểm mạnh có căn cứ trong CV.                          |
+|  13 | `aiAnalysis.improvementSuggestions` | Array of Embedded document | Mặc định mảng rỗng; mỗi phần tử gồm `issue`, `evidence`, `recommendation`, `example` | Các đề xuất cải thiện CV và bằng chứng liên quan.          |
+|  14 | `aiAnalysis.skills`                 | Array of String            | Mặc định mảng rỗng                                                                   | Kỹ năng được trích xuất.                                   |
+|  15 | `aiAnalysis.education`              | Array of Embedded document | Mặc định mảng rỗng; mỗi phần tử gồm `school`, `degree`, `major`                      | Thông tin học vấn.                                         |
+|  16 | `aiAnalysis.experienceYears`        | Number                     | Mặc định `0`                                                                         | Số năm kinh nghiệm ước tính từ CV.                         |
+|  17 | `aiAnalysis.workExperience`         | Array of Embedded document | Mặc định mảng rỗng; gồm `company`, `position`, `duration`, `highlights`              | Kinh nghiệm làm việc và thành tựu liên quan.               |
+|  18 | `aiAnalysis.languages`              | Array of String            | Mặc định mảng rỗng                                                                   | Ngoại ngữ được nhận diện.                                  |
+|  19 | `aiAnalysis.certifications`         | Array of String            | Mặc định mảng rỗng                                                                   | Chứng chỉ được nhận diện.                                  |
+|  20 | `aiAnalysis.missingInformation`     | Array of String            | Mặc định mảng rỗng                                                                   | Các thông tin quan trọng còn thiếu trong CV.               |
+|  21 | `uploadedAt`                        | Date                       | Mặc định thời điểm hiện tại                                                          | Thời điểm tải CV lên hệ thống.                             |
+|  22 | `createdAt`, `updatedAt`            | Date                       | Tự tạo/cập nhật bởi Mongoose timestamps                                              | Thời điểm tạo và cập nhật document CV.                     |
+
+Các tệp PDF được lưu trong hệ thống tệp, không lưu nhị phân trong document MongoDB. Schema định nghĩa index ghép `{ candidate: 1, fileHash: 1 }`; index này không khai báo `unique`. Các schema con của `aiAnalysis` không tạo `_id` riêng.
 
 ### 3.3.4. Collection `Application`
 
-`Application` liên kết `candidate`, `job` và `cv`; lưu `coverLetter`, `status` (`PENDING`, `SHORTLISTED`, `INTERVIEW`, `REJECTED`, `ACCEPTED`) và `hrNote` tối đa 2.000 ký tự. HR chỉ được đọc/quản lý đơn thuộc tin do chính HR tạo theo kiểm tra trong service.
+**Bảng 3.6. Mô tả collection Application (đơn ứng tuyển)**
+
+| STT | Thuộc tính    | Kiểu dữ liệu | Ràng buộc                                                                              | Ý nghĩa                          |
+| --: | ------------- | ------------ | -------------------------------------------------------------------------------------- | -------------------------------- |
+|   1 | `_id`         | ObjectId     | Khóa định danh MongoDB, tự tạo                                                         | Mã định danh đơn ứng tuyển.      |
+|   2 | `candidate`   | ObjectId     | Bắt buộc, tham chiếu `User`                                                            | Ứng viên nộp đơn.                |
+|   3 | `job`         | ObjectId     | Bắt buộc, tham chiếu `Job`                                                             | Tin tuyển dụng được ứng tuyển.   |
+|   4 | `cv`          | ObjectId     | Bắt buộc, tham chiếu `CV`                                                              | CV đính kèm đơn ứng tuyển.       |
+|   5 | `coverLetter` | String       | Mặc định chuỗi rỗng, loại bỏ khoảng trắng đầu/cuối                                     | Thư giới thiệu của ứng viên.     |
+|   6 | `status`      | String       | Enum `PENDING`, `SHORTLISTED`, `INTERVIEW`, `REJECTED`, `ACCEPTED`; mặc định `PENDING` | Trạng thái xử lý đơn ứng tuyển.  |
+|   7 | `hrNote`      | String       | Mặc định chuỗi rỗng, tối đa 2.000 ký tự, loại bỏ khoảng trắng đầu/cuối                 | Ghi chú đánh giá nội bộ của HR.  |
+|   8 | `createdAt`   | Date         | Tự tạo bởi Mongoose timestamps                                                         | Thời điểm nộp đơn.               |
+|   9 | `updatedAt`   | Date         | Tự cập nhật bởi Mongoose timestamps                                                    | Thời điểm cập nhật đơn gần nhất. |
+
+HR chỉ được đọc và cập nhật đơn ứng tuyển thuộc các tin do chính HR tạo; quyền sở hữu được kiểm tra ở tầng service.
 
 ```mermaid
 erDiagram
@@ -320,18 +574,18 @@ Trong request upload hiện tại, xử lý phân tích diễn ra đồng bộ t
 
 ### 4.1.4. API tiêu biểu
 
-| Phương thức | Đường dẫn | Mục đích / quyền |
-|---|---|---|
-| `GET` | `/api/jobs` | Danh sách tin công khai |
-| `GET` | `/api/jobs/:id` | Chi tiết tin |
-| `POST` | `/api/jobs` | HR tạo tin |
-| `POST` | `/api/cv/upload` | Ứng viên tải và phân tích CV |
-| `POST` | `/api/applications` | Ứng viên nộp hồ sơ, kèm CV PDF |
-| `GET` | `/api/applications/my` | Ứng viên xem đơn của mình |
-| `GET` | `/api/applications/hr` | HR xem các đơn thuộc tin của HR |
-| `GET` | `/api/applications/hr/shortlist/:jobId` | HR xem shortlist theo tin |
-| `PATCH` | `/api/applications/:id/status` | HR đổi trạng thái đơn |
-| `GET` | `/api/admin/overview` | Admin xem tổng quan |
+| Phương thức | Đường dẫn                               | Mục đích / quyền                |
+| ----------- | --------------------------------------- | ------------------------------- |
+| `GET`       | `/api/jobs`                             | Danh sách tin công khai         |
+| `GET`       | `/api/jobs/:id`                         | Chi tiết tin                    |
+| `POST`      | `/api/jobs`                             | HR tạo tin                      |
+| `POST`      | `/api/cv/upload`                        | Ứng viên tải và phân tích CV    |
+| `POST`      | `/api/applications`                     | Ứng viên nộp hồ sơ, kèm CV PDF  |
+| `GET`       | `/api/applications/my`                  | Ứng viên xem đơn của mình       |
+| `GET`       | `/api/applications/hr`                  | HR xem các đơn thuộc tin của HR |
+| `GET`       | `/api/applications/hr/shortlist/:jobId` | HR xem shortlist theo tin       |
+| `PATCH`     | `/api/applications/:id/status`          | HR đổi trạng thái đơn           |
+| `GET`       | `/api/admin/overview`                   | Admin xem tổng quan             |
 
 ## 4.2. Xây dựng phía Frontend
 
@@ -368,20 +622,20 @@ Kiểm thử chức năng theo luồng người dùng và API: xác thực, quy�
 
 ## 5.2. Các trường hợp kiểm thử
 
-| ID | Tình huống | Kết quả mong đợi | Kết quả thực tế |
-|---|---|---|---|
-| TC-01 | Ứng viên tải PDF hợp lệ không quá 10 MB | Máy chủ lưu CV và trả kết quả phân tích hoặc trạng thái lỗi AI rõ ràng | `[Điền sau khi chạy]` |
-| TC-02 | Tải tệp không phải PDF | API từ chối với mã 400 và thông báo định dạng | `[Điền sau khi chạy]` |
-| TC-03 | Tải PDF vượt 10 MB | API từ chối tệp vượt giới hạn | `[Điền sau khi chạy]` |
-| TC-04 | Cùng ứng viên tải lại đúng cùng tệp | Tái sử dụng bản ghi CV và không giữ thêm bản tệp trùng | `[Điền sau khi chạy]` |
-| TC-05 | Hai ứng viên tải cùng nội dung CV | Mỗi ứng viên có bản ghi riêng vì khóa trùng gồm cả candidate | `[Điền sau khi chạy]` |
-| TC-06 | Gemini trả kết quả hợp lệ | `aiStatus=COMPLETED`, `aiAnalysis` có cấu trúc theo schema | `[Điền sau khi chạy]` |
-| TC-07 | Gemini lỗi hoặc không khả dụng | `aiStatus=FAILED`; lỗi không làm mất CV đã lưu | `[Điền sau khi chạy]` |
-| TC-08 | Người không có quyền gọi API HR/Admin | Backend từ chối truy cập | `[Điền sau khi chạy]` |
-| TC-09 | Ứng viên ứng tuyển hai lần cùng một tin | Lần tiếp theo bị từ chối theo quy tắc nghiệp vụ | `[Điền sau khi chạy]` |
-| TC-10 | HR đổi trạng thái đơn hợp lệ | Trạng thái được lưu và trả về dữ liệu cập nhật | `[Điền sau khi chạy]` |
-| TC-11 | Làm mới trang kết quả CV trong cùng phiên tab | Khôi phục kết quả từ `sessionStorage` | `[Điền sau khi chạy]` |
-| TC-12 | Tìm kiếm/lọc việc làm trên giao diện | Danh sách hiển thị phù hợp với thao tác đã nhập | `[Điền sau khi chạy]` |
+| ID    | Tình huống                                    | Kết quả mong đợi                                                       | Kết quả thực tế       |
+| ----- | --------------------------------------------- | ---------------------------------------------------------------------- | --------------------- |
+| TC-01 | Ứng viên tải PDF hợp lệ không quá 10 MB       | Máy chủ lưu CV và trả kết quả phân tích hoặc trạng thái lỗi AI rõ ràng | `[Điền sau khi chạy]` |
+| TC-02 | Tải tệp không phải PDF                        | API từ chối với mã 400 và thông báo định dạng                          | `[Điền sau khi chạy]` |
+| TC-03 | Tải PDF vượt 10 MB                            | API từ chối tệp vượt giới hạn                                          | `[Điền sau khi chạy]` |
+| TC-04 | Cùng ứng viên tải lại đúng cùng tệp           | Tái sử dụng bản ghi CV và không giữ thêm bản tệp trùng                 | `[Điền sau khi chạy]` |
+| TC-05 | Hai ứng viên tải cùng nội dung CV             | Mỗi ứng viên có bản ghi riêng vì khóa trùng gồm cả candidate           | `[Điền sau khi chạy]` |
+| TC-06 | Gemini trả kết quả hợp lệ                     | `aiStatus=COMPLETED`, `aiAnalysis` có cấu trúc theo schema             | `[Điền sau khi chạy]` |
+| TC-07 | Gemini lỗi hoặc không khả dụng                | `aiStatus=FAILED`; lỗi không làm mất CV đã lưu                         | `[Điền sau khi chạy]` |
+| TC-08 | Người không có quyền gọi API HR/Admin         | Backend từ chối truy cập                                               | `[Điền sau khi chạy]` |
+| TC-09 | Ứng viên ứng tuyển hai lần cùng một tin       | Lần tiếp theo bị từ chối theo quy tắc nghiệp vụ                        | `[Điền sau khi chạy]` |
+| TC-10 | HR đổi trạng thái đơn hợp lệ                  | Trạng thái được lưu và trả về dữ liệu cập nhật                         | `[Điền sau khi chạy]` |
+| TC-11 | Làm mới trang kết quả CV trong cùng phiên tab | Khôi phục kết quả từ `sessionStorage`                                  | `[Điền sau khi chạy]` |
+| TC-12 | Tìm kiếm/lọc việc làm trên giao diện          | Danh sách hiển thị phù hợp với thao tác đã nhập                        | `[Điền sau khi chạy]` |
 
 Trong mã nguồn có các bài kiểm thử phía server liên quan đến xóa tin, khử trùng lặp CV, middleware xác thực, suy giảm khi AI lỗi, shortlist và matching. Cần chạy `npm test` trong thư mục `server` để xác nhận trạng thái hiện tại; nếu kiểm thử cần MongoDB hoặc dịch vụ ngoài, ghi lại cấu hình và giới hạn tương ứng.
 
@@ -468,5 +722,5 @@ Trong mã nguồn có các bài kiểm thử phía server liên quan đến xóa
 2. Xác nhận chính xác quy trình nghiên cứu/phát triển mà nhóm đã thực hiện; không ghi Scrum nếu không có sprint/backlog thực tế.
 3. Chạy bộ kiểm thử, điền kết quả thực tế và mô tả môi trường kiểm thử.
 4. Chụp ảnh các màn hình, che dữ liệu cá nhân và cập nhật danh mục hình.
-5. Thêm sơ đồ UML/ERD được xuất thành hình nếu mẫu báo cáo của trường yêu cầu.
+5. Xuất các sơ đồ Mermaid tại mục 3.2 và sơ đồ ERD thành hình nếu mẫu báo cáo của trường yêu cầu.
 6. Kiểm tra chính sách trích dẫn, định dạng trang, cỡ chữ và cách đánh số của khoa; tạo mục lục tự động sau cùng.
