@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../services/api";
 import { formatSalary } from "../utils/format";
 import "../scss/CVUpLoad.scss";
 
@@ -186,47 +187,14 @@ const CVUpload = () => {
     setError("");
   };
 
-  // Thuật toán Matching: Tính % trùng khớp giữa Kỹ năng CV và Yêu cầu Job
-  const calculateMatchScore = (cvSkills, job) => {
-    if (!cvSkills || cvSkills.length === 0) return 0;
-
-    const jobContent = `
-      ${job.title || ""} 
-      ${job.description || ""} 
-      ${Array.isArray(job.requirements) ? job.requirements.join(" ") : job.requirements || ""}
-      ${Array.isArray(job.skills) ? job.skills.join(" ") : job.skills || ""}
-    `.toLowerCase();
-
-    let matchedCount = 0;
-
-    cvSkills.forEach((skill) => {
-      const cleanSkill = skill.toLowerCase().trim();
-      if (cleanSkill && jobContent.includes(cleanSkill)) {
-        matchedCount++;
-      }
-    });
-
-    const percentage = Math.round((matchedCount / cvSkills.length) * 100);
-    return percentage;
-  };
-
-  const fetchAndMatchJobs = async (skills) => {
+  // Điểm phù hợp do máy chủ tính, cùng thuật toán với trang chi tiết việc làm
+  const fetchRecommendations = async (cvId) => {
     try {
-      const response = await fetch("http://localhost:3000/api/jobs");
-      const data = await response.json();
-
-      const jobList = Array.isArray(data) ? data : data.data || data.jobs || [];
-
-      const rankedJobs = jobList
-        .map((job) => ({
-          ...job,
-          matchScore: calculateMatchScore(skills, job),
-        }))
-        .sort((a, b) => b.matchScore - a.matchScore);
-
-      setMatchedJobs(rankedJobs.slice(0, 5));
+      const response = await api.get(`/cv/${cvId}/recommendations`);
+      setMatchedJobs(response.data.data || []);
     } catch (err) {
-      console.error("Lỗi khi tải danh sách việc làm để matching:", err);
+      console.error("Lỗi khi lấy việc làm gợi ý:", err);
+      setMatchedJobs([]);
     }
   };
 
@@ -243,35 +211,25 @@ const CVUpload = () => {
     formData.append("cv", file);
 
     try {
-      const token = localStorage.getItem("token");
+      const { data } = await api.post("/cv/upload", formData);
 
-      const response = await fetch("http://localhost:3000/api/cv/upload", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        const analysis = {
-          ...data.cv.aiAnalysis,
-          extractedText: data.cv.extractedText || "",
-        };
-        setResult(analysis);
-        setMatchedJobs([]);
-        setShowAnalysis(true);
-
-        if (analysis.skills && analysis.skills.length > 0) {
-          await fetchAndMatchJobs(analysis.skills);
-        }
-      } else {
-        setError(data.message || "Có lỗi xảy ra khi upload CV.");
+      if (data.cv.aiStatus !== "COMPLETED" || !data.cv.aiAnalysis) {
+        setError(
+          data.message || "Chưa thể phân tích CV lúc này, bạn thử lại sau nhé.",
+        );
+        return;
       }
-    } catch {
-      setError("Không thể kết nối đến Server.");
+
+      const analysis = {
+        ...data.cv.aiAnalysis,
+        extractedText: data.cv.extractedText || "",
+      };
+      setResult(analysis);
+      setMatchedJobs([]);
+      setShowAnalysis(true);
+      await fetchRecommendations(data.cv._id);
+    } catch (err) {
+      setError(err.response?.data?.message || "Không thể kết nối đến máy chủ.");
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,7 @@ const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const CV = require("../models/CV");
+const aiService = require("./aiService");
 const { extractTextFromPDF } = require("./pdfService");
 
 const cvUploadDir = path.resolve(__dirname, "../../uploads/cv");
@@ -91,7 +92,27 @@ const saveUploadedCV = async ({ candidate, file }) => {
   }
 };
 
+// Gọi AI phân tích CV và gán kết quả vào document (chưa lưu).
+// Với PDF dạng ảnh, AI chép lại chữ đọc được vào originalCvText; phải lấy
+// trường này trước khi gán vào cv.aiAnalysis vì schema không có trường đó
+// nên Mongoose sẽ bỏ nó đi.
+const analyzeAndStoreCV = async (cv) => {
+  const pdfBuffer = cv.extractedText
+    ? null
+    : await fs.promises.readFile(cv.filePath);
+  const analysis = await aiService.analyzeCV(cv.extractedText, pdfBuffer);
+
+  if (!cv.extractedText && analysis?.originalCvText) {
+    cv.extractedText = analysis.originalCvText;
+  }
+  cv.aiAnalysis = analysis;
+  cv.aiStatus = "COMPLETED";
+
+  return cv;
+};
+
 module.exports = {
+  analyzeAndStoreCV,
   calculateFileHash,
   findDuplicateCV,
   removeFile,

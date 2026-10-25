@@ -5,29 +5,37 @@ const { GoogleGenAI, Type } = require("@google/genai");
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
 
-/**
- * Phân tích nội dung văn bản CV và trả về dữ liệu có cấu trúc JSON
- * @param {string} cvText - Nội dung văn bản được trích xuất từ file CV PDF
- * @returns {Promise<Object>} - Đối tượng JSON chứa kết quả phân tích
- */
+// Các cách viết khác nhau của cùng một kỹ năng, quy về một tên chung
+const SKILL_ALIASES = {
+  js: "javascript",
+  ts: "typescript",
+  postgres: "postgresql",
+  mongo: "mongodb",
+  golang: "go",
+  k8s: "kubernetes",
+  nodejs: "node",
+  reactjs: "react",
+  vuejs: "vue",
+};
+
+// Chuẩn hóa văn bản để so khớp kỹ năng: bỏ dấu, chữ thường, giữ lại
+// tên có ký hiệu (C++, C#, .NET) và gộp các biến thể như ReactJS/React.js/React.
 function normalizeSkill(skill = "") {
   return String(skill)
     .toLowerCase()
+    .replace(/c\+\+/g, " cpp ")
+    .replace(/c#/g, " csharp ")
+    .replace(/f#/g, " fsharp ")
+    .replace(/\.net\b/g, " dotnet ")
+    .replace(/\b([a-z]+)\.js\b/g, "$1")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
     .replace(/[^a-z0-9\s]/g, " ")
-    .trim();
-}
-
-function extractSkillList(cvAnalysis = {}, job = {}) {
-  const cvSkills = Array.isArray(cvAnalysis.skills) ? cvAnalysis.skills : [];
-  const jobSkills = Array.isArray(job.skills) ? job.skills : [];
-
-  const skillSet = [...cvSkills, ...jobSkills]
-    .map((skill) => normalizeSkill(skill))
-    .filter(Boolean);
-
-  return skillSet.filter((skill, index) => skillSet.indexOf(skill) === index);
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => SKILL_ALIASES[word] || word)
+    .join(" ");
 }
 
 function getCandidateEvidence(cvAnalysis = {}) {
@@ -114,9 +122,15 @@ function matchCVToJob(cvAnalysis = {}, job = {}) {
   const jobRequirements = [job.description, ...requirements]
     .filter(Boolean)
     .join(" ");
-  const experienceRequirement = jobRequirements.match(
-    /(\d+(?:[.,]\d+)?)\s*\+?\s*(?:năm|years?)/i,
-  );
+  // Chỉ lấy số năm đứng gần chữ "kinh nghiệm"/"experience", tránh nhầm với
+  // các câu như "công ty thành lập 10 năm"
+  const experienceRequirement =
+    jobRequirements.match(
+      /(\d+(?:[.,]\d+)?)\s*\+?\s*(?:năm|years?)[^.\n]{0,25}?(?:kinh nghiệm|experience)/i,
+    ) ||
+    jobRequirements.match(
+      /(?:kinh nghiệm|experience)[^.\n\d]{0,30}(\d+(?:[.,]\d+)?)\s*\+?\s*(?:năm|years?)/i,
+    );
   const candidateYears = Math.max(0, Number(cvAnalysis.experienceYears) || 0);
   const requiredYears = experienceRequirement
     ? Number(experienceRequirement[1].replace(",", "."))
@@ -249,6 +263,12 @@ function generateJobDescription(input = {}) {
   };
 }
 
+/**
+ * Phân tích nội dung văn bản CV và trả về dữ liệu có cấu trúc JSON
+ * @param {string} cvText - Nội dung văn bản được trích xuất từ file CV PDF
+ * @param {Buffer|null} pdfBuffer - File PDF gốc, gửi khi không trích được văn bản
+ * @returns {Promise<Object>} - Đối tượng JSON chứa kết quả phân tích
+ */
 async function analyzeCV(cvText, pdfBuffer = null) {
   try {
     const cvContent = pdfBuffer
