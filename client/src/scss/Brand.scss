@@ -1,0 +1,29 @@
+// Logo chữ dùng chung cho mọi thanh điều hướng
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--ink);
+
+  .brand-mark {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .brand-name {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 21px;
+    letter-spacing: -0.01em;
+  }
+}

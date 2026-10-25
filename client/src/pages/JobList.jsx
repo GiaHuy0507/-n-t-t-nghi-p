@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import api from "../services/api";
 import JobCard from "../components/JobCard";
+import "../scss/JobList.scss";
 
 function JobList() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
+  const [statusFilter, setStatusFilter] = useState("OPEN");
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -23,6 +26,11 @@ function JobList() {
 
     fetchJobs();
   }, []);
+
+  const handleSearchChange = (value) => {
+    setSearchTerm(value);
+    setSearchParams(value.trim() ? { q: value } : {}, { replace: true });
+  };
 
   const filteredJobs = useMemo(() => {
     const keyword = searchTerm.trim().toLowerCase();
@@ -48,77 +56,60 @@ function JobList() {
   }, [jobs, searchTerm, statusFilter]);
 
   if (loading) {
-    return <p>Đang tải...</p>;
+    return <p className="page-state">Đang tải danh sách việc làm...</p>;
   }
 
   return (
-    <main
-      style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 20px 40px" }}
-    >
-      <h1>Danh sách việc làm</h1>
+    <main className="page job-list-page">
+      <header className="page-head">
+        <div>
+          <h1>Việc làm</h1>
+          <p>
+            {filteredJobs.length} tin phù hợp
+            {searchTerm.trim() && (
+              <>
+                {" "}
+                với “<strong>{searchTerm.trim()}</strong>”
+              </>
+            )}
+          </p>
+        </div>
+      </header>
 
-      <div
-        style={{
-          display: "flex",
-          gap: 12,
-          flexWrap: "wrap",
-          alignItems: "center",
-          margin: "20px 0 28px",
-          padding: 16,
-          background: "#f8fafc",
-          border: "1px solid #e2e8f0",
-          borderRadius: 12,
-        }}
-      >
+      <div className="job-filters">
         <input
+          className="input"
           type="search"
           value={searchTerm}
-          onChange={(event) => setSearchTerm(event.target.value)}
-          placeholder="Tìm theo vị trí, công ty, kỹ năng..."
-          style={{
-            flex: 1,
-            minWidth: 220,
-            padding: "12px 14px",
-            borderRadius: 10,
-            border: "1px solid #cbd5e1",
-            fontSize: 14,
-          }}
+          onChange={(event) => handleSearchChange(event.target.value)}
+          placeholder="Vị trí, công ty, kỹ năng..."
+          aria-label="Tìm việc làm"
         />
-
-        <select
-          value={statusFilter}
-          onChange={(event) => setStatusFilter(event.target.value)}
-          style={{
-            padding: "12px 14px",
-            borderRadius: 10,
-            border: "1px solid #cbd5e1",
-            fontSize: 14,
-            background: "#fff",
-          }}
+        <div
+          className="job-filters__status"
+          role="group"
+          aria-label="Trạng thái tin"
         >
-          <option value="ALL">Tất cả trạng thái</option>
-          <option value="OPEN">Đang tuyển</option>
-          <option value="CLOSED">Đã đóng</option>
-        </select>
+          {[
+            ["OPEN", "Đang tuyển"],
+            ["CLOSED", "Đã đóng"],
+            ["ALL", "Tất cả"],
+          ].map(([value, label]) => (
+            <button
+              key={value}
+              type="button"
+              className={statusFilter === value ? "active" : ""}
+              aria-pressed={statusFilter === value}
+              onClick={() => setStatusFilter(value)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <p style={{ marginBottom: 18, color: "#475569" }}>
-        Tìm thấy {filteredJobs.length} tin tuyển dụng
-      </p>
-
       {filteredJobs.length === 0 ? (
-        <div
-          style={{
-            padding: 32,
-            background: "#fff",
-            border: "1px dashed #cbd5e1",
-            borderRadius: 12,
-            textAlign: "center",
-            color: "#64748b",
-          }}
-        >
-          Không tìm thấy tin tuyển dụng phù hợp.
-        </div>
+        <div className="empty">Không có tin tuyển dụng nào khớp bộ lọc.</div>
       ) : (
         <div className="job-list">
           {filteredJobs.map((job) => (

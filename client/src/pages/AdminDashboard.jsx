@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import logo from "../assets/img/logo.avif";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
+import DashboardHeader from "../components/DashboardHeader";
 import "../scss/AdminDashboard.scss";
 
 const navigationItems = [
@@ -12,9 +12,7 @@ const navigationItems = [
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const admin = JSON.parse(localStorage.getItem("user") || "null");
-  const isAuthPage = ["/login", "/register"].includes(location.pathname);
   const [overview, setOverview] = useState({
     totalUsers: 0,
     totalHR: 0,
@@ -66,11 +64,11 @@ const AdminDashboard = () => {
       { label: "HR", value: overview.totalHR, type: "sky" },
       { label: "Ứng viên", value: overview.totalCandidates, type: "sky" },
       { label: "Tin tuyển dụng", value: overview.totalJobs, type: "indigo" },
-      { label: "Job đang mở", value: overview.openJobs, type: "amber" },
+      { label: "Tin đang mở", value: overview.openJobs, type: "indigo" },
       {
         label: "Đơn chờ duyệt",
         value: overview.pendingApplications,
-        type: "slate",
+        type: "amber",
       },
     ],
     [overview],
@@ -89,11 +87,11 @@ const AdminDashboard = () => {
   const handleJobStatusChange = async (jobId, status) => {
     try {
       await api.patch(`/admin/jobs/${jobId}/status`, { status });
-      setMessage("Cập nhật trạng thái job thành công");
+      setMessage("Đã cập nhật trạng thái tin");
       fetchAdminData();
     } catch (error) {
       setMessage(
-        error.response?.data?.message || "Cập nhật trạng thái job thất bại",
+        error.response?.data?.message || "Cập nhật trạng thái tin thất bại",
       );
     }
   };
@@ -121,257 +119,217 @@ const AdminDashboard = () => {
     }
   };
 
-  return (
-    <main className="admin-dashboard">
-      <header className="admin-navbar">
-        <Link
-          to={isAuthPage ? "#" : "/"}
-          className="admin-brand"
-          onClick={(event) => {
-            if (isAuthPage) event.preventDefault();
-          }}
-        >
-          <img src={logo} alt="JobPortal AI" className="admin-brand-logo" />
-          <span className="admin-brand-copy">
-            JobPortal <strong style={{ color: "#1a73e8" }}>AI</strong>{" "}
-          </span>
-        </Link>
+  const roleLabels = {
+    ADMIN: "Quản trị",
+    HR: "Nhà tuyển dụng",
+    CANDIDATE: "Ứng viên",
+  };
 
-        <nav className="admin-nav" aria-label="Điều hướng quản trị">
-          {navigationItems.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={activeTab === item.id ? "nav-item active" : "nav-item"}
-              onClick={() => setActiveTab(item.id)}
-            >
-              {item.label}
-            </button>
+  const renderUsersTable = (rows, editable) => (
+    <div className="data-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Người dùng</th>
+            <th>Vai trò</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((user) => (
+            <tr key={user._id}>
+              <td>
+                <strong>{user.name}</strong>
+                <small>{user.email}</small>
+              </td>
+              <td>
+                {editable ? (
+                  <select
+                    className="input role-select"
+                    value={user.role}
+                    aria-label={`Vai trò của ${user.name}`}
+                    onChange={(event) =>
+                      handleRoleChange(user._id, event.target.value)
+                    }
+                  >
+                    {Object.entries(roleLabels).map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <span
+                    className={`badge badge--${String(user.role).toLowerCase()}`}
+                  >
+                    {roleLabels[user.role] || user.role}
+                  </span>
+                )}
+              </td>
+            </tr>
           ))}
-        </nav>
+        </tbody>
+      </table>
+    </div>
+  );
 
-        <div className="admin-navbar-account">
-          <span>
-            Xin chào, <strong>{admin?.name || "Admin"}</strong>
-          </span>
-          <button type="button" onClick={handleLogout}>
-            Đăng xuất
-          </button>
-        </div>
-      </header>
+  const renderJobsTable = (rows, editable) => (
+    <div className="data-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Vị trí</th>
+            <th>Người đăng</th>
+            <th>Trạng thái</th>
+            {editable && <th aria-label="Thao tác" />}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((job) => (
+            <tr key={job._id}>
+              <td>
+                <Link to={`/jobs/${job._id}`} className="data-table__title">
+                  {job.title}
+                </Link>
+                <small>{job.company}</small>
+              </td>
+              <td>{job.createdBy?.name || "Không rõ"}</td>
+              <td>
+                <span
+                  className={`badge badge--${String(job.status).toLowerCase()}`}
+                >
+                  {jobStatusText[job.status] || job.status}
+                </span>
+              </td>
+              {editable && (
+                <td>
+                  <div className="row-actions">
+                    <button
+                      type="button"
+                      className="btn btn--ghost btn--sm"
+                      onClick={() =>
+                        handleJobStatusChange(
+                          job._id,
+                          job.status === "OPEN" ? "CLOSED" : "OPEN",
+                        )
+                      }
+                    >
+                      {job.status === "OPEN" ? "Đóng tin" : "Mở lại"}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn--danger btn--sm"
+                      onClick={() => handleDeleteJob(job._id)}
+                    >
+                      Xóa
+                    </button>
+                  </div>
+                </td>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 
-      <section className="admin-main">
-        <header className="topbar">
+  return (
+    <>
+      <DashboardHeader
+        area="Quản trị"
+        userName={admin?.name || "Admin"}
+        onLogout={handleLogout}
+        items={navigationItems.map((item) => ({
+          label: item.label,
+          active: activeTab === item.id,
+          onClick: () => setActiveTab(item.id),
+        }))}
+      />
+
+      <main className="page admin-dashboard">
+        <header className="page-head">
           <div>
-            <p className="eyebrow">Dashboard</p>
-            <h1>Quản trị hệ thống</h1>
+            <h1>
+              {navigationItems.find((item) => item.id === activeTab)?.label}
+            </h1>
+            <p>Số liệu toàn hệ thống</p>
           </div>
-
-          <div className="topbar-actions">
-            <button
-              type="button"
-              className="ghost-button"
-              onClick={fetchAdminData}
-            >
-              Làm mới
-            </button>
-          </div>
+          <button
+            type="button"
+            className="btn btn--ghost"
+            onClick={fetchAdminData}
+          >
+            Tải lại
+          </button>
         </header>
 
-        <div className="stats-grid">
+        {message && <p className="notice admin-message">{message}</p>}
+
+        <dl className="stat-row">
           {stats.map((stat) => (
-            <article key={stat.label} className={`stat-card ${stat.type}`}>
-              <div>
-                <p>{stat.label}</p>
-                <strong>{stat.value}</strong>
-              </div>
-            </article>
+            <div
+              key={stat.label}
+              className={
+                stat.type === "amber" && stat.value > 0 ? "is-highlight" : ""
+              }
+            >
+              <dt>{stat.label}</dt>
+              <dd>{stat.value}</dd>
+            </div>
           ))}
-        </div>
+        </dl>
 
-        {activeTab === "overview" && (
-          <div className="content-grid">
-            <div className="panel panel-wide">
-              <div className="panel-header">
-                <h2>Chức năng quản trị</h2>
-                <span className="status-pill success">Sẵn sàng</span>
+        {loading ? (
+          <div className="empty">Đang tải dữ liệu...</div>
+        ) : activeTab === "overview" ? (
+          <div className="admin-overview">
+            <section className="dash-section">
+              <div className="dash-section__head">
+                <h2>Người dùng</h2>
+                <button
+                  type="button"
+                  className="link link-button"
+                  onClick={() => setActiveTab("users")}
+                >
+                  Quản lý ({users.length})
+                </button>
               </div>
-
-              <div className="feature-grid">
-                <div className="feature-card">
-                  <div>
-                    <strong>Thống kê</strong>
-                    <p>Giám sát tổng quan hệ thống</p>
-                  </div>
-                </div>
-                <div className="feature-card">
-                  <div>
-                    <strong>Người dùng</strong>
-                    <p>Quản lý HR và ứng viên</p>
-                  </div>
-                </div>
-                <div className="feature-card">
-                  <div>
-                    <strong>Jobs</strong>
-                    <p>Phê duyệt và quản lý tin tuyển dụng</p>
-                  </div>
-                </div>
+              {users.length === 0 ? (
+                <div className="empty">Chưa có người dùng nào.</div>
+              ) : (
+                renderUsersTable(users.slice(0, 5), false)
+              )}
+            </section>
+            <section className="dash-section">
+              <div className="dash-section__head">
+                <h2>Tin tuyển dụng</h2>
+                <button
+                  type="button"
+                  className="link link-button"
+                  onClick={() => setActiveTab("jobs")}
+                >
+                  Quản lý ({jobs.length})
+                </button>
               </div>
-            </div>
+              {jobs.length === 0 ? (
+                <div className="empty">Chưa có tin tuyển dụng nào.</div>
+              ) : (
+                renderJobsTable(jobs.slice(0, 5), false)
+              )}
+            </section>
           </div>
+        ) : activeTab === "users" ? (
+          users.length === 0 ? (
+            <div className="empty">Chưa có người dùng nào.</div>
+          ) : (
+            renderUsersTable(users, true)
+          )
+        ) : jobs.length === 0 ? (
+          <div className="empty">Chưa có tin tuyển dụng nào.</div>
+        ) : (
+          renderJobsTable(jobs, true)
         )}
-
-        {activeTab === "users" && (
-          <div className="panel">
-            <div className="panel-header">
-              <h2>Danh sách người dùng</h2>
-              <span className="status-pill neutral">
-                {users.length} tài khoản
-              </span>
-            </div>
-
-            {loading ? (
-              <div className="empty-state">Đang tải dữ liệu...</div>
-            ) : users.length === 0 ? (
-              <div className="empty-state">Chưa có người dùng nào.</div>
-            ) : (
-              <div className="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Họ tên</th>
-                      <th>Email</th>
-                      <th>Vai trò</th>
-                      <th>Hành động</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {users.map((user) => (
-                      <tr key={user._id}>
-                        <td>{user.name}</td>
-                        <td>{user.email}</td>
-                        <td>
-                          <span
-                            className={`badge ${String(user.role).toLowerCase()}`}
-                          >
-                            {user.role}
-                          </span>
-                        </td>
-                        <td>
-                          <div className="action-group">
-                            {user.role !== "ADMIN" && (
-                              <button
-                                type="button"
-                                className="mini-btn secondary"
-                                onClick={() =>
-                                  handleRoleChange(user._id, "ADMIN")
-                                }
-                              >
-                                Set Admin
-                              </button>
-                            )}
-                            {user.role !== "HR" && (
-                              <button
-                                type="button"
-                                className="mini-btn success"
-                                onClick={() => handleRoleChange(user._id, "HR")}
-                              >
-                                Set HR
-                              </button>
-                            )}
-                            {user.role !== "CANDIDATE" && (
-                              <button
-                                type="button"
-                                className="mini-btn primary"
-                                onClick={() =>
-                                  handleRoleChange(user._id, "CANDIDATE")
-                                }
-                              >
-                                Set Candidate
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
-
-        {activeTab === "jobs" && (
-          <div className="panel">
-            <div className="panel-header">
-              <h2>Danh sách tin tuyển dụng</h2>
-              <span className="status-pill neutral">{jobs.length} job</span>
-            </div>
-
-            {loading ? (
-              <div className="empty-state">Đang tải dữ liệu...</div>
-            ) : jobs.length === 0 ? (
-              <div className="empty-state">Chưa có tin tuyển dụng nào.</div>
-            ) : (
-              <div className="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Vị trí</th>
-                      <th>Công ty</th>
-                      <th>Người tạo</th>
-                      <th>Trạng thái</th>
-                      <th>Hành động</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {jobs.map((job) => (
-                      <tr key={job._id}>
-                        <td>{job.title}</td>
-                        <td>{job.company}</td>
-                        <td>{job.createdBy?.name || "Không rõ"}</td>
-                        <td>
-                          <span
-                            className={`badge ${String(job.status).toLowerCase()}`}
-                          >
-                            {jobStatusText[job.status] || job.status}
-                          </span>
-                        </td>
-                        <td>
-                          <div className="action-group">
-                            <button
-                              type="button"
-                              className="mini-btn secondary"
-                              onClick={() =>
-                                handleJobStatusChange(
-                                  job._id,
-                                  job.status === "OPEN" ? "CLOSED" : "OPEN",
-                                )
-                              }
-                            >
-                              {job.status === "OPEN" ? "Đóng" : "Mở lại"}
-                            </button>
-                            <button
-                              type="button"
-                              className="mini-btn danger"
-                              onClick={() => handleDeleteJob(job._id)}
-                            >
-                              Xoá
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
-
-        {message && <div className="status-message">{message}</div>}
-      </section>
-    </main>
+      </main>
+    </>
   );
 };
 

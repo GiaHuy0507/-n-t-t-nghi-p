@@ -1,0 +1,141 @@
+.job-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+
+  .input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__status {
+    display: flex;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--surface);
+
+    button {
+      padding: 0 16px;
+      border: 0;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-2);
+      cursor: pointer;
+
+      & + button {
+        border-left: 1px solid var(--line-strong);
+      }
+
+      &:hover {
+        color: var(--ink);
+      }
+
+      &.active {
+        background: var(--ink);
+        color: var(--paper);
+      }
+    }
+  }
+}
+
+.job-list {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+.job-row {
+  display: flex;
+  gap: 18px;
+  padding: 20px 22px;
+
+  & + & {
+    border-top: 1px solid var(--line);
+  }
+
+  &__main {
+    flex: 1;
+    min-width: 0;
+
+    h2 {
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.35;
+
+      a {
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+          text-underline-offset: 3px;
+        }
+      }
+    }
+
+    .tags {
+      margin-top: 10px;
+    }
+  }
+
+  &__company {
+    color: var(--ink-2);
+    font-size: 14px;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 0;
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--ink-3);
+
+    span + span::before {
+      content: "·";
+      margin: 0 8px;
+    }
+  }
+
+  &__side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    text-align: right;
+
+    strong {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .job-filters {
+    flex-direction: column;
+
+    &__status {
+      align-self: flex-start;
+
+      button {
+        min-height: 38px;
+      }
+    }
+  }
+
+  .job-row {
+    flex-wrap: wrap;
+    padding: 16px;
+
+    &__side {
+      flex-basis: 100%;
+      flex-direction: row;
+      align-items: center;
+      padding-left: 62px;
+    }
+  }
+}

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import logo from "../assets/img/logo.avif";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import DashboardHeader from "../components/DashboardHeader";
+import { formatDate } from "../utils/format";
 import "../scss/HRApplications.scss";
 
 const statusOptions = [
@@ -219,64 +220,37 @@ function HRApplications() {
     );
 
   if (loading) {
-    return (
-      <main className="hr-applications-page">
-        <p>Đang tải ứng viên...</p>
-      </main>
-    );
+    return <p className="page-state">Đang tải hồ sơ...</p>;
   }
 
   return (
     <>
-      <header className="hr-applications-nav">
-        <Link to="/" className="hr-applications-brand">
-          <img
-            src={logo}
-            alt="JobPortal AI"
-            className="hr-applications-brand-logo"
-          />
-          <span>
-            JobPortal <strong>AI</strong>
-          </span>
-        </Link>
+      <DashboardHeader
+        area="Nhà tuyển dụng"
+        userName={user?.name || "HR"}
+        onLogout={handleLogout}
+        items={[
+          { label: "Tổng quan", to: "/hr/dashboard" },
+          { label: "Tin tuyển dụng", to: "/hr/jobs" },
+          { label: "Ứng viên", to: "/hr/applications" },
+        ]}
+      />
 
-        <nav className="hr-applications-nav-links" aria-label="Điều hướng HR">
-          <Link to="/hr/dashboard">Tổng quan & Ứng viên</Link>
-          <Link to="/hr/jobs">Quản lý tin tuyển dụng</Link>
-          <Link to="/hr/applications" className="active">
-            Quản lý ứng viên
-          </Link>
-        </nav>
-
-        <div className="hr-applications-nav-account">
-          <span>
-            Xin chào, <strong>{user?.name || "HR"}</strong>
-          </span>
-          <button type="button" onClick={handleLogout}>
-            Đăng xuất
-          </button>
-        </div>
-      </header>
-
-      <main className="hr-applications-page">
-        <header className="applications-header">
+      <main className="page hr-applications-page">
+        <header className="page-head">
           <div>
-            <p className="applications-eyebrow">TUYỂN DỤNG</p>
-            <h1>Hồ sơ ứng viên</h1>
-            <p>Xem CV, ghi chú đánh giá và cập nhật kết quả xét duyệt.</p>
-          </div>
-          <div className="applications-header-actions">
-            <div className="applications-total">
-              <strong>{applications.length}</strong>
-              <span>hồ sơ</span>
-            </div>
+            <h1>Ứng viên</h1>
+            <p>
+              {applications.length} hồ sơ · xem CV, ghi chú và cập nhật kết quả
+              xét duyệt
+            </p>
           </div>
         </header>
 
-        {loadError && <p className="applications-error">{loadError}</p>}
+        {loadError && <p className="notice notice--error">{loadError}</p>}
 
         <section className="applications-toolbar" aria-label="Lọc hồ sơ">
-          <label>
+          <label className="field">
             <span>Tìm ứng viên</span>
             <input
               type="search"
@@ -285,7 +259,7 @@ function HRApplications() {
               placeholder="Tên, email hoặc vị trí"
             />
           </label>
-          <label>
+          <label className="field">
             <span>Trạng thái</span>
             <select
               value={statusFilter}
@@ -305,10 +279,12 @@ function HRApplications() {
           <section className="ai-shortlist-panel">
             <div className="ai-shortlist-header">
               <div>
-                <p className="applications-eyebrow">AI RECOMMENDATION</p>
-                <h2>Top ứng viên phù hợp</h2>
+                <h2>Xếp hạng theo mức độ phù hợp</h2>
+                <p>Dựa trên kỹ năng, vị trí và số năm kinh nghiệm trong CV.</p>
               </div>
               <select
+                className="input"
+                aria-label="Chọn tin tuyển dụng"
                 value={selectedJobId}
                 onChange={(event) => setSelectedJobId(event.target.value)}
               >
@@ -321,19 +297,16 @@ function HRApplications() {
             </div>
 
             {shortlistLoading ? (
-              <div className="applications-empty">
-                Đang phân tích bằng AI...
-              </div>
+              <div className="empty">Đang tính điểm...</div>
             ) : shortlist.length === 0 ? (
-              <div className="applications-empty">
-                Chưa có ứng viên nào đủ dữ liệu để AI đánh giá cho công việc
-                này.
+              <div className="empty">
+                Chưa có hồ sơ nào của tin này đủ dữ liệu để xếp hạng.
               </div>
             ) : (
               <div className="shortlist-list">
                 {shortlist.map((candidate, index) => (
                   <div key={candidate.applicationId} className="shortlist-item">
-                    <div className="shortlist-rank">#{index + 1}</div>
+                    <div className="shortlist-rank">{index + 1}</div>
                     <div className="shortlist-info">
                       <strong>{candidate.candidateName}</strong>
                       <p>{candidate.candidateEmail}</p>
@@ -341,7 +314,6 @@ function HRApplications() {
                     </div>
                     <div className="shortlist-score">
                       <strong>{candidate.score}%</strong>
-                      <small>độ phù hợp</small>
                     </div>
                   </div>
                 ))}
@@ -351,11 +323,9 @@ function HRApplications() {
         )}
 
         {applications.length === 0 ? (
-          <div className="applications-empty">Chưa có ứng viên ứng tuyển.</div>
+          <div className="empty">Chưa có ứng viên ứng tuyển.</div>
         ) : filteredApplications.length === 0 ? (
-          <div className="applications-empty">
-            Không tìm thấy hồ sơ phù hợp.
-          </div>
+          <div className="empty">Không tìm thấy hồ sơ phù hợp.</div>
         ) : (
           <div className="application-list">
             {filteredApplications.map((application) => (
@@ -368,7 +338,7 @@ function HRApplications() {
                     </p>
                   </div>
                   <span
-                    className={`application-status status-${application.status.toLowerCase()}`}
+                    className={`badge badge--${application.status.toLowerCase()}`}
                   >
                     {statusLabels[application.status] || application.status}
                   </span>
@@ -385,11 +355,7 @@ function HRApplications() {
                   </p>
                   <p>
                     <span>Ngày ứng tuyển</span>
-                    <strong>
-                      {new Date(application.createdAt).toLocaleDateString(
-                        "vi-VN",
-                      )}
-                    </strong>
+                    <strong>{formatDate(application.createdAt)}</strong>
                   </p>
                 </div>
 
@@ -402,7 +368,7 @@ function HRApplications() {
 
                 <div className="application-actions">
                   <button
-                    className="view-cv-button"
+                    className="btn view-cv-button"
                     type="button"
                     disabled={cvLoadingId === application._id}
                     onClick={() => handleViewCV(application)}
@@ -412,8 +378,9 @@ function HRApplications() {
                       : "Xem CV"}
                   </button>
                   <label className="status-control">
-                    <span>Kết quả xét duyệt</span>
+                    <span>Kết quả</span>
                     <select
+                      className="input"
                       value={application.status}
                       disabled={savingStatusId === application._id}
                       onChange={(event) =>
@@ -431,29 +398,30 @@ function HRApplications() {
 
                 <div className="ai-analysis-status">
                   <span>
-                    AI:{" "}
+                    Phân tích CV:{" "}
                     {application.cv?.aiStatus === "COMPLETED"
-                      ? "Đã phân tích"
+                      ? "đã xong"
                       : application.cv?.aiStatus === "PENDING"
-                        ? "Đang chờ phân tích"
-                        : "Phân tích thất bại"}
+                        ? "đang chờ"
+                        : "lỗi"}
                   </span>
                   {application.cv?.aiStatus !== "COMPLETED" && (
                     <button
                       type="button"
+                      className="btn btn--ghost btn--sm"
                       disabled={retryingAIId === application._id}
                       onClick={() => handleRetryAIAnalysis(application)}
                     >
                       {retryingAIId === application._id
                         ? "Đang phân tích..."
-                        : "Phân tích lại bằng AI"}
+                        : "Phân tích lại"}
                     </button>
                   )}
                 </div>
 
                 <div className="review-note">
                   <label htmlFor={`hr-note-${application._id}`}>
-                    Ghi chú đánh giá <span>Chỉ HR xem được</span>
+                    Ghi chú <span>chỉ HR thấy</span>
                   </label>
                   <textarea
                     id={`hr-note-${application._id}`}
@@ -473,6 +441,7 @@ function HRApplications() {
                     <span>{(notes[application._id] || "").length}/2000</span>
                     <button
                       type="button"
+                      className="btn btn--ghost btn--sm"
                       disabled={savingNoteId === application._id}
                       onClick={() => handleSaveNote(application._id)}
                     >
@@ -506,6 +475,7 @@ function HRApplications() {
                 <h2>{cvPreview.name}</h2>
                 <button
                   type="button"
+                  className="btn btn--ghost btn--sm"
                   aria-label="Quay lại quản lý ứng viên"
                   onClick={() => setCvPreview(null)}
                 >

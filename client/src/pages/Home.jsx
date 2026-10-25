@@ -1,5 +1,8 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../services/api";
+import CompanyMark from "../components/CompanyMark";
+import { formatSalary } from "../utils/format";
 import "../scss/Home.scss";
 
 const readStoredUser = () => {
@@ -10,11 +13,23 @@ const readStoredUser = () => {
   }
 };
 
+const POPULAR_SEARCHES = [
+  "React",
+  "Node.js",
+  "Kiểm thử",
+  "Marketing",
+  "Data",
+  "Thực tập",
+];
+
 const Home = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const user = readStoredUser();
   const role = user?.role?.toUpperCase();
+  const [keyword, setKeyword] = useState("");
+  const [latestJobs, setLatestJobs] = useState([]);
+  const [jobsLoaded, setJobsLoaded] = useState(false);
 
   useEffect(() => {
     if (!token) return;
@@ -34,114 +49,131 @@ const Home = () => {
     }
   }, [token, role, navigate]);
 
+  useEffect(() => {
+    api
+      .get("/jobs")
+      .then((response) => {
+        const jobs = (response.data.data || []).filter(
+          (job) => job.status === "OPEN",
+        );
+        setLatestJobs(jobs.slice(0, 5));
+      })
+      .catch(() => setLatestJobs([]))
+      .finally(() => setJobsLoaded(true));
+  }, []);
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    const query = keyword.trim();
+    navigate(query ? `/jobs?q=${encodeURIComponent(query)}` : "/jobs");
+  };
+
   return (
     <div className="home-page">
-      {/* PHẦN GIỚI THIỆU */}
-      <section className="hero-section">
-        <div className="hero-content">
-          <h1>
-            Tạo CV chuyên nghiệp
-            <br />
-            tăng cơ hội phỏng vấn
-            <br />
-            và tìm việc phù hợp
-          </h1>
-
+      <section className="home-hero">
+        <div className="home-hero__intro">
+          <h1>Tìm việc bắt đầu từ chính CV của bạn.</h1>
           <p>
-            Tải CV lên hệ thống, để AI phân tích hồ sơ và gợi ý những công việc
-            phù hợp với kỹ năng của bạn.
+            Tải CV dạng PDF, đọc nhận xét cụ thể về điểm mạnh và chỗ cần sửa,
+            rồi xem những vị trí có yêu cầu gần với kỹ năng bạn đang có.
           </p>
 
-          {!token && (
-            <div className="hero-buttons">
-              <Link to="/login" className="btn-primary">
-                Đăng nhập
-              </Link>
+          <form className="home-search" onSubmit={handleSearch} role="search">
+            <input
+              type="search"
+              value={keyword}
+              onChange={(event) => setKeyword(event.target.value)}
+              placeholder="Vị trí, kỹ năng hoặc tên công ty"
+              aria-label="Từ khóa tìm việc"
+            />
+            <button type="submit" className="btn">
+              Tìm việc
+            </button>
+          </form>
 
-              <Link to="/register" className="btn-secondary">
-                Đăng ký
+          <div className="home-popular">
+            <span>Hay tìm:</span>
+            {POPULAR_SEARCHES.map((term) => (
+              <Link key={term} to={`/jobs?q=${encodeURIComponent(term)}`}>
+                {term}
               </Link>
-            </div>
+            ))}
+          </div>
+        </div>
+
+        <aside className="home-latest" aria-label="Việc làm mới đăng">
+          <div className="home-latest__head">
+            <h2>Mới đăng</h2>
+            <Link to="/jobs" className="link">
+              Xem tất cả
+            </Link>
+          </div>
+
+          {!jobsLoaded ? (
+            <p className="home-latest__empty">Đang tải...</p>
+          ) : latestJobs.length === 0 ? (
+            <p className="home-latest__empty">
+              Chưa có tin tuyển dụng nào đang mở.
+            </p>
+          ) : (
+            <ul>
+              {latestJobs.map((job) => (
+                <li key={job._id}>
+                  <Link to={`/jobs/${job._id}`}>
+                    <CompanyMark name={job.company} size={38} />
+                    <div>
+                      <strong>{job.title}</strong>
+                      <span>
+                        {job.company} · {job.location || "Chưa rõ địa điểm"}
+                      </span>
+                    </div>
+                    <em>{formatSalary(job.salaryMin, job.salaryMax)}</em>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           )}
-
-          <div className="hero-proof">
-            <div className="proof-item">Phân tích CV và kỹ năng bằng AI</div>
-
-            <div className="proof-item">
-              Gợi ý việc làm phù hợp với hồ sơ của bạn
-            </div>
-          </div>
-        </div>
-
-        {/* PHẦN XEM TRƯỚC CV */}
-        <div className="hero-preview">
-          <div className="preview-card">
-            <div className="preview-header">
-              <div className="avatar" />
-
-              <div className="user-meta">
-                <h3>Nguyễn Văn An</h3>
-                <p>Giáo viên Toán</p>
-              </div>
-            </div>
-
-            <div className="preview-main">
-              <div className="score-box">81%</div>
-
-              <div className="resume-copy">
-                <h4>Hồ sơ</h4>
-
-                <p>
-                  Giáo viên Toán với hơn 8 năm kinh nghiệm trong lĩnh vực giảng
-                  dạy và quản lý, có kỹ năng giao tiếp và quản lý lớp học tốt.
-                </p>
-              </div>
-            </div>
-
-            <div className="preview-columns">
-              <div className="preview-column">
-                <h4>Kinh nghiệm làm việc</h4>
-
-                <div className="line short" />
-                <div className="line medium" />
-                <div className="line long" />
-              </div>
-
-              <div className="preview-column">
-                <h4>Kỹ năng</h4>
-
-                <div className="skill-tags">
-                  <span>Giao tiếp</span>
-                  <span>Lãnh đạo</span>
-                  <span>Lập kế hoạch</span>
-                </div>
-              </div>
-            </div>
-
-            <button className="preview-button">Tương thích ATS</button>
-          </div>
-        </div>
+        </aside>
       </section>
 
-      {/* PHẦN TÍNH NĂNG */}
-      <section className="features-section">
-        <div className="features-grid">
-          <div className="feature-card">
-            <h3>Hoàn thiện CV nhanh chóng</h3>
-          </div>
+      <section className="home-steps">
+        <h2>Cách dùng</h2>
+        <ol>
+          <li>
+            <h3>Tải CV lên</h3>
+            <p>
+              Chấp nhận file PDF đến 10 MB. Hệ thống đọc nội dung và tách ra kỹ
+              năng, kinh nghiệm, học vấn.
+            </p>
+          </li>
+          <li>
+            <h3>Đọc nhận xét</h3>
+            <p>
+              Mỗi góp ý đều kèm đoạn trích từ CV làm căn cứ, nên bạn biết chính
+              xác cần sửa ở đâu.
+            </p>
+          </li>
+          <li>
+            <h3>Ứng tuyển</h3>
+            <p>
+              Xem mức độ khớp với từng tin tuyển dụng, gửi hồ sơ và theo dõi
+              trạng thái ngay trên trang.
+            </p>
+          </li>
+        </ol>
+      </section>
 
-          <div className="feature-card">
-            <h3>Phân tích kỹ năng bằng AI</h3>
-          </div>
-
-          <div className="feature-card">
-            <h3>Tương thích hệ thống ATS</h3>
-          </div>
-
-          <div className="feature-card">
-            <h3>Gợi ý việc làm phù hợp</h3>
-          </div>
+      <section className="home-employer">
+        <div>
+          <h2>Bạn đang tuyển người?</h2>
+          <p>
+            Đăng tin, nhận hồ sơ, ghi chú đánh giá và xem danh sách ứng viên sắp
+            theo mức độ phù hợp với yêu cầu.
+          </p>
         </div>
+        <Link to="/register" className="btn btn--ghost">
+          Tạo tài khoản nhà tuyển dụng
+        </Link>
       </section>
     </div>
   );

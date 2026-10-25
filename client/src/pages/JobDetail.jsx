@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import api from "../services/api";
+import CompanyMark from "../components/CompanyMark";
+import {
+  JOB_STATUS_LABELS,
+  formatDate,
+  formatEmploymentType,
+  formatSalary,
+} from "../utils/format";
 import "../scss/JobDetail.scss";
 
 function JobDetail() {
@@ -97,195 +104,179 @@ function JobDetail() {
     }
   };
 
-  if (loading) return <p className="job-detail-state">Đang tải...</p>;
+  if (loading) return <p className="page-state">Đang tải...</p>;
   if (!job) {
-    return <p className="job-detail-state">Không tìm thấy tin tuyển dụng.</p>;
+    return <p className="page-state">Không tìm thấy tin tuyển dụng.</p>;
   }
 
+  const scorePart = (value) =>
+    value == null ? "chưa đủ dữ liệu" : `${value}%`;
+
   return (
-    <main className="job-detail-page">
+    <main className="page job-detail">
       <Link to={isHR ? "/hr/dashboard" : "/jobs"} className="back-link">
-        {isHR ? "Quay lại trang quản lý" : "Quay lại danh sách việc làm"}
+        ← {isHR ? "Trang quản lý" : "Danh sách việc làm"}
       </Link>
 
-      <section className="job-detail-hero">
+      <header className="job-detail__head">
+        <CompanyMark name={job.company} size={56} />
         <div>
-          {!isHR && <span className="job-detail-eyebrow">CƠ HỘI VIỆC LÀM</span>}
           <h1>{job.title}</h1>
-          <p className="job-company">{job.company}</p>
+          <p>
+            {job.company}
+            {job.status === "CLOSED" && (
+              <span className="badge badge--closed">
+                {JOB_STATUS_LABELS.CLOSED}
+              </span>
+            )}
+          </p>
         </div>
-        {canApply && (
-          <button
-            className="apply-hero-button"
-            onClick={() => setShowApplyForm(true)}
-          >
-            Ứng tuyển ngay
-          </button>
-        )}
-      </section>
+      </header>
 
-      {canApply && (
-        <section className="detail-section" style={{ marginTop: "1rem" }}>
-          <h2>AI đánh giá độ phù hợp</h2>
-          {matchLoading ? (
-            <p>Đang đánh giá hồ sơ của bạn...</p>
-          ) : matchResult ? (
-            <div className="detail-skills" style={{ display: "block" }}>
-              <strong style={{ fontSize: "1.2rem" }}>
-                {matchResult.score}%
-              </strong>
-              <p>{matchResult.summary}</p>
-              {matchResult.breakdown && (
-                <p>
-                  <strong>Điểm thành phần:</strong> Kỹ năng{" "}
-                  {matchResult.breakdown.skills == null
-                    ? "chưa đủ dữ liệu"
-                    : `${matchResult.breakdown.skills}%`}{" "}
-                  · Vai trò{" "}
-                  {matchResult.breakdown.role == null
-                    ? "chưa đủ dữ liệu"
-                    : `${matchResult.breakdown.role}%`}{" "}
-                  · Kinh nghiệm{" "}
-                  {matchResult.breakdown.experience == null
-                    ? "chưa đủ dữ liệu"
-                    : `${matchResult.breakdown.experience}%`}
+      <div className="job-detail__layout">
+        <div className="job-detail__main">
+          {canApply && (
+            <section className="match-panel" aria-live="polite">
+              <h2>Mức độ phù hợp với CV của bạn</h2>
+              {matchLoading ? (
+                <p className="muted">Đang so sánh với CV gần nhất của bạn...</p>
+              ) : matchResult ? (
+                <>
+                  <div className="match-panel__score">
+                    <strong>{matchResult.score}%</strong>
+                    <p>{matchResult.summary}</p>
+                  </div>
+
+                  {matchResult.breakdown && (
+                    <dl className="match-panel__breakdown">
+                      <div>
+                        <dt>Kỹ năng</dt>
+                        <dd>{scorePart(matchResult.breakdown.skills)}</dd>
+                      </div>
+                      <div>
+                        <dt>Vai trò</dt>
+                        <dd>{scorePart(matchResult.breakdown.role)}</dd>
+                      </div>
+                      <div>
+                        <dt>Kinh nghiệm</dt>
+                        <dd>{scorePart(matchResult.breakdown.experience)}</dd>
+                      </div>
+                    </dl>
+                  )}
+
+                  {matchResult.matchedSkills?.length > 0 && (
+                    <div className="match-panel__group">
+                      <h3>Bạn đã có</h3>
+                      <div className="tags tags--ok">
+                        {matchResult.matchedSkills.map((skill) => (
+                          <span key={skill}>{skill}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {matchResult.missingSkills?.length > 0 && (
+                    <div className="match-panel__group">
+                      <h3>Còn thiếu</h3>
+                      <div className="tags tags--missing">
+                        {matchResult.missingSkills.map((skill) => (
+                          <span key={skill}>{skill}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {matchResult.suggestions?.length > 0 && (
+                    <div className="match-panel__group">
+                      <h3>Nên sửa trong CV</h3>
+                      <ul>
+                        {matchResult.suggestions.map((suggestion, index) => (
+                          <li key={`${suggestion}-${index}`}>{suggestion}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p className="muted">
+                  Bạn chưa có CV nào được phân tích.{" "}
+                  <Link to="/my-cv" className="link">
+                    Tải CV lên
+                  </Link>{" "}
+                  để xem mức độ phù hợp với vị trí này.
                 </p>
               )}
-              {matchResult.matchedSkills?.length > 0 && (
-                <div>
-                  <strong>Kỹ năng phù hợp:</strong>
-                  <div
-                    className="detail-skills"
-                    style={{ marginTop: "0.5rem" }}
-                  >
-                    {matchResult.matchedSkills.map((skill) => (
-                      <span key={skill}>{skill}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {matchResult.missingSkills?.length > 0 && (
-                <div style={{ marginTop: "1rem" }}>
-                  <strong>Kỹ năng cần bổ sung:</strong>
-                  <div
-                    className="detail-skills"
-                    style={{ marginTop: "0.5rem" }}
-                  >
-                    {matchResult.missingSkills.map((skill) => (
-                      <span key={skill}>{skill}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {matchResult.suggestions?.length > 0 && (
-                <div style={{ marginTop: "1.5rem" }}>
-                  <strong>Gợi ý cải thiện CV:</strong>
-                  <ul style={{ marginTop: "0.75rem", paddingLeft: "1.25rem" }}>
-                    {matchResult.suggestions.map((suggestion, index) => (
-                      <li key={`${suggestion}-${index}`}>{suggestion}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          ) : (
-            <p>Upload CV để AI đánh giá mức độ phù hợp với công việc này.</p>
+            </section>
           )}
-        </section>
-      )}
 
-      <div className="job-detail-layout">
-        <div className="job-detail-main">
-          <section className="job-info-grid">
-            <div>
-              <span className="info-label">Địa điểm</span>
-              <strong>{job.location}</strong>
-            </div>
-            <div>
-              <span className="info-label">Mức lương</span>
-              <strong>
-                {job.salaryMin.toLocaleString("vi-VN")} -{" "}
-                {job.salaryMax.toLocaleString("vi-VN")} VNĐ
-              </strong>
-            </div>
-            <div>
-              <span className="info-label">Hình thức</span>
-              <strong>{job.employmentType}</strong>
-            </div>
-          </section>
-
-          <section className="detail-section">
+          <section className="job-detail__section">
             <h2>Mô tả công việc</h2>
             <p className="job-description">{job.description}</p>
           </section>
 
-          <section className="detail-section">
+          <section className="job-detail__section">
             <h2>Kỹ năng yêu cầu</h2>
-            <div className="detail-skills">
+            <div className="tags">
               {(job.skills || []).map((skill) => (
                 <span key={skill}>{skill}</span>
               ))}
             </div>
           </section>
-        </div>
 
-        <aside className="employer-card">
-          <span className="card-eyebrow">NHÀ TUYỂN DỤNG</span>
-          <h2>{job.createdBy?.name || "Nhà tuyển dụng"}</h2>
-          <p>{job.createdBy?.email || "Chưa cập nhật email"}</p>
-          {canApply && (
-            <button onClick={() => setShowApplyForm(true)}>Gửi hồ sơ</button>
-          )}
-        </aside>
-      </div>
+          {canApply && showApplyForm && (
+            <section className="apply-form" id="apply-form">
+              <div className="apply-form__head">
+                <h2>Ứng tuyển vị trí này</h2>
+                <button
+                  type="button"
+                  className="btn btn--ghost btn--sm"
+                  onClick={() => setShowApplyForm(false)}
+                >
+                  Đóng
+                </button>
+              </div>
 
-      {canApply && showApplyForm && (
-        <section className="application-form-card">
-          <div className="application-form-header">
-            <div>
-              <span className="card-eyebrow">ỨNG TUYỂN</span>
-              <h2>Ứng tuyển vị trí này</h2>
-            </div>
-            <button
-              className="close-form-button"
-              onClick={() => setShowApplyForm(false)}
-            >
-              Đóng
-            </button>
-          </div>
-
-          <label className="form-label" htmlFor="cover-letter">
-            Thư giới thiệu
-          </label>
-          <textarea
-            id="cover-letter"
-            value={coverLetter}
-            onChange={(event) => setCoverLetter(event.target.value)}
-            placeholder="Giới thiệu ngắn về bạn và lý do bạn phù hợp với công việc..."
-            rows="6"
-          />
-
-          <div
-            className="cv-drop-zone"
-            onDrop={(event) => {
-              event.preventDefault();
-              validateFile(event.dataTransfer.files[0]);
-            }}
-            onDragOver={(event) => event.preventDefault()}
-          >
-            {cvFile ? (
-              <>
-                <strong>{cvFile.name}</strong>
-                <span>{(cvFile.size / 1024 / 1024).toFixed(2)} MB</span>
-              </>
-            ) : (
-              <>
-                <strong>Tải CV của bạn lên</strong>
-                <span>Kéo thả file vào đây hoặc chọn từ máy tính</span>
-                <label className="file-picker" htmlFor="cv-file">
-                  Chọn file PDF
+              <div className="field">
+                <label htmlFor="cover-letter">
+                  Thư giới thiệu (không bắt buộc)
                 </label>
+                <textarea
+                  id="cover-letter"
+                  value={coverLetter}
+                  onChange={(event) => setCoverLetter(event.target.value)}
+                  placeholder="Vài dòng về bạn và lý do bạn phù hợp với công việc..."
+                  rows="6"
+                />
+              </div>
+
+              <div
+                className={`file-drop ${cvFile ? "has-file" : ""}`}
+                onDrop={(event) => {
+                  event.preventDefault();
+                  validateFile(event.dataTransfer.files[0]);
+                }}
+                onDragOver={(event) => event.preventDefault()}
+              >
+                {cvFile ? (
+                  <>
+                    <strong>{cvFile.name}</strong>
+                    <span>{(cvFile.size / 1024 / 1024).toFixed(2)} MB</span>
+                    <label className="link" htmlFor="cv-file">
+                      Chọn file khác
+                    </label>
+                  </>
+                ) : (
+                  <>
+                    <strong>Kéo file CV vào đây</strong>
+                    <span>
+                      hoặc{" "}
+                      <label className="link" htmlFor="cv-file">
+                        chọn từ máy
+                      </label>{" "}
+                      · PDF, tối đa 10 MB
+                    </span>
+                  </>
+                )}
                 <input
                   id="cv-file"
                   type="file"
@@ -293,30 +284,86 @@ function JobDetail() {
                   onChange={(event) => validateFile(event.target.files[0])}
                   hidden
                 />
-                <small>Chỉ nhận file PDF, tối đa 10MB</small>
-              </>
+              </div>
+
+              <div className="apply-form__actions">
+                <button
+                  className="btn"
+                  onClick={handleApply}
+                  disabled={applying}
+                >
+                  {applying ? "Đang gửi..." : "Gửi hồ sơ"}
+                </button>
+                <button
+                  className="btn btn--ghost"
+                  onClick={() => setShowApplyForm(false)}
+                >
+                  Hủy
+                </button>
+              </div>
+
+              {applyMessage && <p className="notice">{applyMessage}</p>}
+            </section>
+          )}
+        </div>
+
+        <aside className="job-facts">
+          <dl>
+            <div>
+              <dt>Mức lương</dt>
+              <dd className="job-facts__salary">
+                {formatSalary(job.salaryMin, job.salaryMax)}
+              </dd>
+            </div>
+            <div>
+              <dt>Địa điểm</dt>
+              <dd>{job.location || "Chưa rõ"}</dd>
+            </div>
+            <div>
+              <dt>Hình thức</dt>
+              <dd>{formatEmploymentType(job.employmentType)}</dd>
+            </div>
+            {job.createdAt && (
+              <div>
+                <dt>Ngày đăng</dt>
+                <dd>{formatDate(job.createdAt)}</dd>
+              </div>
             )}
-          </div>
-
-          <div className="application-actions">
+            <div>
+              <dt>Người đăng</dt>
+              <dd>
+                {job.createdBy?.name || "Nhà tuyển dụng"}
+                {job.createdBy?.email && <small>{job.createdBy.email}</small>}
+              </dd>
+            </div>
+          </dl>
+          {canApply && job.status !== "CLOSED" && (
             <button
-              className="submit-application-button"
-              onClick={handleApply}
-              disabled={applying}
+              className="btn job-facts__apply"
+              onClick={() => {
+                setShowApplyForm(true);
+                setTimeout(
+                  () =>
+                    document
+                      .getElementById("apply-form")
+                      ?.scrollIntoView({ behavior: "smooth" }),
+                  0,
+                );
+              }}
             >
-              {applying ? "Đang gửi..." : "Gửi hồ sơ"}
+              Ứng tuyển
             </button>
-            <button
-              className="cancel-application-button"
-              onClick={() => setShowApplyForm(false)}
-            >
-              Hủy
-            </button>
-          </div>
-
-          {applyMessage && <p className="apply-message">{applyMessage}</p>}
-        </section>
-      )}
+          )}
+          {!user && (
+            <p className="job-facts__hint">
+              <Link to="/login" className="link">
+                Đăng nhập
+              </Link>{" "}
+              bằng tài khoản ứng viên để nộp hồ sơ.
+            </p>
+          )}
+        </aside>
+      </div>
     </main>
   );
 }
