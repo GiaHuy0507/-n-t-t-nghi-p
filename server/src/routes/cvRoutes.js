@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { uploadCV } = require("../controllers/cvController");
+const { getRecommendedJobs, uploadCV } = require("../controllers/cvController");
 const { protect } = require("../middlewares/authMiddleware");
 const { authorize } = require("../middlewares/roleMiddleware");
 const upload = require("../middlewares/uploadMiddleware");
@@ -13,6 +13,13 @@ router.post(
   authorize("CANDIDATE"),
   upload.single("cv"),
   uploadCV,
+);
+
+router.get(
+  "/:id/recommendations",
+  protect,
+  authorize("CANDIDATE"),
+  getRecommendedJobs,
 );
 
 module.exports = router;

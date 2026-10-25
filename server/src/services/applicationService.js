@@ -1,9 +1,12 @@
-const fs = require("fs");
 const Application = require("../models/Application");
 const CV = require("../models/CV");
 const Job = require("../models/Job");
-const { analyzeCV, matchCVToJob } = require("./aiService");
-const { removeFile, saveUploadedCV } = require("./cvFileService");
+const { matchCVToJob } = require("./aiService");
+const {
+  analyzeAndStoreCV,
+  removeFile,
+  saveUploadedCV,
+} = require("./cvFileService");
 
 const createApplication = async (data) => {
   const { candidate, job, coverLetter, cv } = data;
@@ -24,12 +27,12 @@ const createApplication = async (data) => {
 
   if (!jobDocument) {
     await removeFile(cv.path);
-    throw new Error("Job not found");
+    throw new Error("Không tìm thấy tin tuyển dụng");
   }
 
   if (jobDocument.status !== "OPEN") {
     await removeFile(cv.path);
-    throw new Error("This job is closed");
+    throw new Error("Tin tuyển dụng này đã đóng");
   }
 
   const { cv: uploadedCV, isDuplicate } = await saveUploadedCV({
@@ -50,6 +53,10 @@ const createApplication = async (data) => {
       await CV.findByIdAndDelete(uploadedCV._id);
       await removeFile(uploadedCV.filePath);
     }
+    // Hai yêu cầu ứng tuyển gửi gần như cùng lúc: chỉ mục unique chặn bản thứ hai
+    if (error.code === 11000) {
+      throw new Error("Bạn đã ứng tuyển công việc này");
+    }
     throw error;
   }
 
@@ -57,14 +64,7 @@ const createApplication = async (data) => {
     try {
       uploadedCV.aiStatus = "PENDING";
       await uploadedCV.save();
-      const pdfBuffer = uploadedCV.extractedText
-        ? null
-        : fs.readFileSync(uploadedCV.filePath);
-      uploadedCV.aiAnalysis = await analyzeCV(
-        uploadedCV.extractedText,
-        pdfBuffer,
-      );
-      uploadedCV.aiStatus = "COMPLETED";
+      await analyzeAndStoreCV(uploadedCV);
       await uploadedCV.save();
     } catch (error) {
       uploadedCV.aiAnalysis = undefined;
@@ -206,9 +206,7 @@ const retryAIAnalysisForHR = async (applicationId, hrId) => {
   await cv.save();
 
   try {
-    const pdfBuffer = cv.extractedText ? null : fs.readFileSync(cv.filePath);
-    cv.aiAnalysis = await analyzeCV(cv.extractedText, pdfBuffer);
-    cv.aiStatus = "COMPLETED";
+    await analyzeAndStoreCV(cv);
     await cv.save();
     return cv;
   } catch (error) {

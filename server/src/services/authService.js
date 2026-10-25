@@ -13,7 +13,9 @@ const register = async ({ name, email, password, role }) => {
     .trim()
     .toUpperCase();
 
-  if (!["ADMIN", "HR", "CANDIDATE"].includes(normalizedRole)) {
+  // Đăng ký công khai chỉ tạo được tài khoản ứng viên hoặc nhà tuyển dụng.
+  // Tài khoản ADMIN phải được một quản trị viên khác cấp trong trang quản trị.
+  if (!["HR", "CANDIDATE"].includes(normalizedRole)) {
     throw new Error("Vai trò không hợp lệ");
   }
 

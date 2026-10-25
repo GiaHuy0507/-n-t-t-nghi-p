@@ -110,13 +110,17 @@ const matchCandidateToJob = async (req, res) => {
       });
     }
 
-    const latestCv = await CV.findOne({ candidate: req.user.userId })
-      .sort({ uploadedAt: -1 })
+    // Lấy CV mới nhất đã phân tích xong; bỏ qua CV mới tải nhưng AI lỗi
+    const latestCv = await CV.findOne({
+      candidate: req.user.userId,
+      aiStatus: "COMPLETED",
+    })
+      .sort({ updatedAt: -1 })
       .lean();
 
     if (!latestCv || !latestCv.aiAnalysis) {
       return res.status(404).json({
-        message: "Bạn chưa upload CV để AI đánh giá độ phù hợp",
+        message: "Bạn chưa có CV nào được phân tích",
       });
     }
 
