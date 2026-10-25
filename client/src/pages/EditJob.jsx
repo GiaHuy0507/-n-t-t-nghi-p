@@ -1,11 +1,19 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
-import "./EditJob.css";
+import DashboardHeader from "../components/DashboardHeader";
+import "../scss/HRJobs.scss";
 
 function EditJob() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/", { replace: true });
+  };
 
   const [form, setForm] = useState({
     title: "",
@@ -90,122 +98,147 @@ function EditJob() {
   };
 
   if (loading) {
-    return <p>Đang tải thông tin Job...</p>;
+    return <p className="page-state">Đang tải...</p>;
   }
 
   return (
-    <main className="edit-job">
-      <h1>Chỉnh sửa tin tuyển dụng</h1>
+    <>
+      <DashboardHeader
+        area="Nhà tuyển dụng"
+        userName={user?.name || "HR"}
+        onLogout={handleLogout}
+        items={[
+          { label: "Tổng quan", to: "/hr/dashboard" },
+          { label: "Tin tuyển dụng", to: "/hr/jobs" },
+          { label: "Ứng viên", to: "/hr/applications" },
+        ]}
+      />
+      <main className="page edit-job">
+        <Link to="/hr/jobs" className="back-link">
+          ← Tin tuyển dụng
+        </Link>
+        <header className="page-head">
+          <div>
+            <h1>Sửa tin tuyển dụng</h1>
+            <p>{form.title}</p>
+          </div>
+        </header>
 
-      <form onSubmit={handleSubmit} className="edit-job-form">
-        <div>
-          <label>Tiêu đề công việc</label>
-          <input
-            name="title"
-            value={form.title}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="job-form job-form--edit">
+          <div className="job-form__grid">
+            <div className="field">
+              <label>Tiêu đề công việc</label>
+              <input
+                name="title"
+                value={form.title}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-        <div>
-          <label>Công ty</label>
-          <input
-            name="company"
-            value={form.company}
-            onChange={handleChange}
-            required
-          />
-        </div>
+            <div className="field">
+              <label>Công ty</label>
+              <input
+                name="company"
+                value={form.company}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-        <div>
-          <label>Địa điểm</label>
-          <input
-            name="location"
-            value={form.location}
-            onChange={handleChange}
-            required
-          />
-        </div>
+            <div className="field">
+              <label>Địa điểm</label>
+              <input
+                name="location"
+                value={form.location}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-        <div>
-          <label>Lương tối thiểu</label>
-          <input
-            type="number"
-            name="salaryMin"
-            value={form.salaryMin}
-            onChange={handleChange}
-            required
-          />
-        </div>
+            <div className="field">
+              <label>Lương tối thiểu</label>
+              <input
+                type="number"
+                name="salaryMin"
+                value={form.salaryMin}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-        <div>
-          <label>Lương tối đa</label>
-          <input
-            type="number"
-            name="salaryMax"
-            value={form.salaryMax}
-            onChange={handleChange}
-            required
-          />
-        </div>
+            <div className="field">
+              <label>Lương tối đa</label>
+              <input
+                type="number"
+                name="salaryMax"
+                value={form.salaryMax}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-        <div>
-          <label>Kỹ năng</label>
-          <input
-            name="skills"
-            value={form.skills}
-            onChange={handleChange}
-            placeholder="React, Node.js, MongoDB"
-          />
-        </div>
+            <div className="field">
+              <label>Kỹ năng</label>
+              <input
+                name="skills"
+                value={form.skills}
+                onChange={handleChange}
+                placeholder="React, Node.js, MongoDB"
+              />
+            </div>
 
-        <div>
-          <label>Loại công việc</label>
+            <div className="field">
+              <label>Loại công việc</label>
 
-          <select
-            name="employmentType"
-            value={form.employmentType}
-            onChange={handleChange}
-          >
-            <option value="FULL_TIME">Full time</option>
-            <option value="PART_TIME">Part time</option>
-            <option value="INTERNSHIP">Internship</option>
-          </select>
-        </div>
+              <select
+                name="employmentType"
+                value={form.employmentType}
+                onChange={handleChange}
+              >
+                <option value="FULL_TIME">Toàn thời gian</option>
+                <option value="PART_TIME">Bán thời gian</option>
+                <option value="INTERNSHIP">Thực tập</option>
+              </select>
+            </div>
 
-        <div>
-          <label>Trạng thái</label>
+            <div className="field">
+              <label>Trạng thái</label>
 
-          <select name="status" value={form.status} onChange={handleChange}>
-            <option value="OPEN">Đang tuyển</option>
-            <option value="CLOSED">Đã đóng</option>
-          </select>
-        </div>
+              <select name="status" value={form.status} onChange={handleChange}>
+                <option value="OPEN">Đang tuyển</option>
+                <option value="CLOSED">Đã đóng</option>
+              </select>
+            </div>
+          </div>
 
-        <div className="description-field">
-          <label>Mô tả công việc</label>
+          <div className="field">
+            <label>Mô tả công việc</label>
 
-          <textarea
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            rows="8"
-            required
-          />
-        </div>
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              rows="8"
+              required
+            />
+          </div>
 
-        <div className="edit-job-actions">
-          <button type="button" onClick={() => navigate("/hr/jobs")}>
-            Hủy
-          </button>
-
-          <button type="submit" disabled={saving}>
-            {saving ? "Đang lưu..." : "Lưu thay đổi"}
-          </button>
-        </div>
-      </form>
-    </main>
+          <div className="job-form__actions">
+            <button type="submit" className="btn" disabled={saving}>
+              {saving ? "Đang lưu..." : "Lưu thay đổi"}
+            </button>
+            <button
+              type="button"
+              className="btn btn--ghost"
+              onClick={() => navigate("/hr/jobs")}
+            >
+              Hủy
+            </button>
+          </div>
+        </form>
+      </main>
+    </>
   );
 }
 

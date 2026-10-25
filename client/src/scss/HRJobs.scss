@@ -1,0 +1,51 @@
+.hr-jobs .job-filters {
+  margin-top: 0;
+}
+
+.job-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--ink);
+  border-radius: var(--radius-lg);
+
+  h2 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 22px;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 10px;
+  }
+}
+
+.row-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.empty .btn {
+  margin-top: 14px;
+}
+
+@media (max-width: 860px) {
+  .job-form__grid {
+    grid-template-columns: 1fr;
+  }
+}

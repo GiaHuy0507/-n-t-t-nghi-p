@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Brand from "../components/Brand";
 import api from "../services/api";
 import { getDashboardPath } from "../utils/roleRoutes";
-import "../scss/Login.scss";
+import "../scss/Auth.scss";
 
 function Login() {
   const navigate = useNavigate();
@@ -31,39 +32,52 @@ function Login() {
   };
 
   return (
-    <main className="login">
-      <div className="login-box">
+    <main className="auth">
+      <div className="auth__brand">
+        <Brand />
+      </div>
+      <div className="auth__box">
         <h1>Đăng nhập</h1>
+        <p className="auth__sub">Dùng email bạn đã đăng ký.</p>
 
         <form onSubmit={handleLogin}>
-          <div className="input-group">
-            <label>Email</label>
+          <div className="field">
+            <label htmlFor="login-email">Email</label>
             <input
+              id="login-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Nhập email"
+              autoComplete="email"
               required
             />
           </div>
 
-          <div className="input-group">
-            <label>Mật khẩu</label>
+          <div className="field">
+            <label htmlFor="login-password">Mật khẩu</label>
             <input
+              id="login-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Nhập mật khẩu"
+              autoComplete="current-password"
               required
             />
           </div>
 
-          <button type="submit" disabled={loading}>
+          {message && <p className="notice notice--error">{message}</p>}
+
+          <button type="submit" className="btn auth__submit" disabled={loading}>
             {loading ? "Đang đăng nhập..." : "Đăng nhập"}
           </button>
         </form>
 
-        {message && <p className="message">{message}</p>}
+        <p className="auth__switch">
+          Chưa có tài khoản?{" "}
+          <Link to="/register" className="link">
+            Tạo tài khoản
+          </Link>
+        </p>
       </div>
     </main>
   );

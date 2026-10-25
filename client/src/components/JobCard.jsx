@@ -1,47 +1,47 @@
 import { Link } from "react-router-dom";
-
-const JOB_STATUS_LABELS = {
-  OPEN: "Đang tuyển",
-  CLOSED: "Đã đóng",
-};
+import CompanyMark from "./CompanyMark";
+import {
+  JOB_STATUS_LABELS,
+  formatDate,
+  formatEmploymentType,
+  formatSalary,
+} from "../utils/format";
 
 function JobCard({ job }) {
+  const skills = job.skills || [];
+
   return (
-    <div className="job-card">
-      <div className="job-card__header">
-        <div>
-          <h2>{job.title}</h2>
-          <p>{job.company}</p>
-        </div>
+    <article className="job-row">
+      <CompanyMark name={job.company} />
 
-        <span className="job-card__status">
-          {JOB_STATUS_LABELS[job.status] || job.status}
-        </span>
+      <div className="job-row__main">
+        <h2>
+          <Link to={`/jobs/${job._id}`}>{job.title}</Link>
+        </h2>
+        <p className="job-row__company">{job.company}</p>
+        <p className="job-row__meta">
+          <span>{job.location || "Chưa rõ địa điểm"}</span>
+          <span>{formatEmploymentType(job.employmentType)}</span>
+          {job.createdAt && <span>Đăng {formatDate(job.createdAt)}</span>}
+        </p>
+        {skills.length > 0 && (
+          <div className="tags">
+            {skills.slice(0, 6).map((skill) => (
+              <span key={skill}>{skill}</span>
+            ))}
+          </div>
+        )}
       </div>
 
-      <div className="job-card__info">
-        <span>Địa điểm: {job.location}</span>
-
-        <span>
-          Mức lương: {job.salaryMin.toLocaleString()} -{" "}
-          {job.salaryMax.toLocaleString()} VNĐ
-        </span>
-
-        <span>Hình thức: {job.employmentType}</span>
+      <div className="job-row__side">
+        <strong>{formatSalary(job.salaryMin, job.salaryMax)}</strong>
+        {job.status === "CLOSED" && (
+          <span className="badge badge--closed">
+            {JOB_STATUS_LABELS.CLOSED}
+          </span>
+        )}
       </div>
-
-      <div className="job-card__skills">
-        {job.skills.map((skill) => (
-          <span key={skill}>{skill}</span>
-        ))}
-      </div>
-
-      <p className="job-card__description">{job.description}</p>
-
-      <Link to={`/jobs/${job._id}`} className="job-card__button">
-        Xem chi tiết
-      </Link>
-    </div>
+    </article>
   );
 }
 

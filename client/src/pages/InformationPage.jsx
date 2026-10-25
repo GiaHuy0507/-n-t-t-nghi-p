@@ -3,10 +3,10 @@ import "../scss/InformationPage.scss";
 
 const pageContent = {
   about: {
-    eyebrow: "Về JobPortal AI",
+    eyebrow: "Về JobPortal",
     title: "Kết nối đúng người, đúng cơ hội.",
     intro:
-      "JobPortal AI hỗ trợ ứng viên chuẩn bị hồ sơ và tìm kiếm công việc, đồng thời giúp nhà tuyển dụng quản lý tin tuyển dụng và hồ sơ ứng tuyển trên cùng một nền tảng.",
+      "JobPortal hỗ trợ ứng viên chuẩn bị hồ sơ và tìm kiếm công việc, đồng thời giúp nhà tuyển dụng quản lý tin tuyển dụng và hồ sơ ứng tuyển trên cùng một nền tảng.",
     sections: [
       {
         title: "Dành cho ứng viên",
@@ -34,7 +34,7 @@ const pageContent = {
     eyebrow: "Quy chế hoạt động",
     title: "Nguyên tắc sử dụng nền tảng",
     intro:
-      "Quy chế này mô tả các bước sử dụng chính và trách nhiệm cơ bản của người dùng trên JobPortal AI.",
+      "Quy chế này mô tả các bước sử dụng chính và trách nhiệm cơ bản của người dùng trên JobPortal.",
     sections: [
       {
         title: "1. Tạo và quản lý tài khoản",
@@ -72,7 +72,7 @@ const pageContent = {
     eyebrow: "Chính sách",
     title: "Thông tin và quyền riêng tư",
     intro:
-      "Trang này giải thích cách thông tin được sử dụng trong các chức năng hiện có của JobPortal AI. Vui lòng chỉ cung cấp dữ liệu cần thiết cho quá trình tìm việc hoặc tuyển dụng.",
+      "Trang này giải thích cách thông tin được sử dụng trong các chức năng hiện có của JobPortal. Vui lòng chỉ cung cấp dữ liệu cần thiết cho quá trình tìm việc hoặc tuyển dụng.",
     sections: [
       {
         title: "Thông tin được cung cấp",

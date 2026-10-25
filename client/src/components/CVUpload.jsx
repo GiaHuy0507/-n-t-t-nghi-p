@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { formatSalary } from "../utils/format";
 import "../scss/CVUpLoad.scss";
 
 const STORAGE_KEY = "cv-upload-result";
@@ -224,7 +225,7 @@ const CVUpload = () => {
         .sort((a, b) => b.matchScore - a.matchScore);
 
       setMatchedJobs(rankedJobs.slice(0, 5));
-    } catch {
+    } catch (err) {
       console.error("Lỗi khi tải danh sách việc làm để matching:", err);
     }
   };
@@ -277,114 +278,156 @@ const CVUpload = () => {
   };
 
   return (
-    <div className="cv-container">
-      <div className="upload-zone">
-        <h3 style={{ margin: "0 0 15px 0", color: "#111827" }}>
-          Tải CV của bạn lên hệ thống
-        </h3>
-        <input
-          type="file"
-          accept=".pdf"
-          onChange={handleFileChange}
-          className="file-input"
-        />
-        <small>Chỉ nhận file PDF, tối đa 10MB</small>
-        <br />
+    <main className="page cv-page">
+      <header className="page-head">
+        <div>
+          <h1>Phân tích CV</h1>
+          <p>
+            Tải CV dạng PDF để xem nhận xét chi tiết và những vị trí gần với kỹ
+            năng của bạn.
+          </p>
+        </div>
+      </header>
+
+      <section className="cv-upload">
+        <label className={`cv-upload__drop ${file ? "has-file" : ""}`}>
+          <input type="file" accept=".pdf" onChange={handleFileChange} />
+          <strong>{file ? file.name : "Chọn file CV"}</strong>
+          <span>
+            {file
+              ? `${(file.size / 1024 / 1024).toFixed(2)} MB · bấm để đổi file`
+              : "PDF, tối đa 10 MB"}
+          </span>
+        </label>
         <button
           onClick={handleUpload}
           disabled={loading}
-          className="btn-upload"
+          className="btn btn-upload"
         >
-          {loading
-            ? "AI Đang Phân Tích & Tìm Việc..."
-            : "Phân Tích & Gợi Ý Việc Làm"}
+          {loading ? "Đang đọc CV..." : "Phân tích CV"}
         </button>
-      </div>
+      </section>
 
-      {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
+      {loading && (
+        <p className="cv-upload__wait">
+          Việc đọc CV thường mất 10–30 giây, bạn vui lòng giữ trang này.
+        </p>
+      )}
+
+      {error && <p className="notice notice--error cv-error">{error}</p>}
 
       {result && (
-        <div className="ai-result">
-          <div className="result-heading">
-            <h2 className="result-title">Kết Quả AI Phân Tích</h2>
+        <section className="cv-result">
+          <div className="cv-result__head">
+            <h2>Kết quả</h2>
             <button
               type="button"
-              className="toggle-analysis-button"
+              className="btn btn--ghost btn--sm"
               aria-expanded={showAnalysis}
               onClick={() => setShowAnalysis((visible) => !visible)}
             >
-              {showAnalysis ? "Ẩn phân tích" : "Xem phân tích"}
+              {showAnalysis ? "Thu gọn" : "Mở rộng"}
             </button>
           </div>
 
           {showAnalysis && (
-            <div className="ai-result-content">
-              <div className="info-text">
-                <strong>Tóm tắt hồ sơ:</strong> {result.summary}
+            <div className="cv-result__body">
+              <div className="cv-summary">
+                <p>{result.summary}</p>
+                <dl>
+                  <div>
+                    <dt>Kinh nghiệm</dt>
+                    <dd>{result.experienceYears} năm</dd>
+                  </div>
+                  <div>
+                    <dt>Kỹ năng tìm thấy</dt>
+                    <dd>{analyzedSkills.length}</dd>
+                  </div>
+                </dl>
               </div>
 
-              <div className="info-text">
-                <strong>Kinh nghiệm làm việc:</strong> {result.experienceYears}{" "}
-                năm
+              <div className="cv-block">
+                <h3>Kỹ năng</h3>
+                {analyzedSkills.length > 0 ? (
+                  <ul className="tags">
+                    {analyzedSkills.map((skill, index) => (
+                      <li key={index}>{skill}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="muted">Không tìm thấy kỹ năng nào trong CV.</p>
+                )}
               </div>
 
               {(result.strengths || []).length > 0 && (
-                <section className="review-section strengths-section">
-                  <h3>Điểm mạnh có trong CV</h3>
-                  <ul>
+                <div className="cv-block">
+                  <h3>Điểm mạnh</h3>
+                  <ul className="cv-list">
                     {result.strengths.map((strength, index) => (
                       <li key={index}>{strength}</li>
                     ))}
                   </ul>
-                </section>
+                </div>
+              )}
+
+              {missingInformation.length > 0 && (
+                <div className="cv-block">
+                  <h3>Thông tin còn thiếu</h3>
+                  <ul className="cv-list cv-list--missing">
+                    {missingInformation.map((info, index) => (
+                      <li key={index}>{info}</li>
+                    ))}
+                  </ul>
+                </div>
               )}
 
               {(result.improvementSuggestions || []).length > 0 && (
-                <section className="review-section suggestions-section">
-                  <h3>Gợi ý cải thiện CV</h3>
+                <div className="cv-block">
+                  <h3>Nên sửa</h3>
                   {result.improvementSuggestions.map((suggestion, index) => (
-                    <article className="suggestion-item" key={index}>
+                    <article className="suggestion" key={index}>
                       <h4>{suggestion.issue}</h4>
-                      <p>
-                        <strong>Căn cứ:</strong> {suggestion.evidence}
-                      </p>
-                      <p>
-                        <strong>Nên sửa:</strong> {suggestion.recommendation}
-                      </p>
-                      <p>
-                        <strong>Ví dụ:</strong> {suggestion.example}
-                      </p>
+                      <dl>
+                        <dt>Căn cứ</dt>
+                        <dd>{suggestion.evidence}</dd>
+                        <dt>Cách sửa</dt>
+                        <dd>{suggestion.recommendation}</dd>
+                        <dt>Ví dụ</dt>
+                        <dd className="suggestion__example">
+                          {suggestion.example}
+                        </dd>
+                      </dl>
                       <button
                         type="button"
-                        className="apply-ai-suggestion"
+                        className="btn btn--ghost btn--sm"
                         onClick={() => openSuggestionDraft(suggestion)}
                       >
-                        So sánh và chỉnh sửa
+                        Sửa phần này
                       </button>
                     </article>
                   ))}
-                </section>
+                </div>
               )}
 
               {activeSuggestion && (
-                <section className="ai-draft-comparison" aria-live="polite">
-                  <div className="ai-draft-heading">
+                <section className="draft-compare" aria-live="polite">
+                  <div className="draft-compare__head">
                     <div>
-                      <h3>Đối chiếu nội dung trước khi áp dụng</h3>
+                      <h3>So sánh trước khi áp dụng</h3>
                       <p>{activeSuggestion.issue}</p>
                     </div>
                     <button
                       type="button"
-                      className="close-ai-draft"
+                      className="btn btn--ghost btn--sm"
                       onClick={() => setActiveSuggestion(null)}
-                      aria-label="Đóng phần đối chiếu"
+                      aria-label="Đóng phần so sánh"
                     >
                       Đóng
                     </button>
                   </div>
 
-                  <label className="ai-target-field">
-                    Áp dụng vào phần CV
+                  <label className="field draft-compare__target">
+                    <span>Áp dụng vào phần</span>
                     <select
                       value={targetField}
                       onChange={(event) => setTargetField(event.target.value)}
@@ -396,15 +439,13 @@ const CVUpload = () => {
                     </select>
                   </label>
 
-                  <div className="ai-comparison-columns">
-                    <article className="ai-comparison-panel original-panel">
-                      <h4>Nội dung hiện tại trong CV</h4>
+                  <div className="draft-compare__cols">
+                    <div>
+                      <h4>Đang có trong CV</h4>
                       <pre>{getCurrentSection(targetField)}</pre>
-                    </article>
-                    <label className="ai-comparison-panel draft-panel">
-                      <span className="comparison-panel-title">
-                        Bản nháp AI, có thể chỉnh sửa
-                      </span>
+                    </div>
+                    <label className="field">
+                      <span>Bản sửa (bạn có thể chỉnh)</span>
                       <textarea
                         rows={8}
                         value={draftContent}
@@ -415,105 +456,59 @@ const CVUpload = () => {
                     </label>
                   </div>
 
-                  <p className="ai-draft-disclaimer">
-                    Nội dung chỉ được đưa vào trình tạo CV sau khi bạn xác nhận.
-                    Kiểm tra lại thông tin trước khi lưu hoặc xuất PDF.
+                  <p className="draft-compare__note">
+                    Nội dung chỉ được đưa sang trang tạo CV sau khi bạn bấm xác
+                    nhận. Hãy đọc lại trước khi lưu hoặc xuất PDF.
                   </p>
                   <button
                     type="button"
-                    className="confirm-ai-draft"
+                    className="btn"
                     onClick={applySuggestionDraft}
                     disabled={!draftContent.trim()}
                   >
-                    Áp dụng vào trình tạo CV
+                    Mở trong trang tạo CV
                   </button>
                 </section>
               )}
 
-              <div style={{ marginTop: "20px" }}>
-                <strong>Kỹ năng phát hiện:</strong>
-                <ul className="skill-badges">
-                  {analyzedSkills.length > 0 ? (
-                    analyzedSkills.map((skill, index) => (
-                      <li key={index} className="badge">
-                        {skill}
-                      </li>
-                    ))
-                  ) : (
-                    <li
-                      className="badge"
-                      style={{ background: "#f1f5f9", color: "#64748b" }}
-                    >
-                      Chưa cập nhật
-                    </li>
-                  )}
-                </ul>
-              </div>
-
-              {missingInformation.length > 0 && (
-                <div className="warning-box">
-                  <h4 className="warning-title">AI gợi ý - Cần bổ sung:</h4>
-                  <ul className="warning-list">
-                    {missingInformation.map((info, index) => (
-                      <li key={index}>{info}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* ĐÃ SỬA CÁC CLASS Ở ĐÂY CHO KHỚP VỚI SCSS */}
-              <div className="job-recommendations">
-                <h3 className="recommendation-title">
-                  Gợi Ý Việc Làm Phù Hợp Dành Cho Bạn
-                </h3>
-
+              <div className="cv-block">
+                <h3>Việc làm gần với CV này</h3>
                 {matchedJobs.length > 0 ? (
-                  <div className="cv-job-grid">
+                  <ul className="cv-jobs">
                     {matchedJobs.map((job) => (
-                      <div key={job._id || job.id} className="cv-job-card">
-                        <div className="cv-job-info">
-                          <h4>{job.title}</h4>
-                          <div className="job-meta">
-                            Công ty: {job.company || "Công ty tuyển dụng"}{" "}
-                            &nbsp;|&nbsp; Địa điểm: {job.location || "Việt Nam"}{" "}
-                            &nbsp;|&nbsp; Mức lương:{" "}
-                            {job.salary || "Thỏa thuận"}
-                          </div>
-                        </div>
-
-                        <div className="match-badge-container">
-                          <span
-                            className={`match-score ${
-                              job.matchScore >= 50
-                                ? "score-high"
-                                : "score-medium"
-                            }`}
-                          >
-                            Độ khớp: {job.matchScore}%
-                          </span>
-                          <br />
+                      <li key={job._id || job.id}>
+                        <div>
                           <Link
                             to={`/jobs/${job._id || job.id}`}
-                            className="btn-view-job"
+                            className="data-table__title"
                           >
-                            Xem chi tiết
+                            {job.title}
                           </Link>
+                          <small>
+                            {job.company || "Công ty tuyển dụng"} ·{" "}
+                            {job.location || "Việt Nam"} ·{" "}
+                            {formatSalary(job.salaryMin, job.salaryMax)}
+                          </small>
                         </div>
-                      </div>
+                        <span
+                          className={`cv-jobs__score ${job.matchScore >= 50 ? "is-high" : ""}`}
+                        >
+                          {job.matchScore}%
+                        </span>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 ) : (
-                  <p style={{ color: "#6b7280", fontStyle: "italic" }}>
-                    Hiện chưa tìm thấy công việc nào phù hợp với các kỹ năng
-                    trích xuất từ CV của bạn.
+                  <p className="muted">
+                    Chưa có tin tuyển dụng nào trùng với các kỹ năng trong CV.
                   </p>
                 )}
               </div>
             </div>
           )}
-        </div>
+        </section>
       )}
-    </div>
+    </main>
   );
 };
 

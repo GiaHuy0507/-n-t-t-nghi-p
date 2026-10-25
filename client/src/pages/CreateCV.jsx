@@ -225,9 +225,8 @@ const CreateCV = () => {
     <main className="create-cv-page">
       <div className="create-cv-header">
         <div>
-          <span className="eyebrow">CV BUILDER</span>
-          <h1>Tạo CV chuyên nghiệp</h1>
-          <p>Chọn template, điền thông tin và xem trước CV ngay lập tức.</p>
+          <h1>Tạo CV</h1>
+          <p>Chọn mẫu, điền thông tin, bản xem trước bên phải cập nhật ngay.</p>
           <label className="draft-name-field">
             Tên bản nháp
             <input
@@ -241,25 +240,29 @@ const CreateCV = () => {
           </label>
         </div>
         <div className="cv-actions">
-          <button type="button" className="btn-new" onClick={createNewDraft}>
+          <button
+            type="button"
+            className="btn btn--ghost"
+            onClick={createNewDraft}
+          >
             Bản nháp mới
           </button>
-          <button type="button" className="btn-save" onClick={saveDraft}>
+          <button type="button" className="btn btn--ghost" onClick={saveDraft}>
             {saved ? "Đã lưu bản nháp" : "Lưu bản nháp"}
           </button>
           <button
             type="button"
-            className="btn-print"
+            className="btn"
             onClick={exportPdf}
             disabled={exporting}
           >
-            {exporting ? "Đang xuất PDF..." : "Xuất file PDF"}
+            {exporting ? "Đang xuất PDF..." : "Tải PDF"}
           </button>
         </div>
       </div>
 
       {aiAppliedMessage && (
-        <p className="ai-applied-notice" role="status">
+        <p className="notice ai-applied-notice" role="status">
           {aiAppliedMessage}
         </p>
       )}

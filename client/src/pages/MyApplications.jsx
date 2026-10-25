@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
+import { formatDate } from "../utils/format";
 
 function MyApplications() {
   const [applications, setApplications] = useState([]);
@@ -45,37 +46,64 @@ function MyApplications() {
   };
 
   if (loading) {
-    return <p>Đang tải...</p>;
+    return <p className="page-state">Đang tải...</p>;
   }
 
   return (
-    <main>
-      <h1>Đơn ứng tuyển của tôi</h1>
+    <main className="page">
+      <header className="page-head">
+        <div>
+          <h1>Đơn đã nộp</h1>
+          <p>Trạng thái được nhà tuyển dụng cập nhật trực tiếp.</p>
+        </div>
+        <Link to="/jobs" className="btn btn--ghost">
+          Tìm thêm việc
+        </Link>
+      </header>
 
       {applications.length === 0 ? (
-        <p>Bạn chưa ứng tuyển công việc nào.</p>
+        <div className="empty">
+          Bạn chưa ứng tuyển công việc nào.{" "}
+          <Link to="/jobs" className="link">
+            Xem việc làm đang tuyển
+          </Link>
+        </div>
       ) : (
-        <div className="application-list">
-          {applications.map((application) => (
-            <div key={application._id} className="application-card">
-              <h2>{application.job?.title}</h2>
-
-              <p>{application.job?.company}</p>
-
-              <p>Địa điểm: {application.job?.location}</p>
-
-              <p>
-                Trạng thái: <strong>{getStatusText(application.status)}</strong>
-              </p>
-
-              <p>
-                Ngày ứng tuyển:{" "}
-                {new Date(application.createdAt).toLocaleDateString("vi-VN")}
-              </p>
-
-              <Link to={`/jobs/${application.job?._id}`}>Xem công việc</Link>
-            </div>
-          ))}
+        <div className="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Vị trí</th>
+                <th>Địa điểm</th>
+                <th>Ngày nộp</th>
+                <th>Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody>
+              {applications.map((application) => (
+                <tr key={application._id}>
+                  <td>
+                    <Link
+                      to={`/jobs/${application.job?._id}`}
+                      className="data-table__title"
+                    >
+                      {application.job?.title || "Tin đã bị xóa"}
+                    </Link>
+                    <small>{application.job?.company}</small>
+                  </td>
+                  <td>{application.job?.location || "—"}</td>
+                  <td>{formatDate(application.createdAt)}</td>
+                  <td>
+                    <span
+                      className={`badge badge--${String(application.status).toLowerCase()}`}
+                    >
+                      {getStatusText(application.status)}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </main>

@@ -1,15 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import logo from "../assets/img/logo.avif";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import api from "../services/api";
-import "./HRJobs.css";
+import DashboardHeader from "../components/DashboardHeader";
+import { formatEmploymentType, formatSalary } from "../utils/format";
+import "../scss/JobList.scss";
+import "../scss/HRJobs.scss";
 
 function HRJobs() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") || "null");
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showCreateForm, setShowCreateForm] = useState(false);
+  const location = useLocation();
+  const [showCreateForm, setShowCreateForm] = useState(
+    Boolean(location.state?.openCreateForm),
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [jobForm, setJobForm] = useState({
@@ -145,79 +150,48 @@ function HRJobs() {
   };
 
   if (loading) {
-    return <p>Đang tải...</p>;
+    return <p className="page-state">Đang tải...</p>;
   }
 
   return (
     <>
-      <header className="hr-jobs-nav">
-        <Link to="/" className="hr-jobs-brand">
-          <img src={logo} alt="JobPortal AI" className="hr-jobs-brand-logo" />
-          <span>
-            JobPortal <strong>AI</strong>
-          </span>
-        </Link>
+      <DashboardHeader
+        area="Nhà tuyển dụng"
+        userName={user?.name || "HR"}
+        onLogout={handleLogout}
+        items={[
+          { label: "Tổng quan", to: "/hr/dashboard" },
+          { label: "Tin tuyển dụng", to: "/hr/jobs" },
+          { label: "Ứng viên", to: "/hr/applications" },
+        ]}
+      />
 
-        <nav className="hr-jobs-nav-links" aria-label="Điều hướng HR">
-          <Link to="/hr/dashboard">Tổng quan & Ứng viên</Link>
-          <Link to="/hr/jobs" className="active">
-            Quản lý tin tuyển dụng
-          </Link>
-          <Link to="/hr/applications">Quản lý ứng viên</Link>
-        </nav>
-
-        <div className="hr-jobs-nav-account">
-          <span>
-            Xin chào, <strong>{user?.name || "HR"}</strong>
-          </span>
-          <button type="button" onClick={handleLogout}>
-            Đăng xuất
-          </button>
-        </div>
-      </header>
-
-      <main className="hr-jobs">
-        <div className="hr-jobs-header">
+      <main className="page hr-jobs">
+        <header className="page-head">
           <div>
-            <h1>Quản lý tin tuyển dụng</h1>
-            <p>Danh sách các công việc bạn đã đăng</p>
+            <h1>Tin tuyển dụng</h1>
+            <p>
+              {jobs.length} tin ·{" "}
+              {jobs.filter((job) => job.status === "OPEN").length} đang tuyển
+            </p>
           </div>
-
           <button
             type="button"
-            className="create-job-btn"
+            className={`btn ${showCreateForm ? "btn--ghost" : ""}`}
             onClick={() => setShowCreateForm((prev) => !prev)}
           >
-            {showCreateForm ? "Đóng form" : "Tạo tin tuyển dụng"}
+            {showCreateForm ? "Đóng biểu mẫu" : "Đăng tin mới"}
           </button>
-        </div>
-
-        <div className="job-toolbar">
-          <input
-            type="search"
-            value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
-            placeholder="Tìm theo vị trí, công ty, mô tả..."
-            aria-label="Tìm tin tuyển dụng"
-          />
-
-          <select
-            value={statusFilter}
-            onChange={(event) => setStatusFilter(event.target.value)}
-            aria-label="Lọc theo trạng thái"
-          >
-            <option value="ALL">Tất cả</option>
-            <option value="OPEN">Đang tuyển</option>
-            <option value="CLOSED">Đã đóng</option>
-          </select>
-        </div>
+        </header>
 
         {showCreateForm && (
           <form className="job-form" onSubmit={handleCreateJob}>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Tiêu đề công việc</label>
+            <h2>Tin tuyển dụng mới</h2>
+            <div className="job-form__grid">
+              <div className="field">
+                <label htmlFor="job-title">Vị trí tuyển dụng</label>
                 <input
+                  id="job-title"
                   type="text"
                   name="title"
                   value={jobForm.title}
@@ -225,9 +199,10 @@ function HRJobs() {
                   required
                 />
               </div>
-              <div className="form-group">
-                <label>Công ty</label>
+              <div className="field">
+                <label htmlFor="job-company">Công ty</label>
                 <input
+                  id="job-company"
                   type="text"
                   name="company"
                   value={jobForm.company}
@@ -235,21 +210,21 @@ function HRJobs() {
                   required
                 />
               </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label>Địa điểm</label>
+              <div className="field">
+                <label htmlFor="job-location">Địa điểm</label>
                 <input
+                  id="job-location"
                   type="text"
                   name="location"
                   value={jobForm.location}
                   onChange={handleJobFormChange}
+                  placeholder="Hà Nội"
                 />
               </div>
-              <div className="form-group">
-                <label>Lương tối thiểu</label>
+              <div className="field">
+                <label htmlFor="job-salaryMin">Lương tối thiểu (VNĐ)</label>
                 <input
+                  id="job-salaryMin"
                   type="number"
                   name="salaryMin"
                   value={jobForm.salaryMin}
@@ -257,9 +232,10 @@ function HRJobs() {
                   required
                 />
               </div>
-              <div className="form-group">
-                <label>Lương tối đa</label>
+              <div className="field">
+                <label htmlFor="job-salaryMax">Lương tối đa (VNĐ)</label>
                 <input
+                  id="job-salaryMax"
                   type="number"
                   name="salaryMax"
                   value={jobForm.salaryMax}
@@ -267,22 +243,22 @@ function HRJobs() {
                   required
                 />
               </div>
+              <div className="field">
+                <label htmlFor="job-skills">Kỹ năng yêu cầu</label>
+                <input
+                  id="job-skills"
+                  type="text"
+                  name="skills"
+                  value={jobForm.skills}
+                  onChange={handleJobFormChange}
+                  placeholder="React, Node.js, MongoDB"
+                />
+              </div>
             </div>
-
-            <div className="form-group">
-              <label>Kỹ năng</label>
-              <input
-                type="text"
-                name="skills"
-                value={jobForm.skills}
-                onChange={handleJobFormChange}
-                placeholder="React, Node.js, MongoDB"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Mô tả công việc</label>
+            <div className="field">
+              <label htmlFor="job-description">Mô tả công việc</label>
               <textarea
+                id="job-description"
                 name="description"
                 value={jobForm.description}
                 onChange={handleJobFormChange}
@@ -290,78 +266,134 @@ function HRJobs() {
                 required
               />
             </div>
-
-            <div className="form-actions-row">
-              <button type="submit" className="btn-submit">
-                Đăng tin tuyển dụng
+            <div className="job-form__actions">
+              <button type="submit" className="btn">
+                Đăng tin
+              </button>
+              <button
+                type="button"
+                className="btn btn--ghost"
+                onClick={() => setShowCreateForm(false)}
+              >
+                Hủy
               </button>
             </div>
           </form>
         )}
 
-        {jobs.length === 0 ? (
-          <div className="empty-jobs">
-            <p>Bạn chưa tạo tin tuyển dụng nào.</p>
+        <div className="job-filters">
+          <input
+            className="input"
+            type="search"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            placeholder="Tìm theo vị trí, công ty, mô tả..."
+            aria-label="Tìm tin tuyển dụng"
+          />
+          <div
+            className="job-filters__status"
+            role="group"
+            aria-label="Lọc theo trạng thái"
+          >
+            {[
+              ["ALL", "Tất cả"],
+              ["OPEN", "Đang tuyển"],
+              ["CLOSED", "Đã đóng"],
+            ].map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                className={statusFilter === value ? "active" : ""}
+                aria-pressed={statusFilter === value}
+                onClick={() => setStatusFilter(value)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
 
+        {jobs.length === 0 ? (
+          <div className="empty">
+            <p>Bạn chưa đăng tin tuyển dụng nào.</p>
             <button
               type="button"
-              className="create-job-btn"
+              className="btn"
               onClick={() => setShowCreateForm(true)}
             >
-              Tạo tin tuyển dụng đầu tiên
+              Đăng tin đầu tiên
             </button>
           </div>
         ) : filteredJobs.length === 0 ? (
-          <div className="empty-jobs">
-            <p>Không tìm thấy tin tuyển dụng phù hợp với bộ lọc hiện tại.</p>
-          </div>
+          <div className="empty">Không có tin nào khớp bộ lọc.</div>
         ) : (
-          <div className="job-management-list">
-            <p className="job-results-summary">
-              Hiển thị {filteredJobs.length}/{jobs.length} tin tuyển dụng
-            </p>
-
-            {filteredJobs.map((job) => (
-              <div className="hr-job-card" key={job._id}>
-                <div className="hr-job-info">
-                  <h2>{job.title}</h2>
-
-                  <p>{job.company}</p>
-
-                  <p>Địa điểm: {job.location}</p>
-
-                  <p>
-                    Mức lương: {job.salaryMin?.toLocaleString()} -{" "}
-                    {job.salaryMax?.toLocaleString()} VNĐ
-                  </p>
-
-                  <p>Hình thức: {job.employmentType}</p>
-
-                  <span className={`job-status ${job.status.toLowerCase()}`}>
-                    {jobStatusText[job.status] || job.status}
-                  </span>
-                </div>
-
-                <div className="hr-job-actions">
-                  <Link to={`/hr/jobs/edit/${job._id}`}>Sửa</Link>
-                  <Link to={`/jobs/${job._id}`}>Xem</Link>
-
-                  <button
-                    onClick={() => handleCloseJob(job._id)}
-                    disabled={job.status === "CLOSED"}
-                  >
-                    {job.status === "CLOSED" ? "Đã đóng" : "Đóng tuyển dụng"}
-                  </button>
-
-                  <button
-                    className="delete-btn"
-                    onClick={() => handleDeleteJob(job._id)}
-                  >
-                    Xóa
-                  </button>
-                </div>
-              </div>
-            ))}
+          <div className="data-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Vị trí</th>
+                  <th>Địa điểm</th>
+                  <th>Mức lương</th>
+                  <th>Trạng thái</th>
+                  <th aria-label="Thao tác" />
+                </tr>
+              </thead>
+              <tbody>
+                {filteredJobs.map((job) => (
+                  <tr key={job._id}>
+                    <td>
+                      <Link
+                        to={`/jobs/${job._id}`}
+                        className="data-table__title"
+                      >
+                        {job.title}
+                      </Link>
+                      <small>
+                        {job.company} ·{" "}
+                        {formatEmploymentType(job.employmentType)}
+                      </small>
+                    </td>
+                    <td>{job.location || "—"}</td>
+                    <td className="nowrap">
+                      {formatSalary(job.salaryMin, job.salaryMax)}
+                    </td>
+                    <td>
+                      <span
+                        className={`badge badge--${job.status.toLowerCase()}`}
+                      >
+                        {jobStatusText[job.status] || job.status}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="row-actions">
+                        <Link
+                          to={`/hr/jobs/edit/${job._id}`}
+                          className="btn btn--ghost btn--sm"
+                        >
+                          Sửa
+                        </Link>
+                        {job.status !== "CLOSED" && (
+                          <button
+                            type="button"
+                            className="btn btn--ghost btn--sm"
+                            onClick={() => handleCloseJob(job._id)}
+                          >
+                            Đóng tin
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          className="btn btn--danger btn--sm"
+                          onClick={() => handleDeleteJob(job._id)}
+                        >
+                          Xóa
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </main>

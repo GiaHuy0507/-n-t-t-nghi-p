@@ -1,5 +1,5 @@
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import logo from "../assets/img/logo.avif";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import Brand from "./Brand";
 import "../scss/Navbar.scss";
 
 const readStoredUser = () => {
@@ -28,72 +28,63 @@ const Navbar = () => {
     if (role === "HR") {
       return (
         <>
-          <NavLink to="/hr/dashboard">Tổng quan &amp; Ứng viên</NavLink>
-          {/* <NavLink to="/hr/jobs/create">Đăng việc làm mới</NavLink> */}
-          <NavLink to="/hr/jobs">Tin tuyển dụng đã đăng</NavLink>
-          <NavLink to="/hr/applications">Quản lý ứng viên</NavLink>
+          <NavLink to="/hr/dashboard">Tổng quan</NavLink>
+          <NavLink to="/hr/jobs">Tin tuyển dụng</NavLink>
+          <NavLink to="/hr/applications">Ứng viên</NavLink>
         </>
       );
     }
 
     if (role === "ADMIN") {
-      return <NavLink to="/admin/dashboard">Admin Dashboard</NavLink>;
+      return <NavLink to="/admin/dashboard">Quản trị</NavLink>;
     }
 
     if (role === "CANDIDATE") {
       return (
         <>
-          <NavLink to="/jobs">Danh sách việc làm</NavLink>
+          <NavLink to="/jobs">Việc làm</NavLink>
+          <NavLink to="/my-cv">Phân tích CV</NavLink>
           <NavLink to="/create-cv">Tạo CV</NavLink>
-          <NavLink to="/my-cv">Tải CV</NavLink>
+          <NavLink to="/my-applications">Đơn đã nộp</NavLink>
         </>
       );
     }
 
-    return (
-      <>
-        <NavLink to="/jobs">Danh sách việc làm</NavLink>
-      </>
-    );
+    return <NavLink to="/jobs">Việc làm</NavLink>;
   };
 
   return (
-    <header className="main-navbar">
-      <div className="nav-brand">
-        <Link
-          to={isAuthPage ? "#" : "/"}
-          className="nav-brand-link"
-          onClick={(event) => {
-            if (isAuthPage) event.preventDefault();
-          }}
-        >
-          <img src={logo} alt="JobPortal AI logo" className="nav-logo" />
-          <span className="brand-name">
-            JobPortal <strong>AI</strong>
-          </span>
-        </Link>
-      </div>
-      <nav className="nav-links">{renderNavLinks()}</nav>
-      <div className="nav-auth">
-        {token ? (
-          <div className="user-info">
-            <span>
-              Xin chào, <strong>{user?.name || "User"}</strong>
-            </span>
-            <button onClick={handleLogout} className="btn-logout">
-              Đăng xuất
-            </button>
-          </div>
-        ) : (
-          <div className="auth-buttons">
-            <Link to="/login" className="btn-login">
-              Đăng nhập
-            </Link>
-            <Link to="/register" className="btn-register">
-              Đăng ký
-            </Link>
-          </div>
-        )}
+    <header className="site-header">
+      <div className="site-header__inner">
+        <Brand disabled={isAuthPage} />
+        <nav className="site-nav" aria-label="Điều hướng chính">
+          {renderNavLinks()}
+        </nav>
+        <div className="site-account">
+          {token ? (
+            <>
+              <span className="site-account__name">
+                {user?.name || "Tài khoản"}
+              </span>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="btn btn--ghost btn--sm"
+              >
+                Đăng xuất
+              </button>
+            </>
+          ) : (
+            <>
+              <NavLink to="/login" className="site-account__login">
+                Đăng nhập
+              </NavLink>
+              <NavLink to="/register" className="btn btn--sm">
+                Tạo tài khoản
+              </NavLink>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );
