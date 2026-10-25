@@ -476,3 +476,14 @@ img {
 .muted {
   color: var(--ink-3);
 }
+
+/* ===== Đẩy chân trang xuống đáy khi trang ít nội dung ===== */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#root > * {
+  width: 100%;
+}

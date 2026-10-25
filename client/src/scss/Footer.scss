@@ -2,7 +2,7 @@
   background: var(--ink);
   color: #c9c6bc;
   font-size: 14px;
-  margin-top: 0;
+  margin-top: auto; // đẩy chân trang xuống đáy khi trang ngắn
 
   a {
     color: #e9e6dc;
