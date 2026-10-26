@@ -49,3 +49,24 @@
     grid-template-columns: 1fr;
   }
 }
+
+.ai-draft-box {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+
+  .field {
+    flex: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .ai-draft-box {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

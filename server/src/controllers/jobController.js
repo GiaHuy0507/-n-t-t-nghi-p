@@ -148,17 +148,24 @@ const matchCandidateToJob = async (req, res) => {
 };
 
 const generateJobBrief = async (req, res) => {
+  const payload = req.body || {};
+
+  if (!String(payload.title || "").trim()) {
+    return res.status(400).json({
+      message: "Cần nhập vị trí tuyển dụng trước khi tạo mô tả",
+    });
+  }
+
   try {
-    const payload = req.body || {};
-    const generated = generateJobDescription(payload);
+    const generated = await generateJobDescription(payload);
 
     return res.status(200).json({
-      message: "AI đã tạo mô tả job thành công",
+      message: "Đã tạo bản nháp mô tả công việc, hãy đọc lại trước khi đăng",
       data: generated,
     });
   } catch (error) {
-    return res.status(500).json({
-      message: "Không thể tạo mô tả công việc bằng AI",
+    return res.status(503).json({
+      message: error.message,
     });
   }
 };

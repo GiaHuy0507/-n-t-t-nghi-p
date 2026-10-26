@@ -3,7 +3,6 @@ const assert = require("node:assert/strict");
 const {
   matchCVToJob,
   suggestCVImprovement,
-  generateJobDescription,
 } = require("../src/services/aiService");
 
 test("matchCVToJob returns a normalized score and missing skills", () => {
@@ -97,19 +96,4 @@ test("suggestCVImprovement does not call evidenced skills missing", () => {
     suggestions.some((suggestion) => suggestion.includes("TypeScript")),
     false,
   );
-});
-
-test("generateJobDescription creates a readable job brief from requirements", () => {
-  const result = generateJobDescription({
-    title: "Frontend Developer",
-    company: "TechHub",
-    location: "Hà Nội",
-    skills: ["React", "TypeScript", "REST API"],
-    experience: "2 năm",
-  });
-
-  assert.ok(result.title.includes("Frontend Developer"));
-  assert.ok(result.description.toLowerCase().includes("react"));
-  assert.ok(result.requirements.some((item) => item.includes("TypeScript")));
-  assert.ok(result.skills.includes("React"));
 });

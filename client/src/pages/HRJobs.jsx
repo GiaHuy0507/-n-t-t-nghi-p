@@ -71,6 +71,53 @@ function HRJobs() {
     });
   }, [jobs, searchTerm, statusFilter]);
 
+  const [aiNotes, setAiNotes] = useState("");
+  const [aiDrafting, setAiDrafting] = useState(false);
+  const [aiMessage, setAiMessage] = useState("");
+
+  // Gemini soạn bản nháp mô tả từ thông tin HR đã nhập; HR đọc và sửa trước khi đăng
+  const handleDraftDescription = async () => {
+    if (!jobForm.title.trim()) {
+      setAiMessage("Nhập vị trí tuyển dụng trước khi nhờ AI viết mô tả.");
+      return;
+    }
+    if (
+      jobForm.description.trim() &&
+      !window.confirm("Thay mô tả hiện tại bằng bản nháp mới của AI?")
+    ) {
+      return;
+    }
+
+    setAiDrafting(true);
+    setAiMessage("");
+    try {
+      const response = await api.post("/jobs/ai/generate", {
+        title: jobForm.title,
+        company: jobForm.company,
+        location: jobForm.location,
+        salaryMin: jobForm.salaryMin,
+        salaryMax: jobForm.salaryMax,
+        skills: jobForm.skills,
+        notes: aiNotes,
+      });
+      const { description, skills } = response.data.data;
+      setJobForm((prev) => ({
+        ...prev,
+        description,
+        skills: prev.skills.trim() ? prev.skills : skills.join(", "),
+      }));
+      setAiMessage(
+        "Đã có bản nháp. Hãy đọc lại và điền các chỗ trong [ngoặc vuông] trước khi đăng.",
+      );
+    } catch (error) {
+      setAiMessage(
+        error.response?.data?.message || "AI chưa thể viết mô tả lúc này.",
+      );
+    } finally {
+      setAiDrafting(false);
+    }
+  };
+
   const handleJobFormChange = (e) => {
     const { name, value } = e.target;
     setJobForm((prev) => ({ ...prev, [name]: value }));
@@ -100,6 +147,8 @@ function HRJobs() {
         description: "",
         skills: "",
       });
+      setAiNotes("");
+      setAiMessage("");
       setShowCreateForm(false);
       alert("Tạo tin tuyển dụng thành công");
     } catch (error) {
@@ -255,6 +304,28 @@ function HRJobs() {
                 />
               </div>
             </div>
+            <div className="ai-draft-box">
+              <div className="field">
+                <label htmlFor="job-ai-notes">
+                  Gợi ý thêm cho AI (không bắt buộc)
+                </label>
+                <input
+                  id="job-ai-notes"
+                  value={aiNotes}
+                  onChange={(event) => setAiNotes(event.target.value)}
+                  placeholder="Ví dụ: 2 năm kinh nghiệm, làm hybrid, có thưởng dự án"
+                />
+              </div>
+              <button
+                type="button"
+                className="btn btn--ghost"
+                onClick={handleDraftDescription}
+                disabled={aiDrafting}
+              >
+                {aiDrafting ? "AI đang viết..." : "Viết mô tả bằng AI"}
+              </button>
+            </div>
+            {aiMessage && <p className="notice">{aiMessage}</p>}
             <div className="field">
               <label htmlFor="job-description">Mô tả công việc</label>
               <textarea
@@ -262,7 +333,7 @@ function HRJobs() {
                 name="description"
                 value={jobForm.description}
                 onChange={handleJobFormChange}
-                rows="6"
+                rows="12"
                 required
               />
             </div>

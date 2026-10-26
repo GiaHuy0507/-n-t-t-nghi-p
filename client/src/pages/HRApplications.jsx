@@ -36,6 +36,8 @@ function HRApplications() {
   const [selectedJobId, setSelectedJobId] = useState("");
   const [shortlistLoading, setShortlistLoading] = useState(false);
   const [shortlistRevision, setShortlistRevision] = useState(0);
+  const [reviewLoadingId, setReviewLoadingId] = useState(null);
+  const [reviewErrors, setReviewErrors] = useState({});
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -178,6 +180,33 @@ function HRApplications() {
       alert(error.response?.data?.message || "Không thể mở CV này");
     } finally {
       setCvLoadingId(null);
+    }
+  };
+
+  // Tóm tắt hồ sơ và câu hỏi phỏng vấn do AI gợi ý; refresh = tạo lại
+  const handleAIReview = async (application, refresh = false) => {
+    setReviewLoadingId(application._id);
+    setReviewErrors((current) => ({ ...current, [application._id]: "" }));
+    try {
+      const response = await api.post(
+        `/applications/hr/${application._id}/ai-review`,
+        { refresh },
+      );
+      setApplications((current) =>
+        current.map((item) =>
+          item._id === application._id
+            ? { ...item, aiReview: response.data.data }
+            : item,
+        ),
+      );
+    } catch (error) {
+      setReviewErrors((current) => ({
+        ...current,
+        [application._id]:
+          error.response?.data?.message || "Chưa tạo được gợi ý, thử lại sau.",
+      }));
+    } finally {
+      setReviewLoadingId(null);
     }
   };
 
@@ -418,6 +447,107 @@ function HRApplications() {
                     </button>
                   )}
                 </div>
+
+                <section className="ai-review" aria-live="polite">
+                  {application.aiReview?.generatedAt ? (
+                    <>
+                      <div className="ai-review__head">
+                        <h3>Gợi ý chuẩn bị phỏng vấn</h3>
+                        <button
+                          type="button"
+                          className="btn btn--ghost btn--sm"
+                          disabled={reviewLoadingId === application._id}
+                          onClick={() => handleAIReview(application, true)}
+                        >
+                          {reviewLoadingId === application._id
+                            ? "Đang tạo lại..."
+                            : "Tạo lại"}
+                        </button>
+                      </div>
+                      <p className="ai-review__summary">
+                        {application.aiReview.summary}
+                      </p>
+                      <div className="ai-review__cols">
+                        {application.aiReview.strengths?.length > 0 && (
+                          <div>
+                            <h4>Điểm phù hợp</h4>
+                            <ul>
+                              {application.aiReview.strengths.map((item) => (
+                                <li key={item}>{item}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {application.aiReview.concerns?.length > 0 && (
+                          <div>
+                            <h4>Cần làm rõ</h4>
+                            <ul>
+                              {application.aiReview.concerns.map((item) => (
+                                <li key={item}>{item}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                      {application.aiReview.interviewQuestions?.length > 0 && (
+                        <>
+                          <h4>Câu hỏi phỏng vấn gợi ý</h4>
+                          <ol className="ai-review__questions">
+                            {application.aiReview.interviewQuestions.map(
+                              (item) => (
+                                <li key={item.question}>
+                                  <strong>{item.question}</strong>
+                                  <span>
+                                    {item.skill && <em>{item.skill}</em>}
+                                    {item.purpose}
+                                  </span>
+                                </li>
+                              ),
+                            )}
+                          </ol>
+                        </>
+                      )}
+                      <p className="ai-review__note">
+                        Gợi ý do AI tạo{" "}
+                        {new Date(
+                          application.aiReview.generatedAt,
+                        ).toLocaleString("vi-VN")}
+                        , chỉ để tham khảo. Thông tin cá nhân của ứng viên không
+                        được gửi cho AI.
+                      </p>
+                    </>
+                  ) : (
+                    <div className="ai-review__empty">
+                      <span>
+                        Tóm tắt hồ sơ và 5 câu hỏi phỏng vấn dựa trên kỹ năng
+                        còn thiếu.
+                      </span>
+                      <button
+                        type="button"
+                        className="btn btn--ghost btn--sm"
+                        disabled={
+                          reviewLoadingId === application._id ||
+                          application.cv?.aiStatus !== "COMPLETED"
+                        }
+                        title={
+                          application.cv?.aiStatus !== "COMPLETED"
+                            ? "Cần phân tích CV xong trước"
+                            : undefined
+                        }
+                        onClick={() => handleAIReview(application)}
+                      >
+                        {reviewLoadingId === application._id
+                          ? "AI đang đọc hồ sơ..."
+                          : "Gợi ý phỏng vấn bằng AI"}
+                      </button>
+                    </div>
+                  )}
+                  {reviewErrors[application._id] && (
+                    <p className="notice notice--error">
+                      {reviewErrors[application._id]}
+                    </p>
+                  )}
+                </section>
 
                 <div className="review-note">
                   <label htmlFor={`hr-note-${application._id}`}>

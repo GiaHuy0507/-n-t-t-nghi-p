@@ -150,7 +150,36 @@ const retryAIAnalysisForHR = async (req, res) => {
   }
 };
 
+const getAIReviewForHR = async (req, res) => {
+  try {
+    const review = await applicationService.getAIReviewForHR(
+      req.params.id,
+      req.user.userId,
+      { refresh: Boolean(req.body?.refresh) },
+    );
+
+    return res.status(200).json({
+      message: "Lấy gợi ý của AI thành công",
+      data: review,
+    });
+  } catch (error) {
+    const statusCode =
+      error.message === "Không tìm thấy đơn ứng tuyển"
+        ? 404
+        : error.message.includes("không có quyền")
+          ? 403
+          : error.message.startsWith("AI chưa thể")
+            ? 503
+            : 400;
+
+    return res.status(statusCode).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
+  getAIReviewForHR,
   createApplication,
   getApplicationsForHR,
   getCVForHR,
