@@ -1,7 +1,8 @@
 const Application = require("../models/Application");
 const CV = require("../models/CV");
 const Job = require("../models/Job");
-const { matchCVToJob } = require("./aiService");
+const aiService = require("./aiService");
+const { matchCVToJob } = aiService;
 const {
   analyzeAndStoreCV,
   removeFile,
@@ -173,7 +174,7 @@ const getApplicationsForCandidate = async (candidateId) => {
   const applications = await Application.find({
     candidate: candidateId,
   })
-    .select("-hrNote")
+    .select("-hrNote -aiReview")
     .populate(
       "job",
       "title company location salaryMin salaryMax employmentType",
@@ -208,6 +209,11 @@ const retryAIAnalysisForHR = async (applicationId, hrId) => {
   try {
     await analyzeAndStoreCV(cv);
     await cv.save();
+    // Kết quả phân tích mới → bỏ gợi ý cũ của AI để HR tạo lại
+    if (application.aiReview) {
+      application.aiReview = undefined;
+      await application.save();
+    }
     return cv;
   } catch (error) {
     cv.aiAnalysis = undefined;
@@ -266,7 +272,54 @@ const getAIShortlistForHR = async (hrId, jobId) => {
   };
 };
 
+// HR xem tóm tắt hồ sơ và câu hỏi phỏng vấn gợi ý. Kết quả được lưu lại;
+// chỉ gọi AI lần nữa khi HR yêu cầu tạo lại.
+const getAIReviewForHR = async (
+  applicationId,
+  hrId,
+  { refresh = false } = {},
+) => {
+  const application = await Application.findById(applicationId)
+    .populate("job", "title description skills createdBy")
+    .populate("cv", "aiAnalysis");
+
+  if (!application) {
+    throw new Error("Không tìm thấy đơn ứng tuyển");
+  }
+
+  if (!application.job || application.job.createdBy.toString() !== hrId) {
+    throw new Error("Bạn không có quyền xem đơn ứng tuyển này");
+  }
+
+  if (application.aiReview?.generatedAt && !refresh) {
+    return application.aiReview;
+  }
+
+  if (!application.cv?.aiAnalysis) {
+    throw new Error(
+      "CV của ứng viên chưa được phân tích, hãy phân tích lại CV trước",
+    );
+  }
+
+  const match = matchCVToJob(application.cv.aiAnalysis, application.job);
+  const review = await aiService.generateApplicationReview({
+    cvAnalysis: application.cv.aiAnalysis,
+    job: application.job,
+    match,
+  });
+
+  application.aiReview = {
+    ...review,
+    matchScore: match.score,
+    generatedAt: new Date(),
+  };
+  await application.save();
+
+  return application.aiReview;
+};
+
 module.exports = {
+  getAIReviewForHR,
   createApplication,
   getApplicationsForHR,
   getCVForHR,

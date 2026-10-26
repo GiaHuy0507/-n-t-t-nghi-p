@@ -35,6 +35,13 @@ router.post(
   applicationController.retryAIAnalysisForHR,
 );
 
+router.post(
+  "/hr/:id/ai-review",
+  protect,
+  authorize("HR"),
+  applicationController.getAIReviewForHR,
+);
+
 router.get(
   "/:id/cv",
   protect,
