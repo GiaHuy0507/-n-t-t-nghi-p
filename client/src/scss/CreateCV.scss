@@ -752,3 +752,58 @@ $muted: #5f6670;
     padding: 28px 18px;
   }
 }
+
+// Khi bấm "Tải PDF": chỉ in khung CV, khổ A4, không lề, giữ màu nền của mẫu
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  .site-header,
+  .main-footer,
+  .create-cv-header,
+  .ai-applied-notice,
+  .draft-list,
+  .cv-editor {
+    display: none !important;
+  }
+
+  html,
+  body,
+  #root {
+    background: #fff;
+    min-height: 0;
+  }
+
+  .create-cv-page,
+  .cv-builder-grid {
+    display: block;
+    margin: 0;
+    max-width: none;
+    padding: 0;
+  }
+
+  .cv-preview,
+  .cv-preview.sidebar {
+    background: none;
+    border-radius: 0;
+    padding: 0;
+    position: static;
+  }
+
+  .cv-paper {
+    box-shadow: none;
+    min-height: 297mm;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .sidebar-template {
+    min-height: 297mm;
+  }
+
+  .cv-entry {
+    break-inside: avoid;
+  }
+}

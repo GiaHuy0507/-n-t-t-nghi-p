@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../scss/CreateCV.scss";
 
@@ -91,9 +91,7 @@ const CreateCV = () => {
       : getInitialDraft()?.template || "modern",
   );
   const [saved, setSaved] = useState(false);
-  const [exporting, setExporting] = useState(false);
   const [aiAppliedMessage, setAiAppliedMessage] = useState("");
-  const previewRef = useRef(null);
 
   useEffect(() => {
     const aiDraft = location.state?.aiDraft;
@@ -190,33 +188,21 @@ const CreateCV = () => {
     if (draftId === currentDraftId) createNewDraft();
   };
 
-  const exportPdf = async () => {
-    if (!previewRef.current || exporting) return;
-
-    setExporting(true);
-    try {
-      // Chỉ tải thư viện xuất PDF khi người dùng bấm xuất, giúp bundle chính nhẹ hơn
-      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
-        import("html2canvas"),
-        import("jspdf"),
-      ]);
-      const canvas = await html2canvas(previewRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-      });
-      const imageData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "px",
-        format: [canvas.width, canvas.height],
-      });
-
-      pdf.addImage(imageData, "PNG", 0, 0, canvas.width, canvas.height);
-      pdf.save(`${data.fullName || "cv-cua-toi"}.pdf`);
-    } finally {
-      setExporting(false);
-    }
+  // Dùng hộp thoại in của trình duyệt (chọn "Lưu dưới dạng PDF") để PDF giữ
+  // lớp chữ thật: nhẹ, chọn được chữ và pdf-parse đọc được khi tải CV lên lại.
+  // Phần chỉ in khung CV nằm trong @media print của CreateCV.scss.
+  const exportPdf = () => {
+    // Trình duyệt lấy tiêu đề trang làm tên file PDF gợi ý
+    const pageTitle = document.title;
+    document.title = data.fullName ? `CV - ${data.fullName}` : "cv-cua-toi";
+    window.addEventListener(
+      "afterprint",
+      () => {
+        document.title = pageTitle;
+      },
+      { once: true },
+    );
+    window.print();
   };
 
   const lines = (value) => value.split("\n").filter((line) => line.trim());
@@ -254,9 +240,9 @@ const CreateCV = () => {
             type="button"
             className="btn"
             onClick={exportPdf}
-            disabled={exporting}
+            title='Chọn "Lưu dưới dạng PDF" trong hộp thoại hiện ra'
           >
-            {exporting ? "Đang xuất PDF..." : "Tải PDF"}
+            Tải PDF
           </button>
         </div>
       </div>
@@ -478,7 +464,7 @@ const CreateCV = () => {
         </section>
 
         <section className={`cv-preview ${template}`} aria-label="Xem trước CV">
-          <div className="cv-paper" ref={previewRef}>
+          <div className="cv-paper">
             {template === "sidebar" ? (
               <div className="sidebar-template">
                 <aside className="sidebar-column">
