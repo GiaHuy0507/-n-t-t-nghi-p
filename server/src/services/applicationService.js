@@ -272,7 +272,7 @@ const getAIShortlistForHR = async (hrId, jobId) => {
   };
 };
 
-// HR xem tóm tắt hồ sơ và câu hỏi phỏng vấn gợi ý. Kết quả được lưu lại;
+// HR xem nhận xét hồ sơ do AI tạo. Kết quả được lưu lại;
 // chỉ gọi AI lần nữa khi HR yêu cầu tạo lại.
 const getAIReviewForHR = async (
   applicationId,

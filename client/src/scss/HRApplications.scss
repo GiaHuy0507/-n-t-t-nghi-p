@@ -303,7 +303,7 @@
   }
 }
 
-// Gợi ý chuẩn bị phỏng vấn do AI tạo
+// Nhận xét hồ sơ do AI tạo
 .ai-review {
   margin-top: 16px;
   padding: 16px 18px;
@@ -354,34 +354,6 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
-  }
-
-  &__questions {
-    padding-left: 20px;
-    font-size: 14px;
-
-    li + li {
-      margin-top: 8px;
-    }
-
-    strong {
-      display: block;
-      font-weight: 600;
-    }
-
-    span {
-      color: var(--ink-3);
-      font-size: 13px;
-    }
-
-    em {
-      font-style: normal;
-      margin-right: 6px;
-      padding: 0 6px;
-      border-radius: 4px;
-      background: var(--accent-soft);
-      color: var(--accent);
-    }
   }
 
   &__note {

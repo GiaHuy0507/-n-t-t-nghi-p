@@ -183,7 +183,7 @@ function HRApplications() {
     }
   };
 
-  // Tóm tắt hồ sơ và câu hỏi phỏng vấn do AI gợi ý; refresh = tạo lại
+  // Nhận xét hồ sơ do AI tạo; refresh = tạo lại
   const handleAIReview = async (application, refresh = false) => {
     setReviewLoadingId(application._id);
     setReviewErrors((current) => ({ ...current, [application._id]: "" }));
@@ -203,7 +203,7 @@ function HRApplications() {
       setReviewErrors((current) => ({
         ...current,
         [application._id]:
-          error.response?.data?.message || "Chưa tạo được gợi ý, thử lại sau.",
+          error.response?.data?.message || "Chưa tạo được nhận xét, thử lại sau.",
       }));
     } finally {
       setReviewLoadingId(null);
@@ -452,7 +452,7 @@ function HRApplications() {
                   {application.aiReview?.generatedAt ? (
                     <>
                       <div className="ai-review__head">
-                        <h3>Gợi ý chuẩn bị phỏng vấn</h3>
+                        <h3>Nhận xét hồ sơ của AI</h3>
                         <button
                           type="button"
                           className="btn btn--ghost btn--sm"
@@ -489,26 +489,8 @@ function HRApplications() {
                           </div>
                         )}
                       </div>
-                      {application.aiReview.interviewQuestions?.length > 0 && (
-                        <>
-                          <h4>Câu hỏi phỏng vấn gợi ý</h4>
-                          <ol className="ai-review__questions">
-                            {application.aiReview.interviewQuestions.map(
-                              (item) => (
-                                <li key={item.question}>
-                                  <strong>{item.question}</strong>
-                                  <span>
-                                    {item.skill && <em>{item.skill}</em>}
-                                    {item.purpose}
-                                  </span>
-                                </li>
-                              ),
-                            )}
-                          </ol>
-                        </>
-                      )}
                       <p className="ai-review__note">
-                        Gợi ý do AI tạo{" "}
+                        Nhận xét do AI tạo{" "}
                         {new Date(
                           application.aiReview.generatedAt,
                         ).toLocaleString("vi-VN")}
@@ -519,8 +501,8 @@ function HRApplications() {
                   ) : (
                     <div className="ai-review__empty">
                       <span>
-                        Tóm tắt hồ sơ và 5 câu hỏi phỏng vấn dựa trên kỹ năng
-                        còn thiếu.
+                        Tóm tắt hồ sơ, điểm phù hợp và điểm cần làm rõ so với tin
+                        tuyển dụng.
                       </span>
                       <button
                         type="button"
@@ -538,7 +520,7 @@ function HRApplications() {
                       >
                         {reviewLoadingId === application._id
                           ? "AI đang đọc hồ sơ..."
-                          : "Gợi ý phỏng vấn bằng AI"}
+                          : "Nhận xét hồ sơ bằng AI"}
                       </button>
                     </div>
                   )}
