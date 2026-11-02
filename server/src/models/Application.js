@@ -39,16 +39,13 @@ const applicationSchema = new mongoose.Schema(
       default: "",
     },
 
-    // Gợi ý của AI cho HR: tóm tắt, điểm cần làm rõ, câu hỏi phỏng vấn
+    // Nhận xét của AI cho HR: tóm tắt, điểm phù hợp, điểm cần làm rõ
     aiReview: {
       type: new mongoose.Schema(
         {
           summary: String,
           strengths: [String],
           concerns: [String],
-          interviewQuestions: [
-            { question: String, purpose: String, skill: String, _id: false },
-          ],
           matchScore: Number,
           generatedAt: Date,
         },

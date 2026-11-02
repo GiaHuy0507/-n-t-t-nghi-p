@@ -137,7 +137,9 @@ test("gợi ý cho HR không gửi thông tin cá nhân của ứng viên sang A
       );
     }
     assert.match(receivedPrompt, /TypeScript/);
-    assert.equal(review.interviewQuestions.length, 1);
+    assert.deepEqual(review.concerns, ["Chưa thấy TypeScript"]);
+    // AI có trả thêm trường lạ thì cũng không được đưa vào kết quả
+    assert.equal(review.interviewQuestions, undefined);
     assert.equal(typeof review.matchScore, "number");
     assert.ok(review.generatedAt instanceof Date);
     assert.equal(application.saved, 1);
