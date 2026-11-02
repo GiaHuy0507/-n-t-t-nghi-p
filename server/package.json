@@ -8,7 +8,8 @@
     "start": "node src/server.js",
     "test": "node --test",
     "test:gemini": "node scripts/check-gemini.js",
-    "make-admin": "node scripts/make-admin.js"
+    "make-admin": "node scripts/make-admin.js",
+    "reanalyze-cvs": "node scripts/reanalyze-cvs.js"
   },
   "keywords": [],
   "author": "",
