@@ -96,10 +96,14 @@ const saveUploadedCV = async ({ candidate, file }) => {
 // Với PDF dạng ảnh, AI chép lại chữ đọc được vào originalCvText; phải lấy
 // trường này trước khi gán vào cv.aiAnalysis vì schema không có trường đó
 // nên Mongoose sẽ bỏ nó đi.
+// PDF có chữ cũng được gửi kèm file gốc: pdf-parse có thể đọc lệch thứ tự
+// tiêu đề mục (CV làm bằng Canva...), AI cần nhìn bố cục thật để nhận xét đúng.
+// Nếu không đọc được file mà đã có văn bản thì vẫn phân tích bằng văn bản.
 const analyzeAndStoreCV = async (cv) => {
-  const pdfBuffer = cv.extractedText
-    ? null
-    : await fs.promises.readFile(cv.filePath);
+  const pdfBuffer = await fs.promises.readFile(cv.filePath).catch((error) => {
+    if (!cv.extractedText) throw error;
+    return null;
+  });
   const analysis = await aiService.analyzeCV(cv.extractedText, pdfBuffer);
 
   if (!cv.extractedText && analysis?.originalCvText) {

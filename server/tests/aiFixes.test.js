@@ -183,3 +183,36 @@ test("chỉ lấy số năm kinh nghiệm khi câu thật sự nói về kinh ng
     null,
   );
 });
+
+test("analyzeAndStoreCV gửi kèm file PDF cả khi đã có văn bản", async () => {
+  const directory = await fs.mkdtemp(path.join(os.tmpdir(), "cv-text-"));
+  const filePath = path.join(directory, "cv.pdf");
+  await fs.writeFile(filePath, "pdf bytes");
+
+  let receivedText;
+  let receivedBuffer;
+  aiService.analyzeCV = async (text, pdfBuffer) => {
+    receivedText = text;
+    receivedBuffer = pdfBuffer;
+    return { summary: "Tóm tắt", skills: ["React"] };
+  };
+
+  const cv = new CV({
+    candidate: "64b000000000000000000000",
+    originalName: "cv.pdf",
+    fileName: "cv.pdf",
+    filePath,
+    extractedText: "Nguyễn Văn A - React",
+  });
+
+  try {
+    await analyzeAndStoreCV(cv);
+
+    assert.equal(receivedText, "Nguyễn Văn A - React");
+    assert.ok(Buffer.isBuffer(receivedBuffer), "PDF phải được gửi kèm văn bản");
+    assert.equal(cv.extractedText, "Nguyễn Văn A - React");
+  } finally {
+    aiService.analyzeCV = originalAnalyzeCV;
+    await fs.rm(directory, { recursive: true, force: true });
+  }
+});

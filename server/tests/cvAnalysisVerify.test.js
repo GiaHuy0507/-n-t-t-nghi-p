@@ -84,3 +84,26 @@ test("PDF dạng ảnh: dùng originalCvText làm văn bản đối chiếu", ()
   );
   assert.equal(result.improvementSuggestions.length, 1);
 });
+
+test("analyzeCV ghi ngày hiện tại và gửi kèm PDF khi đã có văn bản", async () => {
+  const aiService = require("../src/services/aiService");
+  const originalGenerateJSON = aiService.gemini.generateJSON;
+  let sentContents;
+  aiService.gemini.generateJSON = async (contents) => {
+    sentContents = contents;
+    return { ...baseAnalysis, missingInformation: [], improvementSuggestions: [] };
+  };
+
+  try {
+    await aiService.analyzeCV(cvText, Buffer.from("pdf bytes"), new Date("2026-11-02T03:00:00Z"));
+
+    const parts = sentContents[0].parts;
+    const prompt = parts[0].text;
+    assert.match(prompt, /Hôm nay là ngày 02\/11\/2026/);
+    assert.match(prompt, /căn cứ vào PDF/);
+    assert.ok(prompt.includes("Frontend Developer tại ABC"), "văn bản CV vẫn nằm trong prompt");
+    assert.equal(parts[1].inlineData.mimeType, "application/pdf");
+  } finally {
+    aiService.gemini.generateJSON = originalGenerateJSON;
+  }
+});

@@ -213,14 +213,14 @@ async function main() {
     console.log(`[${index + 1}/${labels.length}] ${label.file}`);
 
     try {
-      // Giống luồng thật trong cvFileService: có chữ thì gửi chữ, không có thì gửi PDF
+      // Giống luồng thật trong cvFileService: luôn gửi PDF, có chữ thì gửi kèm chữ
       let text = "";
       try {
         text = await extractTextFromPDF(filePath);
       } catch {
         text = "";
       }
-      const buffer = text ? null : fs.readFileSync(filePath);
+      const buffer = fs.readFileSync(filePath);
       if (!text) console.log("  không trích được chữ → gửi PDF cho AI đọc ảnh");
 
       const analysis = await analyzeWithRetry(analyzeCV, text, buffer);
