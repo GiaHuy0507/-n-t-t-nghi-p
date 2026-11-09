@@ -60,7 +60,7 @@ Chúng em cũng xin cảm ơn [tên khoa/trường], các thầy cô và những
 
 Đồ án xây dựng một nền tảng tuyển dụng trực tuyến kết nối ứng viên và nhà tuyển dụng, đồng thời hỗ trợ ứng viên hiểu rõ hơn nội dung hồ sơ của mình thông qua phân tích CV bằng mô hình ngôn ngữ Gemini. Ứng viên có thể tạo tài khoản, tìm kiếm tin tuyển dụng, tải CV PDF, xem nội dung được trích xuất, nhận nhận xét về điểm mạnh và đề xuất cải thiện, cũng như tham khảo các việc làm có kỹ năng gần với hồ sơ. Nhà tuyển dụng có thể quản lý tin tuyển dụng, xem hồ sơ ứng tuyển, ghi chú, cập nhật trạng thái và tham khảo danh sách ứng viên được xếp hạng theo mức độ phù hợp. Quản trị viên có thể theo dõi người dùng, tin tuyển dụng và điều chỉnh một số trạng thái hệ thống.
 
-Hệ thống sử dụng React và SCSS ở phía giao diện; Node.js, Express và Mongoose ở phía máy chủ; MongoDB để lưu dữ liệu; Multer và hệ thống tệp để nhận, lưu CV; `pdf-parse` để trích xuất chữ từ PDF; Gemini API để phân tích nội dung CV theo cấu trúc JSON. Tệp được tính mã SHA-256 nhằm nhận diện CV trùng của cùng ứng viên. Kết quả thực tế cần được đánh giá bằng bộ kiểm thử và thử nghiệm người dùng trước khi đưa ra kết luận định lượng; báo cáo không giả định trước số liệu hiệu năng hay độ chính xác của AI.
+Hệ thống sử dụng React và SCSS ở phía giao diện; Node.js, Express và Mongoose ở phía máy chủ; MongoDB để lưu dữ liệu; Multer và hệ thống tệp để nhận, lưu CV; `pdf-parse` để trích xuất chữ từ PDF; Gemini API để phân tích nội dung CV theo cấu trúc JSON, soạn bản nháp mô tả công việc và nhận xét hồ sơ cho HR. Mức độ phù hợp giữa CV và tin tuyển dụng được tính bằng thuật toán có trọng số (kỹ năng 70%, chức danh 15%, kinh nghiệm 15%) trên dữ liệu AI đã trích xuất. Tệp được tính mã SHA-256 nhằm nhận diện CV trùng của cùng ứng viên. Bộ 26 bài kiểm thử tự động phía máy chủ đều đạt; đánh giá trích xuất trên mẫu nhỏ (2 CV) cho kết quả đúng toàn bộ họ tên, thông tin liên hệ và số năm kinh nghiệm, recall kỹ năng 95%. Số mẫu còn ít nên các tỉ lệ chỉ mang tính minh họa.
 
 **Từ khóa:** tuyển dụng trực tuyến, CV, phân tích hồ sơ, Gemini, MongoDB, Applicant Tracking System.
 
@@ -68,7 +68,7 @@ Hệ thống sử dụng React và SCSS ở phía giao diện; Node.js, Express 
 
 This project develops an online recruitment platform that connects candidates and employers and uses the Gemini API to analyze résumé content. Candidates can register, browse job postings, upload PDF résumés, review extracted profile information, receive evidence-based strengths and improvement suggestions, and explore jobs whose requirements overlap with their skills. Employers can manage job postings, review applications, add notes, update application statuses, and consult a ranked shortlist based on candidate profile evidence. Administrators can inspect users and job postings and manage selected system states.
 
-The frontend is built with React and SCSS. The backend uses Node.js, Express, and Mongoose, with MongoDB for structured data and the local filesystem for uploaded PDF files. Multer handles uploads, `pdf-parse` extracts text, and Gemini produces structured résumé analysis. SHA-256 hashes are used to detect duplicate files for the same candidate. Quantitative claims about usability, performance, or AI accuracy should be added only after running and documenting the corresponding evaluations.
+The frontend is built with React and SCSS. The backend uses Node.js, Express, and Mongoose, with MongoDB for structured data and the local filesystem for uploaded PDF files. Multer handles uploads, `pdf-parse` extracts text, and Gemini produces structured résumé analysis, draft job descriptions, and application reviews for HR. The match between a résumé and a job posting is computed by a weighted rule-based algorithm (skills 70%, job title 15%, experience 15%) over the extracted data. SHA-256 hashes are used to detect duplicate files for the same candidate. All 26 automated server tests pass; an extraction evaluation on a small sample (2 résumés) found names, contact details, and years of experience fully correct, with 95% skill recall. The sample is small, so these figures are illustrative only.
 
 **Keywords:** online recruitment, résumé analysis, Gemini, MongoDB, applicant tracking.
 
@@ -115,8 +115,13 @@ The frontend is built with React and SCSS. The backend uses Node.js, Express, an
 | Bảng 3.4 | Mô tả collection Job            |
 | Bảng 3.5 | Mô tả collection CV             |
 | Bảng 3.6 | Mô tả collection Application    |
-| Bảng 3.7 | Đặc tả một số API               |
+| Bảng 3.7 | Các chức năng sử dụng AI        |
+| Bảng 3.8 | Ghép cặp dữ liệu khi tính độ phù hợp |
+| Bảng 3.9 | Ví dụ tính điểm phù hợp         |
+| Bảng 4.1 | Đặc tả một số API               |
 | Bảng 5.1 | Các trường hợp kiểm thử đề xuất |
+| Bảng 5.2 | Đánh giá trích xuất của AI      |
+| Bảng 5.3 | Kết quả trước và sau cải tiến phân tích AI |
 
 ## DANH MỤC CHỮ VIẾT TẮT
 
@@ -186,6 +191,8 @@ Mô hình ngôn ngữ nhận nội dung CV và trả về các trường như th
 
 ## 2.2. Công nghệ và công cụ phát triển
 
+**Bảng 2.1. Công nghệ sử dụng trong dự án**
+
 | Thành phần                 | Công nghệ trong mã nguồn                    | Vai trò                                                                |
 | -------------------------- | ------------------------------------------- | ---------------------------------------------------------------------- |
 | Frontend                   | React, React Router, JavaScript, SCSS, Vite | Xây dựng trang, điều hướng, giao diện và biểu mẫu                      |
@@ -194,7 +201,7 @@ Mô hình ngôn ngữ nhận nội dung CV và trả về các trường như th
 | Cơ sở dữ liệu              | MongoDB, Mongoose                           | Lưu người dùng, việc làm, CV và đơn ứng tuyển                          |
 | Tải tệp                    | Multer                                      | Nhận tệp PDF, giới hạn 10 MB, lưu tạm trước khi xử lý                  |
 | PDF                        | `pdf-parse`                                 | Trích xuất văn bản từ PDF có lớp chữ                                   |
-| AI                         | Google GenAI SDK, Gemini API                | Phân tích CV thành JSON; tạo mô tả công việc theo logic hiện tại       |
+| AI                         | Google GenAI SDK, Gemini API                | Phân tích CV thành JSON; soạn mô tả công việc; nhận xét hồ sơ cho HR   |
 | Bảo mật hỗ trợ             | `jsonwebtoken`, `bcryptjs`, `helmet`, CORS  | Token xác thực, băm mật khẩu, header bảo mật và cấu hình chia sẻ nguồn |
 | Lưu trạng thái trình duyệt | `localStorage`, `sessionStorage`            | Lưu token/người dùng; giữ kết quả tải CV trong phiên trình duyệt       |
 
@@ -214,21 +221,29 @@ MongoDB lưu dữ liệu nghiệp vụ. Tệp PDF lưu trong thư mục `uploads
 
 ### 2.2.4. Tích hợp AI
 
-Máy chủ gửi văn bản PDF đã trích xuất hoặc gửi PDF trực tiếp nếu không trích được đủ văn bản. Gemini được yêu cầu trả JSON theo schema, bao gồm `personalInfo`, `summary`, `strengths`, `improvementSuggestions`, `skills`, `education`, `experienceYears`, `workExperience`, `languages`, `certifications` và `missingInformation`. Kết quả và trạng thái được lưu ở CV. Logic so khớp công việc hiện chuẩn hóa chữ thường và dấu, đối chiếu kỹ năng, từ khóa chức danh, và số năm kinh nghiệm nếu mô tả công việc có thể nhận diện số năm.
+Mọi lời gọi Gemini đi qua một hàm chung `gemini.generateJSON` và bắt buộc trả JSON theo `responseSchema` (`responseMimeType: "application/json"`), nên máy chủ luôn nhận dữ liệu có cấu trúc. Mô hình mặc định là `gemini-3.5-flash-lite`, cấu hình qua biến môi trường `GEMINI_MODEL`; khóa API đặt trong `GEMINI_API_KEY`.
+
+Khi phân tích CV, máy chủ gửi văn bản do `pdf-parse` trích xuất kèm tệp PDF gốc. Tệp gốc giúp mô hình thấy bố cục thật, vì với CV thiết kế bằng công cụ đồ họa, thứ tự tiêu đề mục trong văn bản trích xuất có thể bị lệch. Nếu văn bản trích được ít hơn 40 ký tự (CV dạng ảnh), chỉ tệp PDF được gửi và mô hình tự đọc nội dung ảnh. Prompt ghi rõ ngày hiện tại để tính đúng mốc "Hiện tại", và dùng `temperature` 0,2 để kết quả ổn định. Gemini trả JSON gồm `personalInfo`, `summary`, `strengths`, `improvementSuggestions`, `skills`, `education`, `experienceYears`, `workExperience`, `languages`, `certifications` và `missingInformation`. Kết quả được hậu kiểm bằng code trước khi lưu vào CV.
+
+Bước so khớp CV với tin tuyển dụng không gọi AI mà dùng thuật toán có trọng số trên dữ liệu AI đã trích xuất (mục 3.5).
 
 # CHƯƠNG 3. PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG
 
 ## 3.1. Khảo sát yêu cầu và tác nhân
 
+**Bảng 3.1. Tác nhân và quyền chính**
+
 | Tác nhân            | Nhu cầu và quyền chính                                                                                                    |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Ứng viên            | Đăng ký/đăng nhập; tìm việc; tải và phân tích CV; xem việc làm gợi ý; ứng tuyển; theo dõi đơn; tạo CV từ giao diện hỗ trợ |
-| Nhà tuyển dụng (HR) | Quản lý tin do mình tạo; xem hồ sơ ứng tuyển; xem CV; tham khảo shortlist; ghi chú và cập nhật trạng thái ứng viên        |
+| Ứng viên            | Đăng ký/đăng nhập; tìm việc; tải và phân tích CV; xem độ phù hợp với từng tin và việc làm gợi ý; ứng tuyển; theo dõi đơn; tạo CV từ giao diện hỗ trợ |
+| Nhà tuyển dụng (HR) | Quản lý tin do mình tạo; soạn mô tả công việc bằng AI; xem hồ sơ ứng tuyển; xem CV; tham khảo shortlist và nhận xét hồ sơ bằng AI; ghi chú và cập nhật trạng thái ứng viên |
 | Quản trị viên       | Xem tổng quan, người dùng và việc làm; thay đổi vai trò người dùng; đổi trạng thái hoặc xóa tin tuyển dụng                |
 
 ### 3.1.1. Đặc tả chức năng hệ thống
 
 Bảng 3.2 mô tả đầu vào, đầu ra, xử lý chính và nơi lưu dữ liệu của các chức năng. “Dữ liệu cần lưu” phân biệt dữ liệu bền vững phía máy chủ với dữ liệu tạm/lưu cục bộ trên trình duyệt.
+
+**Bảng 3.2. Đặc tả chức năng hệ thống**
 
 | Chức năng                  | Đầu vào                                                                                                       | Đầu ra                                                                               | Xử lý                                                                                                                                  | Dữ liệu cần lưu                                                                                                                                  |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -236,13 +251,16 @@ Bảng 3.2 mô tả đầu vào, đầu ra, xử lý chính và nơi lưu dữ l
 | Tìm kiếm và xem việc làm   | Yêu cầu lấy danh sách hoặc mã tin tuyển dụng.                                                                 | Danh sách tin hoặc nội dung chi tiết một tin.                                        | Backend truy vấn collection `Job`; giao diện hiển thị thông tin tin tuyển dụng.                                                        | Không tạo dữ liệu mới; đọc dữ liệu `Job` đã có trong MongoDB.                                                                                    |
 | HR quản lý tin tuyển dụng  | Tiêu đề, mô tả, công ty, địa điểm, khoảng lương, kỹ năng, hình thức làm việc, trạng thái; mã tin khi sửa/xóa. | Tin được tạo/cập nhật, danh sách tin của HR hoặc thông báo kết quả thao tác.         | Xác thực vai trò HR và quyền sở hữu tin; tạo, sửa trường cho phép hoặc xóa tin. Khi xóa tin, các đơn ứng tuyển liên quan cũng bị xóa.  | MongoDB `Job`: nội dung tin, `createdBy`, trạng thái và thời gian. Các `Application` liên quan bị xóa khi xóa tin.                               |
 | Tải và phân tích CV        | Tệp PDF tối đa 10 MB và JWT của ứng viên.                                                                     | CV đã lưu, văn bản trích xuất, kết quả phân tích hoặc trạng thái phân tích thất bại. | Kiểm tra tệp; tính SHA-256 để tìm bản trùng của cùng ứng viên; trích xuất văn bản; gọi Gemini; lưu kết quả hoặc `FAILED`.              | Tệp PDF trong `uploads/cv`; MongoDB `CV`: ứng viên, tên/đường dẫn tệp, hash, văn bản, trạng thái và kết quả AI.                                  |
-| Gợi ý việc làm phù hợp     | Kỹ năng từ kết quả phân tích CV và danh sách tin tuyển dụng.                                                  | Tối đa 5 tin được xếp hạng theo mức độ trùng kỹ năng.                                | Giao diện so khớp kỹ năng với tiêu đề, mô tả, yêu cầu và kỹ năng của tin; sắp xếp điểm giảm dần.                                       | Không lưu điểm gợi ý vào MongoDB; kết quả phân tích và danh sách gợi ý được giữ trong `sessionStorage` của trình duyệt.                          |
+| Gợi ý việc làm phù hợp     | Mã CV đã phân tích và JWT của ứng viên.                                                                       | Mặc định 5 tin (tối đa 20) xếp hạng theo điểm phù hợp, kèm kỹ năng có/thiếu.         | Máy chủ chấm điểm CV với mọi tin đang `OPEN` bằng `matchCVToJob` (mục 3.5); sắp xếp điểm giảm dần.                                    | Không lưu điểm vào MongoDB; giao diện giữ kết quả tải CV và danh sách gợi ý trong `sessionStorage`.                                              |
+| Đánh giá độ phù hợp với tin | Mã tin và JWT của ứng viên.                                                                                  | Điểm phù hợp, điểm từng phần, kỹ năng có/thiếu và gợi ý cải thiện CV.                | Lấy CV đã phân tích mới nhất của ứng viên; chạy `matchCVToJob` và `suggestCVImprovement`.                                              | Không lưu; tính lại mỗi lần xem.                                                                                                                 |
+| HR soạn mô tả công việc bằng AI | Vị trí (bắt buộc), công ty, địa điểm, lương, kỹ năng, ghi chú.                                           | Bản nháp mô tả gồm giới thiệu, nhiệm vụ, yêu cầu, quyền lợi.                         | Gọi Gemini với quy tắc không bịa phúc lợi/số liệu và không phân biệt đối xử; HR chỉnh sửa trước khi đăng.                              | Chỉ lưu khi HR đăng tin (collection `Job`).                                                                                                      |
+| HR nhận xét hồ sơ bằng AI  | Mã đơn ứng tuyển; tùy chọn tạo lại.                                                                           | Tóm tắt, tối đa 3 điểm phù hợp và 3 điểm cần làm rõ.                                 | Tính điểm phù hợp, gửi Gemini dữ liệu hồ sơ không kèm họ tên, email, điện thoại, địa chỉ; không kết luận tuyển hay loại.               | MongoDB `Application.aiReview`; lần sau dùng lại, chỉ gọi AI khi HR yêu cầu tạo lại.                                                             |
 | Ứng tuyển và theo dõi đơn  | Mã tin, CV PDF, thư giới thiệu (nếu có) và JWT ứng viên.                                                      | Đơn ứng tuyển được tạo; ứng viên nhận danh sách và trạng thái các đơn của mình.      | Kiểm tra đơn trùng và tin còn mở; lưu hoặc tái sử dụng CV; tạo đơn; thử phân tích CV nếu chưa có kết quả. Lỗi AI không hủy đơn đã tạo. | MongoDB `Application`: ứng viên, tin, CV tham chiếu, thư giới thiệu, trạng thái. Thông tin tệp và phân tích được lưu trong `CV` và hệ thống tệp. |
 | HR xem và xử lý hồ sơ      | Yêu cầu lấy đơn; mã tin/mã đơn; trạng thái mới hoặc ghi chú đánh giá.                                         | Danh sách đơn, CV, shortlist có điểm so khớp; kết quả cập nhật trạng thái/ghi chú.   | Chỉ truy cập đơn thuộc tin do HR tạo; kiểm tra trạng thái hợp lệ; ghi chú tối đa 2.000 ký tự. Điểm shortlist được tính khi yêu cầu.    | MongoDB `Application`: `status` và `hrNote`. Điểm shortlist được tính tại thời điểm truy vấn, không lưu thành trường riêng.                      |
 | Quản trị người dùng và tin | Yêu cầu tổng quan/danh sách; mã người dùng và vai trò; mã tin và trạng thái hoặc yêu cầu xóa.                 | Số liệu tổng quan, danh sách người dùng/tin và kết quả cập nhật.                     | Chỉ ADMIN được gọi; kiểm tra vai trò/trạng thái thuộc danh sách hợp lệ; khi xóa tin, xóa các đơn liên quan.                            | MongoDB `User.role`, `Job.status`; tin và đơn liên quan bị xóa theo thao tác quản trị. Số liệu tổng quan được truy vấn từ dữ liệu hiện có.       |
-| Tạo CV và xuất PDF         | Thông tin cá nhân, tóm tắt, kỹ năng, kinh nghiệm, học vấn, mẫu CV và gợi ý AI nếu có.                         | Bản nháp có thể chỉnh sửa và tệp PDF tải về.                                         | Giao diện tạo bản xem trước; lưu/đọc/xóa bản nháp cục bộ; kết xuất PDF trên trình duyệt.                                               | Bản nháp lưu trong `localStorage` với khóa `cvDrafts`; PDF được tải về thiết bị. Chức năng này không ghi bản nháp vào MongoDB.                   |
+| Tạo CV và xuất PDF         | Thông tin cá nhân, tóm tắt, kỹ năng, kinh nghiệm, học vấn, mẫu CV và gợi ý AI nếu có.                         | Bản nháp có thể chỉnh sửa và tệp PDF tải về.                                         | Giao diện tạo bản xem trước; lưu/đọc/xóa bản nháp cục bộ; xuất PDF qua hộp thoại in của trình duyệt ("Lưu dưới dạng PDF") để tệp giữ lớp chữ thật. | Bản nháp lưu trong `localStorage` với khóa `cvDrafts`; PDF được tải về thiết bị. Chức năng này không ghi bản nháp vào MongoDB.                   |
 
-**Lưu ý về đăng ký:** API hiện nhận trường `role` từ yêu cầu đăng ký nếu giá trị thuộc enum hợp lệ; nếu bỏ trống thì mặc định là `CANDIDATE`. Khi triển khai thực tế, nên giới hạn tài khoản tự đăng ký ở vai trò ứng viên và cấp quyền HR/ADMIN qua quy trình quản trị.
+**Lưu ý về đăng ký:** người dùng tự đăng ký chỉ được chọn vai trò `CANDIDATE` hoặc `HR` (mặc định `CANDIDATE`); yêu cầu đăng ký với vai trò `ADMIN` bị từ chối. Tài khoản ADMIN được cấp bằng lệnh `npm run make-admin` hoặc bởi quản trị viên khác. Khi triển khai thực tế, nên duyệt tài khoản HR trước khi cho đăng tin.
 
 ### 3.1.2. Yêu cầu phi chức năng
 
@@ -494,13 +512,13 @@ Hệ thống sử dụng MongoDB với bốn collection nghiệp vụ. Các bả
 |   4 | `fileName`                          | String                     | Bắt buộc                                                                             | Tên tệp được lưu trên máy chủ.                             |
 |   5 | `filePath`                          | String                     | Bắt buộc                                                                             | Đường dẫn tệp PDF trong hệ thống tệp máy chủ.              |
 |   6 | `fileHash`                          | String                     | Không bắt buộc; tham gia index ghép với `candidate`                                  | Giá trị SHA-256 dùng nhận diện CV trùng của cùng ứng viên. |
-|   7 | `extractedText`                     | String                     | Mặc định chuỗi rỗng                                                                  | Văn bản trích xuất từ PDF hoặc nội dung văn bản CV.        |
+|   7 | `extractedText`                     | String                     | Mặc định chuỗi rỗng                                                                  | Văn bản trích xuất bằng `pdf-parse`; với CV dạng ảnh là văn bản do Gemini đọc từ PDF. |
 |   8 | `aiStatus`                          | String                     | Enum `PENDING`, `COMPLETED`, `FAILED`; mặc định `PENDING`                            | Trạng thái phân tích CV bằng AI.                           |
 |   9 | `aiAnalysis`                        | Embedded document          | Không bắt buộc; các trường con có giá trị mặc định                                   | Kết quả phân tích có cấu trúc từ Gemini.                   |
 |  10 | `aiAnalysis.personalInfo`           | Embedded document          | Gồm `fullName`, `email`, `phone`, `location`; mặc định chuỗi rỗng                    | Thông tin liên hệ trích xuất từ CV.                        |
 |  11 | `aiAnalysis.summary`                | String                     | Mặc định chuỗi rỗng                                                                  | Tóm tắt hồ sơ ứng viên.                                    |
 |  12 | `aiAnalysis.strengths`              | Array of String            | Mặc định mảng rỗng                                                                   | Các điểm mạnh có căn cứ trong CV.                          |
-|  13 | `aiAnalysis.improvementSuggestions` | Array of Embedded document | Mặc định mảng rỗng; mỗi phần tử gồm `issue`, `evidence`, `recommendation`, `example` | Các đề xuất cải thiện CV và bằng chứng liên quan.          |
+|  13 | `aiAnalysis.improvementSuggestions` | Array of Embedded document | Mặc định mảng rỗng; mỗi phần tử gồm `issue`, `evidence`, `recommendation`, `example` | 2–4 đề xuất cải thiện, mỗi đề xuất trích nguyên văn đoạn CV làm căn cứ. |
 |  14 | `aiAnalysis.skills`                 | Array of String            | Mặc định mảng rỗng                                                                   | Kỹ năng được trích xuất.                                   |
 |  15 | `aiAnalysis.education`              | Array of Embedded document | Mặc định mảng rỗng; mỗi phần tử gồm `school`, `degree`, `major`                      | Thông tin học vấn.                                         |
 |  16 | `aiAnalysis.experienceYears`        | Number                     | Mặc định `0`                                                                         | Số năm kinh nghiệm ước tính từ CV.                         |
@@ -526,10 +544,11 @@ Các tệp PDF được lưu trong hệ thống tệp, không lưu nhị phân t
 |   5 | `coverLetter` | String       | Mặc định chuỗi rỗng, loại bỏ khoảng trắng đầu/cuối                                     | Thư giới thiệu của ứng viên.     |
 |   6 | `status`      | String       | Enum `PENDING`, `SHORTLISTED`, `INTERVIEW`, `REJECTED`, `ACCEPTED`; mặc định `PENDING` | Trạng thái xử lý đơn ứng tuyển.  |
 |   7 | `hrNote`      | String       | Mặc định chuỗi rỗng, tối đa 2.000 ký tự, loại bỏ khoảng trắng đầu/cuối                 | Ghi chú đánh giá nội bộ của HR.  |
-|   8 | `createdAt`   | Date         | Tự tạo bởi Mongoose timestamps                                                         | Thời điểm nộp đơn.               |
-|   9 | `updatedAt`   | Date         | Tự cập nhật bởi Mongoose timestamps                                                    | Thời điểm cập nhật đơn gần nhất. |
+|   8 | `aiReview`    | Embedded document | Không bắt buộc; gồm `summary`, `strengths`, `concerns`, `matchScore`, `generatedAt` | Nhận xét hồ sơ của AI cho HR, lưu lại để không gọi AI nhiều lần. |
+|   9 | `createdAt`   | Date         | Tự tạo bởi Mongoose timestamps                                                         | Thời điểm nộp đơn.               |
+|  10 | `updatedAt`   | Date         | Tự cập nhật bởi Mongoose timestamps                                                    | Thời điểm cập nhật đơn gần nhất. |
 
-HR chỉ được đọc và cập nhật đơn ứng tuyển thuộc các tin do chính HR tạo; quyền sở hữu được kiểm tra ở tầng service.
+Schema định nghĩa index unique `{ candidate: 1, job: 1 }`: mỗi ứng viên chỉ nộp một đơn cho một tin, kể cả khi hai yêu cầu được gửi gần như cùng lúc. HR chỉ được đọc và cập nhật đơn ứng tuyển thuộc các tin do chính HR tạo; quyền sở hữu được kiểm tra ở tầng service.
 
 ```mermaid
 erDiagram
@@ -550,6 +569,60 @@ erDiagram
 
 Giao diện chính được tổ chức trong các trang `Home`, `JobList`, `JobDetail`, `CVUpload`, `MyApplications`, `HRDashboard`, `HRJobs`, `HRApplications` và `AdminDashboard`. Chèn ảnh chụp thực tế vào các vị trí Hình 4.1–4.5. Cần ẩn tên, email, số điện thoại và dữ liệu cá nhân của người thử nghiệm trước khi đưa ảnh vào báo cáo.
 
+## 3.5. Thiết kế các chức năng AI và thuật toán tính độ phù hợp
+
+### 3.5.1. Các chức năng sử dụng AI
+
+Hệ thống có sáu chức năng liên quan đến AI, chia làm hai nhóm: ba chức năng gọi Gemini và ba chức năng dùng thuật toán do nhóm viết trên dữ liệu Gemini đã trích xuất. Bảng 3.7 liệt kê các chức năng cùng hàm xử lý và dữ liệu liên quan.
+
+**Bảng 3.7. Các chức năng sử dụng AI**
+
+| Chức năng                         | Gọi Gemini | Hàm chính (`server/src/services`)                     | API                                           | Dữ liệu đọc / ghi                                    |
+| --------------------------------- | ---------- | ----------------------------------------------------- | --------------------------------------------- | ---------------------------------------------------- |
+| Phân tích CV                      | Có         | `analyzeCV`, `verifyCVAnalysis`, `analyzeAndStoreCV`  | `POST /api/cv/upload`, `POST /api/applications` | Ghi `CV.extractedText`, `CV.aiStatus`, `CV.aiAnalysis` |
+| Soạn mô tả công việc              | Có         | `generateJobDescription`                              | `POST /api/jobs/ai/generate`                  | Không ghi; HR đăng tin thì lưu vào `Job`             |
+| Nhận xét hồ sơ cho HR             | Có         | `generateApplicationReview`, `getAIReviewForHR`       | `POST /api/applications/hr/:id/ai-review`     | Đọc `CV.aiAnalysis`, `Job`; ghi `Application.aiReview` |
+| Chấm điểm phù hợp với một tin     | Không      | `matchCVToJob`                                        | `GET /api/jobs/:id/match`                     | Đọc `CV.aiAnalysis`, `Job`                           |
+| Gợi ý cải thiện CV theo một tin   | Không      | `suggestCVImprovement`                                | `GET /api/jobs/:id/match`                     | Đọc `CV.aiAnalysis`, `Job`                           |
+| Gợi ý việc làm, shortlist cho HR  | Không      | `matchCVToJob`, `getAIShortlistForHR`                 | `GET /api/cv/:id/recommendations`, `GET /api/applications/hr/shortlist/:jobId` | Đọc `CV.aiAnalysis`, `Job`, `Application` |
+
+**Trích xuất thông tin từ CV.** `pdf-parse` lấy toàn bộ chữ trong tệp nhưng chưa phân biệt chữ nào quan trọng. Gemini đọc hiểu ngữ cảnh và điền vào các ô định sẵn trong `responseSchema` (họ tên, kỹ năng, số năm kinh nghiệm...). Cách này không phụ thuộc mẫu CV cố định như biểu thức chính quy, và xử lý được CV tiếng Việt lẫn tiếng Anh. Để hạn chế sai lệch, hệ thống áp dụng năm biện pháp:
+
+1. Ép kết quả theo JSON schema, mô hình không trả văn bản tự do.
+2. Prompt yêu cầu chỉ ghi điều có bằng chứng trong CV, không có thì để trống; nội dung CV đặt trong thẻ `<cv>` và được coi là dữ liệu không đáng tin để chống prompt injection.
+3. Gửi kèm tệp PDF gốc và ngày hiện tại, để mô hình thấy bố cục thật và tính đúng mốc "Hiện tại".
+4. Hậu kiểm bằng code (`verifyCVAnalysis`): loại đề xuất có trích dẫn không nằm trong CV, loại mục "thiếu X" khi dữ liệu đã trích xuất có X.
+5. Đo độ chính xác so với nhãn gán thủ công (mục 5.3).
+
+**Nhận xét hồ sơ cho HR** không gửi họ tên, email, số điện thoại, địa chỉ sang Gemini; prompt cấm đánh giá theo tuổi, giới tính, tình trạng hôn nhân, tôn giáo, quê quán, sức khỏe và không kết luận nên tuyển hay loại.
+
+### 3.5.2. Thuật toán tính độ phù hợp
+
+Hàm `matchCVToJob` so sánh JSON kết quả phân tích CV (`CV.aiAnalysis`) với document tin tuyển dụng (`Job`) theo ba cặp trường ở Bảng 3.8. Bước này không gọi AI nên cùng một CV và một tin luôn cho cùng kết quả, chạy nhanh và giải thích được.
+
+**Bảng 3.8. Ghép cặp dữ liệu khi tính độ phù hợp**
+
+| Tiêu chí     | Lấy từ `CV.aiAnalysis`                                                 | So với `Job`                                | Cách tính                                                        | Trọng số |
+| ------------ | ---------------------------------------------------------------------- | ------------------------------------------- | ---------------------------------------------------------------- | -------: |
+| Kỹ năng      | `skills`, `summary`, `workExperience[].position`, `workExperience[].highlights` | `skills`                           | Số kỹ năng của tin có bằng chứng trong CV ÷ tổng số kỹ năng của tin | 70%      |
+| Chức danh    | `summary`, `workExperience[].position`                                 | `title` (bỏ từ chung như developer, engineer) | Số từ khóa của tên vị trí xuất hiện trong chức danh cũ ÷ tổng số từ khóa | 15%      |
+| Kinh nghiệm  | `experienceYears`                                                      | Số năm đứng gần chữ "kinh nghiệm"/"experience" trong `description` | min(1; số năm của ứng viên ÷ số năm yêu cầu)                    | 15%      |
+
+Trước khi so, tên kỹ năng được chuẩn hóa: bỏ dấu, chữ thường, coi "ReactJS", "React.js" và "React" là một, "JS" là "JavaScript", giữ đúng "C++", "C#", ".NET". Điểm tổng bằng tổng điểm từng tiêu chí nhân trọng số. Tiêu chí nào tin tuyển dụng không có dữ liệu (ví dụ không ghi số năm kinh nghiệm) thì bị bỏ ra và trọng số được chia lại cho các tiêu chí còn lại, để ứng viên không bị trừ điểm vì yêu cầu không tồn tại.
+
+Trọng số do nhóm xác định theo lập luận, không học từ dữ liệu. Kỹ năng chiếm phần lớn vì là tiêu chí HR lọc đầu tiên và kiểm chứng được. Chức danh và kinh nghiệm là tiêu chí phụ, kém tin cậy hơn: tên chức danh khác nhau giữa các công ty, nhiều tin không ghi số năm, và nhiều năm chưa chắc phù hợp hơn. Điểm chỉ dùng để sắp xếp và gợi ý; quyết định cuối cùng thuộc về HR.
+
+**Bảng 3.9. Ví dụ tính điểm phù hợp**
+
+| Tiêu chí    | Dữ liệu CV                                     | Dữ liệu tin                                              | Kết quả            | Điểm |
+| ----------- | ---------------------------------------------- | -------------------------------------------------------- | ------------------ | ---: |
+| Kỹ năng     | ReactJS, JavaScript; mô tả công việc có "REST API" | React, JavaScript, TypeScript, REST API, Docker       | Có 3/5, thiếu TypeScript, Docker | 60 |
+| Chức danh   | "Frontend Developer"                           | "Frontend Developer ReactJS" → từ khóa frontend, react   | Có 1/2             | 50   |
+| Kinh nghiệm | 1 năm                                          | "Ít nhất 2 năm kinh nghiệm"                              | 1 ÷ 2              | 50   |
+| **Tổng**    |                                                |                                                          | 60 × 0,7 + 50 × 0,15 + 50 × 0,15 | **57%** |
+
+Nếu tin không ghi số năm kinh nghiệm, điểm là (60 × 0,7 + 50 × 0,15) ÷ 0,85 ≈ 58%. Kết quả trả về gồm điểm tổng, điểm từng phần, danh sách kỹ năng có và thiếu, nên ứng viên và HR đều thấy được lý do của con số.
+
 # CHƯƠNG 4. HIỆN THỰC HỆ THỐNG
 
 ## 4.1. Xây dựng phía Backend
@@ -567,25 +640,33 @@ Người dùng đăng nhập nhận JWT; các API cần bảo vệ dùng middlew
 1. Multer nhận trường `cv`, chỉ chấp nhận MIME PDF, giới hạn 10 MB và đặt tệp ở vùng tạm.
 2. Dịch vụ tính SHA-256 và tìm CV cùng hash của cùng ứng viên. Nếu trùng, tệp tạm được xóa và bản ghi hiện có được dùng lại.
 3. Nếu là tệp mới, hệ thống thử trích xuất chữ bằng `pdf-parse`, chuyển tệp sang `uploads/cv`, tạo bản ghi CV ở trạng thái `PENDING`.
-4. Backend gọi Gemini với văn bản đã trích xuất; nếu không có văn bản đủ dùng, gửi nội dung PDF để mô hình đọc trực tiếp.
-5. Khi thành công, lưu `aiAnalysis` và đặt `aiStatus` thành `COMPLETED`; nếu lỗi, đặt `FAILED` và giữ bản CV đã lưu để có thể thử phân tích lại trong một số luồng.
+4. Backend gọi Gemini với văn bản đã trích xuất kèm tệp PDF gốc và ngày hiện tại; nếu văn bản ít hơn 40 ký tự (CV dạng ảnh), chỉ gửi tệp PDF để mô hình đọc trực tiếp và chép lại văn bản vào `originalCvText`.
+5. `verifyCVAnalysis` hậu kiểm kết quả: loại đề xuất có trích dẫn không nằm trong CV và mục "thiếu" mâu thuẫn với dữ liệu đã trích xuất.
+6. Khi thành công, lưu `aiAnalysis` và đặt `aiStatus` thành `COMPLETED`; nếu lỗi, đặt `FAILED` và giữ bản CV đã lưu. HR có thể yêu cầu phân tích lại qua `POST /api/applications/hr/:id/retry-ai-analysis`; sau khi thay đổi prompt, lệnh `npm run reanalyze-cvs` phân tích lại toàn bộ CV đã lưu và xóa nhận xét HR cũ liên quan.
 
 Trong request upload hiện tại, xử lý phân tích diễn ra đồng bộ trong luồng yêu cầu. `PENDING` là trạng thái khởi tạo/lưu trước khi gọi AI, không phải bằng chứng có hàng đợi nền. Báo cáo cần phân biệt điểm này khi mô tả trải nghiệm và hiệu năng.
 
 ### 4.1.4. API tiêu biểu
 
-| Phương thức | Đường dẫn                               | Mục đích / quyền                |
-| ----------- | --------------------------------------- | ------------------------------- |
-| `GET`       | `/api/jobs`                             | Danh sách tin công khai         |
-| `GET`       | `/api/jobs/:id`                         | Chi tiết tin                    |
-| `POST`      | `/api/jobs`                             | HR tạo tin                      |
-| `POST`      | `/api/cv/upload`                        | Ứng viên tải và phân tích CV    |
-| `POST`      | `/api/applications`                     | Ứng viên nộp hồ sơ, kèm CV PDF  |
-| `GET`       | `/api/applications/my`                  | Ứng viên xem đơn của mình       |
-| `GET`       | `/api/applications/hr`                  | HR xem các đơn thuộc tin của HR |
-| `GET`       | `/api/applications/hr/shortlist/:jobId` | HR xem shortlist theo tin       |
-| `PATCH`     | `/api/applications/:id/status`          | HR đổi trạng thái đơn           |
-| `GET`       | `/api/admin/overview`                   | Admin xem tổng quan             |
+**Bảng 4.1. Đặc tả một số API**
+
+| Phương thức | Đường dẫn                                    | Mục đích / quyền                                   |
+| ----------- | -------------------------------------------- | -------------------------------------------------- |
+| `GET`       | `/api/jobs`                                  | Danh sách tin công khai                            |
+| `GET`       | `/api/jobs/:id`                              | Chi tiết tin                                       |
+| `POST`      | `/api/jobs`                                  | HR tạo tin                                         |
+| `POST`      | `/api/jobs/ai/generate`                      | HR nhờ AI soạn bản nháp mô tả công việc            |
+| `GET`       | `/api/jobs/:id/match`                        | Ứng viên xem độ phù hợp của CV với tin và gợi ý cải thiện |
+| `POST`      | `/api/cv/upload`                             | Ứng viên tải và phân tích CV                       |
+| `GET`       | `/api/cv/:id/recommendations`                | Ứng viên xem việc làm gợi ý theo CV                |
+| `POST`      | `/api/applications`                          | Ứng viên nộp hồ sơ, kèm CV PDF                     |
+| `GET`       | `/api/applications/my`                       | Ứng viên xem đơn của mình                          |
+| `GET`       | `/api/applications/hr`                       | HR xem các đơn thuộc tin của HR                    |
+| `GET`       | `/api/applications/hr/shortlist/:jobId`      | HR xem 5 ứng viên phù hợp nhất của một tin         |
+| `POST`      | `/api/applications/hr/:id/ai-review`         | HR xem nhận xét hồ sơ do AI tạo                    |
+| `POST`      | `/api/applications/hr/:id/retry-ai-analysis` | HR yêu cầu phân tích lại CV bị lỗi                 |
+| `PATCH`     | `/api/applications/:id/status`               | HR đổi trạng thái đơn                              |
+| `GET`       | `/api/admin/overview`                        | Admin xem tổng quan                                |
 
 ## 4.2. Xây dựng phía Frontend
 
@@ -593,7 +674,9 @@ Trong request upload hiện tại, xử lý phân tích diễn ra đồng bộ t
 
 Component `CVUpload` kiểm tra kích thước tệp ở giao diện, gửi PDF đến `/api/cv/upload`, hiển thị trạng thái tải và kết quả. Kết quả cùng các việc làm gợi ý được lưu bằng `sessionStorage` dưới khóa `cv-upload-result`; dữ liệu tồn tại trong phiên tab và được khôi phục khi tải lại trang. `localStorage` được dùng cho token và đối tượng người dùng. Hai cơ chế này giữ dữ liệu phía trình duyệt; chúng không thay thế lưu trữ bền vững tại máy chủ.
 
-Giao diện cho phép xem điểm mạnh và các đề xuất có căn cứ, chỉnh sửa nội dung dự thảo trước khi chuyển sang trang tạo CV. Việc lưu bản CV đã chỉnh sửa hoặc xuất bản mới cần được kiểm tra theo luồng cụ thể khi nghiệm thu.
+Giao diện cho phép xem điểm mạnh và các đề xuất có căn cứ; nút "Sửa phần này" chuyển nội dung đề xuất sang trang tạo CV (`CreateCV`) để ứng viên chỉnh sửa. Bước này chạy hoàn toàn trên trình duyệt, không gọi AI. Trang tạo CV dùng state của React: các ô nhập và bản xem trước cùng đọc một đối tượng dữ liệu nên bản xem trước cập nhật ngay khi gõ. Nút "Tải PDF" mở hộp thoại in của trình duyệt; người dùng chọn "Lưu dưới dạng PDF" để nhận tệp có lớp chữ thật (khoảng 50 KB), nhờ đó CV tạo trên hệ thống được `pdf-parse` đọc trực tiếp khi tải lên lại, thay vì phải gửi ảnh cho AI.
+
+Trang `JobDetail` hiển thị điểm phù hợp, điểm từng phần và kỹ năng còn thiếu. Trang `HRJobs` có nút soạn mô tả bằng AI; trang `HRApplications` có shortlist, nút "Nhận xét hồ sơ bằng AI" và nút phân tích lại CV bị lỗi.
 
 ## 4.3. Minh họa màn hình
 
@@ -618,9 +701,11 @@ Giao diện cho phép xem điểm mạnh và các đề xuất có căn cứ, ch
 
 ## 5.1. Phương pháp kiểm thử
 
-Kiểm thử chức năng theo luồng người dùng và API: xác thực, quyền theo vai trò, quản lý tin, tải tệp, phát hiện CV trùng, xử lý phản hồi AI, ứng tuyển và cập nhật trạng thái. Kiểm thử giao diện cần thực hiện trên các kích thước màn hình và kiểm tra thông báo lỗi, trạng thái tải, dữ liệu rỗng. Các bài kiểm thử tự động có trong `server/tests`; cần chạy chúng trong môi trường được cấu hình phù hợp và ghi lại lệnh, ngày, phiên bản và kết quả thực tế. Báo cáo này không khẳng định các bài kiểm thử đã chạy.
+Kiểm thử chức năng theo luồng người dùng và API: xác thực, quyền theo vai trò, quản lý tin, tải tệp, phát hiện CV trùng, xử lý phản hồi AI, ứng tuyển và cập nhật trạng thái. Kiểm thử giao diện cần thực hiện trên các kích thước màn hình và kiểm tra thông báo lỗi, trạng thái tải, dữ liệu rỗng. Các bài kiểm thử tự động nằm trong `server/tests` và chạy bằng `npm test` (trình chạy `node --test` có sẵn của Node.js). Các bài kiểm thử thay hàm gọi Gemini và truy vấn MongoDB bằng hàm giả, nên không cần khóa API hay cơ sở dữ liệu. Lần chạy ngày 09/11/2026 trên Node.js 24.12.0, nhánh `main`: **26/26 bài kiểm thử đạt**. Các bài kiểm thử bao phủ xác thực và phân quyền, nhận diện CV trùng, xóa tin kèm đơn ứng tuyển, thuật toán so khớp và shortlist, hậu kiểm kết quả AI, việc không gửi thông tin cá nhân sang AI khi nhận xét hồ sơ, và việc hệ thống vẫn tạo đơn khi AI lỗi.
 
 ## 5.2. Các trường hợp kiểm thử
+
+**Bảng 5.1. Các trường hợp kiểm thử đề xuất**
 
 | ID    | Tình huống                                    | Kết quả mong đợi                                                       | Kết quả thực tế       |
 | ----- | --------------------------------------------- | ---------------------------------------------------------------------- | --------------------- |
@@ -637,19 +722,46 @@ Kiểm thử chức năng theo luồng người dùng và API: xác thực, quy�
 | TC-11 | Làm mới trang kết quả CV trong cùng phiên tab | Khôi phục kết quả từ `sessionStorage`                                  | `[Điền sau khi chạy]` |
 | TC-12 | Tìm kiếm/lọc việc làm trên giao diện          | Danh sách hiển thị phù hợp với thao tác đã nhập                        | `[Điền sau khi chạy]` |
 
-Trong mã nguồn có các bài kiểm thử phía server liên quan đến xóa tin, khử trùng lặp CV, middleware xác thực, suy giảm khi AI lỗi, shortlist và matching. Cần chạy `npm test` trong thư mục `server` để xác nhận trạng thái hiện tại; nếu kiểm thử cần MongoDB hoặc dịch vụ ngoài, ghi lại cấu hình và giới hạn tương ứng.
+Các ca TC-01 đến TC-12 là kiểm thử thủ công trên giao diện; cột "Kết quả thực tế" cần được điền sau khi nhóm chạy thử. Một phần nội dung các ca này đã được kiểm chứng ở mức hàm bằng bộ kiểm thử tự động nêu ở mục 5.1: TC-04 (tải lại cùng tệp dùng lại bản ghi và xóa tệp tạm), TC-07 (AI lỗi vẫn giữ đơn ứng tuyển) và một phần TC-08 (HR không xem được đơn thuộc tin của HR khác; tài khoản ADMIN không tạo được qua đăng ký công khai).
 
-## 5.3. Đánh giá ưu điểm và hạn chế
+## 5.3. Đánh giá độ chính xác của phân tích AI
 
-**Ưu điểm:** hệ thống gom các thao tác tìm việc, nộp hồ sơ và theo dõi tuyển dụng; phân quyền theo vai trò; phân tích CV trả về dữ liệu có cấu trúc; đề xuất cải thiện có trường bằng chứng; nhận diện CV trùng trong phạm vi một ứng viên; HR có công cụ shortlist, ghi chú và cập nhật trạng thái.
+Script `server/scripts/evaluate-ai.js` gửi từng CV qua đúng luồng phân tích của hệ thống rồi so kết quả với nhãn gán thủ công trong `server/eval/labels.json`. Họ tên và thông tin liên hệ được so sau khi chuẩn hóa (bỏ dấu, chữ thường, số điện thoại về dạng 0xxxxxxxxx). Số năm kinh nghiệm tính là đúng nếu lệch không quá 0,5 năm. Kỹ năng được đo bằng precision = TP ÷ (TP + FP) và recall = TP ÷ (TP + FN), cộng dồn trên mọi CV. Bộ mẫu gồm 2 CV: một CV PDF có lớp chữ (tiếng Anh) và một CV PDF dạng ảnh (tiếng Việt). Thư mục `server/eval` không được đưa lên git vì chứa CV có thông tin cá nhân.
 
-**Hạn chế:** chất lượng phân tích phụ thuộc chất lượng PDF, ngôn ngữ và dịch vụ Gemini; kết quả AI có thể thiếu hoặc sai và chưa có đánh giá định lượng độ chính xác. Việc gọi AI đồng bộ có thể kéo dài thời gian phản hồi. Hash chỉ nhận diện tệp nhị phân giống hệt, không nhận diện các CV cùng nội dung nhưng khác cách lưu/định dạng. File system cục bộ gây hạn chế khi mở rộng nhiều máy chủ. Matching hiện là luật dựa trên kỹ năng, từ khóa vai trò và kinh nghiệm, không phải mô hình xếp hạng đã được huấn luyện. `sessionStorage` mất dữ liệu khi phiên tab kết thúc. Cần bổ sung kiểm thử bảo mật, kiểm soát quyền riêng tư, giám sát, sao lưu và đánh giá khả năng sử dụng trước triển khai rộng.
+**Bảng 5.2. Đánh giá trích xuất của AI**
+
+| Trường                                  | Số CV | Đúng | Tỉ lệ / Precision | Recall | Ghi chú                                         |
+| --------------------------------------- | ----: | ---: | ----------------: | -----: | ----------------------------------------------- |
+| Họ tên                                  |     2 |  2/2 |              100% |      — | Đúng cả tên có dấu và không dấu                 |
+| Email, điện thoại                       |     2 |  2/2 |              100% |      — | Email đúng 2/2; số điện thoại đúng 2/2          |
+| Kỹ năng                                 |     2 |    — |             82,6% |  95,0% | TP = 19, FP = 4, FN = 1                         |
+| Số năm kinh nghiệm (sai lệch ≤ 0,5 năm) |     2 |  2/2 |              100% |      — |                                                 |
+| CV dạng ảnh                             |     1 |  1/1 |              100% |      — | Đúng đồng thời họ tên, liên hệ và kinh nghiệm   |
+
+Lần đánh giá đầu tiên phát hiện ba nguyên nhân gây sai: mô hình không biết ngày hiện tại nên tính thiếu số năm cho mốc "Hiện tại" và coi các mốc gần đây là "tương lai"; `pdf-parse` đọc lệch thứ tự tiêu đề mục của CV thiết kế bằng Canva; kỹ năng viết gộp ("Flutter / Dart") và thư viện chỉ nêu trong mục dự án bị bỏ sót. Nhóm khắc phục bằng cách đưa ngày hiện tại vào prompt, gửi kèm tệp PDF gốc cùng văn bản, và yêu cầu tách từng kỹ năng. Bảng 5.3 so sánh kết quả trên cùng bộ mẫu.
+
+**Bảng 5.3. Kết quả trước và sau cải tiến phân tích AI**
+
+| Chỉ số             | Trước     | Sau        |
+| ------------------ | --------- | ---------- |
+| Số năm kinh nghiệm | 1/2 (50%) | 2/2 (100%) |
+| CV dạng ảnh        | 0/1 (0%)  | 1/1 (100%) |
+| Precision kỹ năng  | 88,2%     | 82,6%      |
+| Recall kỹ năng     | 75,0%     | 95,0%      |
+
+Recall tăng vì mô hình trích được nhiều kỹ năng hơn. Precision giảm nhẹ, nhưng trong 4 trường hợp tính là FP có 2 trường hợp là cùng kỹ năng ghi khác cách ("RESTful API" so với nhãn "REST API") và 2 trường hợp có thật trong mục dự án của CV nhưng không được đưa vào nhãn; chấm theo ngữ nghĩa thì precision gần 100%. Bộ mẫu chỉ có 2 CV nên mỗi CV sai làm tỉ lệ đổi 50%; các con số mang tính minh họa, chưa có ý nghĩa thống kê.
+
+## 5.4. Đánh giá ưu điểm và hạn chế
+
+**Ưu điểm:** hệ thống gom các thao tác tìm việc, nộp hồ sơ và theo dõi tuyển dụng; phân quyền theo vai trò; phân tích CV trả về dữ liệu có cấu trúc và được hậu kiểm; đề xuất cải thiện có trích dẫn từ CV; điểm phù hợp giải thích được qua điểm từng phần và kỹ năng có/thiếu; nhận diện CV trùng trong phạm vi một ứng viên; HR có shortlist, nhận xét hồ sơ bằng AI không lộ thông tin cá nhân, ghi chú và cập nhật trạng thái.
+
+**Hạn chế:** chất lượng phân tích phụ thuộc chất lượng PDF và dịch vụ Gemini; kết quả AI có thể thiếu hoặc sai, và bộ đánh giá định lượng mới có 2 CV. Thuật toán so khớp so chuỗi đã chuẩn hóa nên chưa nhận ra cùng một kỹ năng hay chức danh viết bằng hai ngôn ngữ (ví dụ "Làm việc nhóm" và "Teamwork"); trọng số 70/15/15 được chọn theo lập luận, chưa tối ưu trên dữ liệu tuyển dụng thực. Việc gọi AI đồng bộ có thể kéo dài thời gian phản hồi; luồng tải CV chưa tự thử lại khi Gemini quá tải. Hash chỉ nhận diện tệp nhị phân giống hệt, không nhận diện các CV cùng nội dung nhưng khác cách lưu/định dạng. File system cục bộ gây hạn chế khi mở rộng nhiều máy chủ. Matching hiện là luật dựa trên kỹ năng, từ khóa vai trò và kinh nghiệm, không phải mô hình xếp hạng đã được huấn luyện. `sessionStorage` mất dữ liệu khi phiên tab kết thúc. Cần bổ sung kiểm thử bảo mật, kiểm soát quyền riêng tư, giám sát, sao lưu và đánh giá khả năng sử dụng trước triển khai rộng.
 
 # CHƯƠNG 6. KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
 
 ## 6.1. Tổng kết kết quả
 
-Đồ án đã thiết kế và hiện thực nền tảng tuyển dụng web với ba vai trò chính. Hệ thống hỗ trợ quản lý tin việc làm, nộp và theo dõi hồ sơ, tải CV PDF, nhận phân tích có cấu trúc từ Gemini, nhận diện CV trùng theo mã SHA-256, gợi ý việc làm dựa trên kỹ năng và hỗ trợ HR sắp xếp ứng viên. Các mục tiêu chức năng chính được phản ánh trong mã nguồn client và server. Mức độ hoàn thành chất lượng, hiệu năng và độ chính xác cần được kết luận dựa trên kết quả kiểm thử thực tế được bổ sung vào báo cáo.
+Đồ án đã thiết kế và hiện thực nền tảng tuyển dụng web với ba vai trò chính. Hệ thống hỗ trợ quản lý tin việc làm, nộp và theo dõi hồ sơ, tải CV PDF, nhận phân tích có cấu trúc từ Gemini, nhận diện CV trùng theo mã SHA-256, tính độ phù hợp với tin tuyển dụng bằng thuật toán có trọng số, gợi ý việc làm, hỗ trợ HR soạn mô tả công việc, sắp xếp và nhận xét ứng viên. Bộ 26 bài kiểm thử tự động phía máy chủ đều đạt. Đánh giá trích xuất trên mẫu nhỏ cho kết quả đúng toàn bộ họ tên, liên hệ và số năm kinh nghiệm, recall kỹ năng 95%; cần mở rộng bộ mẫu để có kết luận định lượng đáng tin cậy. Hiệu năng và khả năng sử dụng chưa được đo.
 
 ## 6.2. Hướng phát triển
 
@@ -720,7 +832,7 @@ Trong mã nguồn có các bài kiểm thử phía server liên quan đến xóa
 
 1. Điền tên trường, khoa, chuyên ngành, giảng viên, sinh viên, mã sinh viên, lớp, địa phương và năm.
 2. Xác nhận chính xác quy trình nghiên cứu/phát triển mà nhóm đã thực hiện; không ghi Scrum nếu không có sprint/backlog thực tế.
-3. Chạy bộ kiểm thử, điền kết quả thực tế và mô tả môi trường kiểm thử.
+3. Chạy các ca kiểm thử thủ công TC-01 đến TC-12 trên giao diện và điền kết quả thực tế (bộ kiểm thử tự động đã chạy, xem mục 5.1); mở rộng bộ mẫu đánh giá AI ở mục 5.3 nếu có thêm CV.
 4. Chụp ảnh các màn hình, che dữ liệu cá nhân và cập nhật danh mục hình.
 5. Xuất các sơ đồ Mermaid tại mục 3.2 và sơ đồ ERD thành hình nếu mẫu báo cáo của trường yêu cầu.
 6. Kiểm tra chính sách trích dẫn, định dạng trang, cỡ chữ và cách đánh số của khoa; tạo mục lục tự động sau cùng.
