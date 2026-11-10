@@ -17,6 +17,15 @@ const removeFile = async (filePath) => {
   }
 };
 
+const fileExists = async (filePath) => {
+  try {
+    await fs.promises.access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 const calculateFileHash = async (filePath) => {
   const fileBuffer = await fs.promises.readFile(filePath);
   return crypto.createHash("sha256").update(fileBuffer).digest("hex");
@@ -58,7 +67,13 @@ const saveUploadedCV = async ({ candidate, file }) => {
     const fileHash = await calculateFileHash(file.path);
     const duplicate = await findDuplicateCV(candidate, fileHash);
 
-    if (duplicate) {
+    // CV trùng nhưng file cũ đã mất (xóa thư mục uploads, đổi chỗ dự án...):
+    // dùng file vừa tải lên thay vào, nếu không sẽ không còn file để phân
+    // tích hay cho HR xem.
+    const duplicateFileMissing =
+      duplicate?.filePath && !(await fileExists(duplicate.filePath));
+
+    if (duplicate && !duplicateFileMissing) {
       await removeFile(file.path);
       return { cv: duplicate, isDuplicate: true };
     }
@@ -73,6 +88,17 @@ const saveUploadedCV = async ({ candidate, file }) => {
     await fs.promises.mkdir(cvUploadDir, { recursive: true });
     permanentPath = path.join(cvUploadDir, file.filename);
     await fs.promises.rename(file.path, permanentPath);
+
+    if (duplicate) {
+      console.warn(
+        `File của CV ${duplicate._id} không còn tại ${duplicate.filePath}; dùng file vừa tải lên thay thế.`,
+      );
+      duplicate.fileName = file.filename;
+      duplicate.filePath = permanentPath;
+      if (!duplicate.extractedText) duplicate.extractedText = extractedText;
+      await duplicate.save();
+      return { cv: duplicate, isDuplicate: true };
+    }
 
     const cv = await CV.create({
       candidate,
