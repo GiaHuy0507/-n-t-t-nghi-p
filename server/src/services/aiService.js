@@ -20,9 +20,36 @@ const gemini = {
         }),
       },
     });
-    return JSON.parse(response.text);
+    return parseGeminiJSON(response);
   },
 };
+
+// Gemini có thể trả về rỗng (bị chặn, hết token) hoặc JSON bị cắt ngang.
+// Ghi rõ lý do để log server cho biết vì sao phân tích thất bại.
+function parseGeminiJSON(response) {
+  const candidate = response?.candidates?.[0];
+  const finishReason = candidate?.finishReason || "không rõ";
+  const blockReason = response?.promptFeedback?.blockReason;
+  const usage = response?.usageMetadata;
+  const usageText = usage
+    ? ` | token vào: ${usage.promptTokenCount ?? "?"}, ra: ${usage.candidatesTokenCount ?? "?"}, suy nghĩ: ${usage.thoughtsTokenCount ?? 0}`
+    : "";
+  const text = response?.text;
+
+  if (!text) {
+    throw new Error(
+      `Gemini không trả về nội dung (finishReason: ${finishReason}${blockReason ? `, blockReason: ${blockReason}` : ""})${usageText}`,
+    );
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    throw new Error(
+      `Gemini trả về JSON không hợp lệ (finishReason: ${finishReason}, dài ${text.length} ký tự)${usageText}: ${error.message}`,
+    );
+  }
+}
 
 const asList = (value) =>
   (Array.isArray(value) ? value : String(value || "").split(","))
@@ -782,4 +809,5 @@ module.exports = {
   generateJobDescription,
   generateApplicationReview,
   gemini,
+  parseGeminiJSON,
 };

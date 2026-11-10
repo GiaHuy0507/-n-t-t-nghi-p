@@ -198,3 +198,16 @@ test("chưa có kết quả phân tích CV thì không gọi AI", async () => {
     Application.findById = originalFindById;
   }
 });
+
+test("báo rõ lý do khi Gemini trả về rỗng hoặc JSON bị cắt", () => {
+  const { parseGeminiJSON } = require("../src/services/aiService");
+  assert.throws(
+    () => parseGeminiJSON({ text: undefined, candidates: [{ finishReason: "SAFETY" }] }),
+    /finishReason: SAFETY/,
+  );
+  assert.throws(
+    () => parseGeminiJSON({ text: '{"summary": "abc', candidates: [{ finishReason: "MAX_TOKENS" }] }),
+    /JSON không hợp lệ \(finishReason: MAX_TOKENS/,
+  );
+  assert.deepEqual(parseGeminiJSON({ text: '{"a":1}' }), { a: 1 });
+});
