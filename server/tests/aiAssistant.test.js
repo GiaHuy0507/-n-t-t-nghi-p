@@ -211,3 +211,59 @@ test("báo rõ lý do khi Gemini trả về rỗng hoặc JSON bị cắt", () =
   );
   assert.deepEqual(parseGeminiJSON({ text: '{"a":1}' }), { a: 1 });
 });
+
+test("tự thử lại khi Gemini lỗi tạm thời, không thử lại lỗi cố định", async () => {
+  const { withRetry } = require("../src/services/aiService");
+  const noSleep = async () => {};
+  const originalWarn = console.warn;
+  console.warn = () => {};
+
+  try {
+    let calls = 0;
+    const result = await withRetry(
+      async () => {
+        calls += 1;
+        if (calls < 3) {
+          const error = new Error("The model is overloaded");
+          error.status = 503;
+          throw error;
+        }
+        return "ok";
+      },
+      { delays: [1, 1], sleep: noSleep },
+    );
+    assert.equal(result, "ok");
+    assert.equal(calls, 3);
+
+    let badKeyCalls = 0;
+    await assert.rejects(
+      withRetry(
+        async () => {
+          badKeyCalls += 1;
+          const error = new Error("API key not valid");
+          error.status = 400;
+          throw error;
+        },
+        { delays: [1, 1], sleep: noSleep },
+      ),
+      /API key not valid/,
+    );
+    assert.equal(badKeyCalls, 1, "lỗi sai key không được thử lại");
+
+    let alwaysFail = 0;
+    await assert.rejects(
+      withRetry(
+        async () => {
+          alwaysFail += 1;
+          const error = new Error("JSON hỏng");
+          error.retryable = true;
+          throw error;
+        },
+        { delays: [1, 1], sleep: noSleep },
+      ),
+    );
+    assert.equal(alwaysFail, 3, "tối đa 3 lần gọi");
+  } finally {
+    console.warn = originalWarn;
+  }
+});
