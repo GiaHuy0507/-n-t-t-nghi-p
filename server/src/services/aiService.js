@@ -7,22 +7,89 @@ const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
 
 // Mọi lời gọi Gemini đi qua đây; kết quả luôn là JSON theo responseSchema.
 // Để dạng thuộc tính của object để kiểm thử có thể thay bằng hàm giả.
+// Gemini thỉnh thoảng lỗi tạm thời (503 quá tải, 429, mất kết nối, JSON bị
+// cắt ngang); gọi lại sau vài giây thường thành công. Không thử lại lỗi cố
+// định như sai API key, sai tên model hay request không hợp lệ (400/401/403/404).
+const RETRY_DELAYS_MS = [2000, 5000];
+const TRANSIENT_STATUS = new Set([429, 500, 502, 503, 504]);
+
+function isTransientGeminiError(error) {
+  if (error?.retryable) return true;
+  if (TRANSIENT_STATUS.has(Number(error?.status))) return true;
+  return /fetch failed|ECONNRESET|ETIMEDOUT|socket hang up|overloaded|UNAVAILABLE|RESOURCE_EXHAUSTED/i.test(
+    String(error?.message || ""),
+  );
+}
+
+async function withRetry(
+  task,
+  {
+    delays = RETRY_DELAYS_MS,
+    sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+  } = {},
+) {
+  for (let attempt = 0; ; attempt += 1) {
+    try {
+      return await task();
+    } catch (error) {
+      if (attempt >= delays.length || !isTransientGeminiError(error)) throw error;
+      console.warn(
+        `Gemini lỗi tạm thời (${error.status || ""} ${error.message}); thử lại lần ${attempt + 2}/${delays.length + 1} sau ${delays[attempt] / 1000}s...`,
+      );
+      await sleep(delays[attempt]);
+    }
+  }
+}
+
 const gemini = {
   async generateJSON(contents, responseSchema, options = {}) {
-    const response = await ai.models.generateContent({
-      model: GEMINI_MODEL,
-      contents,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema,
-        ...(options.temperature !== undefined && {
-          temperature: options.temperature,
-        }),
-      },
+    return withRetry(async () => {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema,
+          ...(options.temperature !== undefined && {
+            temperature: options.temperature,
+          }),
+        },
+      });
+      return parseGeminiJSON(response);
     });
-    return JSON.parse(response.text);
   },
 };
+
+// Gemini có thể trả về rỗng (bị chặn, hết token) hoặc JSON bị cắt ngang.
+// Ghi rõ lý do để log server cho biết vì sao phân tích thất bại.
+function parseGeminiJSON(response) {
+  const candidate = response?.candidates?.[0];
+  const finishReason = candidate?.finishReason || "không rõ";
+  const blockReason = response?.promptFeedback?.blockReason;
+  const usage = response?.usageMetadata;
+  const usageText = usage
+    ? ` | token vào: ${usage.promptTokenCount ?? "?"}, ra: ${usage.candidatesTokenCount ?? "?"}, suy nghĩ: ${usage.thoughtsTokenCount ?? 0}`
+    : "";
+  const text = response?.text;
+
+  if (!text) {
+    const error = new Error(
+      `Gemini không trả về nội dung (finishReason: ${finishReason}${blockReason ? `, blockReason: ${blockReason}` : ""})${usageText}`,
+    );
+    error.retryable = !blockReason;
+    throw error;
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    const parseError = new Error(
+      `Gemini trả về JSON không hợp lệ (finishReason: ${finishReason}, dài ${text.length} ký tự)${usageText}: ${error.message}`,
+    );
+    parseError.retryable = true;
+    throw parseError;
+  }
+}
 
 const asList = (value) =>
   (Array.isArray(value) ? value : String(value || "").split(","))
@@ -782,4 +849,6 @@ module.exports = {
   generateJobDescription,
   generateApplicationReview,
   gemini,
+  parseGeminiJSON,
+  withRetry,
 };

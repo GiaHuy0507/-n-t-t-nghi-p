@@ -9,7 +9,8 @@
     "test": "node --test",
     "test:gemini": "node scripts/check-gemini.js",
     "make-admin": "node scripts/make-admin.js",
-    "reanalyze-cvs": "node scripts/reanalyze-cvs.js"
+    "reanalyze-cvs": "node scripts/reanalyze-cvs.js",
+    "debug-cv": "node scripts/debug-cv.js"
   },
   "keywords": [],
   "author": "",
