@@ -91,18 +91,28 @@ The frontend is built with React and SCSS. The backend uses Node.js, Express, an
 
 ## DANH MỤC HÌNH ẢNH
 
-| Mã hình  | Tên hình                        | Gợi ý bổ sung                                          |
-| -------- | ------------------------------- | ------------------------------------------------------ |
-| Hình 3.1 | Sơ đồ ca sử dụng tổng quát      | Các tác nhân ứng viên, HR, quản trị viên và Gemini API |
-| Hình 3.2 | Mô hình quan hệ các collection  | Vẽ theo các tham chiếu trong MongoDB                   |
-| Hình 3.3 | Sequence tải CV và phân tích AI | Thể hiện nhận diện tệp trùng và lỗi AI                 |
-| Hình 3.4 | Sequence ứng tuyển việc làm     | Thể hiện kiểm tra đơn trùng, trạng thái tin và CV      |
-| Hình 3.5 | Sequence HR xử lý hồ sơ         | Thể hiện tải danh sách và cập nhật trạng thái          |
-| Hình 4.1 | Trang chủ                       | Chèn ảnh chụp ứng dụng chạy thực tế                    |
-| Hình 4.2 | Danh sách và chi tiết việc làm  | Chèn ảnh chụp ứng dụng chạy thực tế                    |
-| Hình 4.3 | Trang tải CV và kết quả AI      | Che thông tin cá nhân trong ảnh                        |
-| Hình 4.4 | Khu vực quản lý tuyển dụng      | Chèn ảnh HR Dashboard/Applications                     |
-| Hình 4.5 | Khu vực quản trị                | Chèn ảnh Admin Dashboard                               |
+| Mã hình | Tên hình |
+| ------- | -------- |
+| Hình 3.1 | Sơ đồ ca sử dụng tổng quát |
+| Hình 3.2 | Sơ đồ ca sử dụng phân hệ ứng viên |
+| Hình 3.3 | Sơ đồ ca sử dụng phân hệ nhà tuyển dụng |
+| Hình 3.4 | Sơ đồ ca sử dụng phân hệ quản trị |
+| Hình 3.5 | Sơ đồ tuần tự luồng tải và phân tích CV |
+| Hình 3.6 | Sơ đồ tuần tự luồng ứng tuyển việc làm |
+| Hình 3.7 | Sơ đồ tuần tự luồng HR xem và cập nhật hồ sơ |
+| Hình 3.8 | Sơ đồ tuần tự HR nhận xét hồ sơ bằng AI |
+| Hình 3.9 | Sơ đồ tuần tự HR soạn mô tả công việc bằng AI |
+| Hình 3.10 | Sơ đồ hoạt động ứng tuyển việc làm |
+| Hình 3.11 | Sơ đồ hoạt động HR xử lý hồ sơ ứng tuyển |
+| Hình 3.12 | Mô hình dữ liệu và quan hệ giữa các collection |
+| Hình 3.13 | Lưu đồ thuật toán tính độ phù hợp |
+| Hình 3.14 | Kiến trúc tổng quan của hệ thống |
+| Hình 3.15 | Mô hình triển khai |
+| Hình 4.1 | Trang chủ |
+| Hình 4.2 | Danh sách và chi tiết việc làm |
+| Hình 4.3 | Trang tải CV và kết quả AI |
+| Hình 4.4 | Khu vực quản lý tuyển dụng |
+| Hình 4.5 | Khu vực quản trị |
 
 ## DANH MỤC BẢNG BIỂU
 
@@ -111,13 +121,17 @@ The frontend is built with React and SCSS. The backend uses Node.js, Express, an
 | Bảng 2.1 | Công nghệ sử dụng trong dự án   |
 | Bảng 3.1 | Tác nhân và quyền chính         |
 | Bảng 3.2 | Đặc tả chức năng hệ thống       |
-| Bảng 3.3 | Mô tả collection User           |
-| Bảng 3.4 | Mô tả collection Job            |
-| Bảng 3.5 | Mô tả collection CV             |
-| Bảng 3.6 | Mô tả collection Application    |
-| Bảng 3.7 | Các chức năng sử dụng AI        |
-| Bảng 3.8 | Ghép cặp dữ liệu khi tính độ phù hợp |
-| Bảng 3.9 | Ví dụ tính điểm phù hợp         |
+| Bảng 3.3 | Đặc tả ca sử dụng Tải và phân tích CV |
+| Bảng 3.4 | Đặc tả ca sử dụng Ứng tuyển việc làm |
+| Bảng 3.5 | Đặc tả ca sử dụng HR xử lý hồ sơ ứng tuyển |
+| Bảng 3.6 | Đặc tả ca sử dụng HR nhận xét hồ sơ bằng AI |
+| Bảng 3.7 | Mô tả collection User           |
+| Bảng 3.8 | Mô tả collection Job            |
+| Bảng 3.9 | Mô tả collection CV             |
+| Bảng 3.10 | Mô tả collection Application    |
+| Bảng 3.11 | Các chức năng sử dụng AI        |
+| Bảng 3.12 | Ghép cặp dữ liệu khi tính độ phù hợp |
+| Bảng 3.13 | Ví dụ tính điểm phù hợp         |
 | Bảng 4.1 | Đặc tả một số API               |
 | Bảng 5.1 | Các trường hợp kiểm thử đề xuất |
 | Bảng 5.2 | Đánh giá trích xuất của AI      |
@@ -266,200 +280,409 @@ Bảng 3.2 mô tả đầu vào, đầu ra, xử lý chính và nơi lưu dữ l
 
 Yêu cầu phi chức năng gồm giao diện dễ hiểu, kiểm tra dữ liệu đầu vào, phân quyền phía máy chủ, thông báo lỗi phù hợp và lưu trữ dữ liệu nhất quán. Các yêu cầu về tải đồng thời, thời gian phản hồi, khả năng truy cập và tiêu chuẩn bảo mật cần được đo/đặc tả thêm nếu dùng trong môi trường thực tế.
 
-## 3.2. Sơ đồ ca sử dụng
+## 3.2. Sơ đồ ca sử dụng, tuần tự và hoạt động
 
 ### 3.2.1. Sơ đồ ca sử dụng tổng quát
 
-Sơ đồ thể hiện các chức năng chính theo vai trò. Gemini API là hệ thống ngoài được gọi khi phân tích CV; kết quả phân tích chỉ mang tính hỗ trợ.
+Sơ đồ thể hiện các chức năng chính theo vai trò. Gemini API là hệ thống ngoài được gọi khi phân tích CV, soạn mô tả công việc và nhận xét hồ sơ; kết quả của AI chỉ mang tính hỗ trợ.
+
+**Hình 3.1. Sơ đồ ca sử dụng tổng quát**
 
 ```mermaid
 flowchart LR
-  C[Ứng viên]
-  H[Nhà tuyển dụng / HR]
-  A[Quản trị viên]
-  G[Gemini API]
-
-  subgraph SYS["Nền tảng tuyển dụng"]
+  C[/"Ứng viên"/]
+  H[/"Nhà tuyển dụng (HR)"/]
+  A[/"Quản trị viên"/]
+  G["«hệ thống ngoài»<br/>Gemini API"]
+  subgraph SYS["Nền tảng tuyển dụng và phân tích CV bằng AI"]
     direction TB
     UC1([Đăng ký / đăng nhập])
-    UC2([Tìm kiếm và xem việc làm])
-    UC3([Tải CV và xem phân tích AI])
-    UC4([Xem việc làm phù hợp])
-    UC5([Ứng tuyển và theo dõi đơn])
-    UC10([Tạo CV từ gợi ý phân tích])
-    UC6([Tạo và quản lý tin tuyển dụng])
-    UC7([Xem hồ sơ và shortlist ứng viên])
-    UC8([Ghi chú và cập nhật trạng thái])
-    UC9([Quản lý người dùng và tin tuyển dụng])
+    UC2([Tìm kiếm, xem chi tiết việc làm])
+    UC3([Tải CV PDF, xem phân tích AI])
+    UC4([Xem độ phù hợp CV với tin])
+    UC5([Xem việc làm gợi ý theo CV])
+    UC6([Tạo CV theo mẫu, xuất PDF])
+    UC7([Ứng tuyển, theo dõi đơn])
+    UC8([Tạo, sửa, xóa tin tuyển dụng])
+    UC9([Soạn mô tả công việc bằng AI])
+    UC10([Xem đơn, CV và shortlist])
+    UC11([Nhận xét hồ sơ bằng AI])
+    UC12([Ghi chú, cập nhật trạng thái đơn])
+    UC13([Phân tích lại CV bằng AI])
+    UC14([Quản lý người dùng và tin tuyển dụng])
   end
-
-  C --- UC1
-  H --- UC1
-  A --- UC1
-  C --- UC2
-  C --- UC3
-  C --- UC4
-  C --- UC5
-  C --- UC10
-  H --- UC6
-  H --- UC7
-  H --- UC8
-  A --- UC9
-  G --- UC3
+  C --- UC1 & UC2 & UC3 & UC4 & UC5 & UC6 & UC7
+  H --- UC1 & UC8 & UC9 & UC10 & UC11 & UC12 & UC13
+  A --- UC14
+  G --- UC3 & UC9 & UC11 & UC13
 ```
 
-### 3.2.2. Sequence tải CV và phân tích AI
+### 3.2.2. Sơ đồ ca sử dụng phân rã
+
+Quan hệ «include» chỉ bước luôn diễn ra cùng ca sử dụng gốc (tải CV luôn kèm phân tích bằng AI); quan hệ «extend» chỉ bước tùy chọn (khi xem danh sách đơn, HR có thể yêu cầu AI nhận xét hồ sơ).
+
+**Hình 3.2. Sơ đồ ca sử dụng phân hệ ứng viên**
+
+```mermaid
+flowchart LR
+  C[/"Ứng viên"/]
+  G["«hệ thống ngoài»<br/>Gemini API"]
+  subgraph SYS["Phân hệ ứng viên"]
+    direction TB
+    L([Đăng nhập])
+    S([Tìm kiếm việc làm])
+    DT([Xem chi tiết việc làm])
+    U([Tải CV PDF])
+    R([Xem kết quả phân tích CV])
+    CR([Tạo CV theo mẫu, xuất PDF])
+    AP([Ứng tuyển việc làm])
+    T([Theo dõi đơn đã nộp])
+    M([Xem độ phù hợp CV với tin])
+    AN([Phân tích CV bằng AI])
+    RC([Xem việc làm gợi ý])
+    FX([Sửa CV theo gợi ý AI])
+    CH([Chọn hoặc tải CV])
+  end
+  C --- L & S & DT & U & R & CR & AP & T
+  M -. «extend» .-> DT
+  U -. «include» .-> AN
+  RC -. «extend» .-> R
+  FX -. «extend» .-> R
+  AP -. «include» .-> CH
+  G --- AN
+```
+
+**Hình 3.3. Sơ đồ ca sử dụng phân hệ nhà tuyển dụng**
+
+```mermaid
+flowchart LR
+  H[/"Nhà tuyển dụng (HR)"/]
+  G["«hệ thống ngoài»<br/>Gemini API"]
+  subgraph SYS["Phân hệ nhà tuyển dụng"]
+    direction TB
+    L([Đăng nhập])
+    CJ([Tạo tin tuyển dụng])
+    EJ([Sửa, đóng hoặc xóa tin])
+    LS([Xem danh sách đơn ứng tuyển])
+    SL([Xem shortlist xếp hạng])
+    ST([Cập nhật trạng thái đơn])
+    NT([Ghi chú đánh giá])
+    GEN([Soạn mô tả công việc bằng AI])
+    VC([Xem CV ứng viên])
+    RV([Nhận xét hồ sơ bằng AI])
+    RT([Phân tích lại CV bị lỗi])
+    SC([Tính điểm phù hợp])
+  end
+  H --- L & CJ & EJ & LS & SL & ST & NT
+  GEN -. «extend» .-> CJ
+  VC -. «extend» .-> LS
+  RV -. «extend» .-> LS
+  RT -. «extend» .-> LS
+  SL -. «include» .-> SC
+  G --- GEN & RV & RT
+```
+
+**Hình 3.4. Sơ đồ ca sử dụng phân hệ quản trị**
+
+```mermaid
+flowchart LR
+  A[/"Quản trị viên"/]
+  subgraph SYS["Phân hệ quản trị"]
+    direction TB
+    L([Đăng nhập])
+    O([Xem tổng quan hệ thống])
+    U([Xem danh sách người dùng])
+    J([Xem danh sách tin tuyển dụng])
+    RL([Đổi vai trò người dùng])
+    JS([Đổi trạng thái tin])
+    DL([Xóa tin kèm các đơn ứng tuyển])
+  end
+  A --- L & O & U & J
+  RL -. «extend» .-> U
+  JS -. «extend» .-> J
+  DL -. «extend» .-> J
+```
+
+### 3.2.3. Đặc tả ca sử dụng
+
+Bảng 3.3 – 3.6 đặc tả bốn ca sử dụng chính.
+
+**Bảng 3.3. Đặc tả ca sử dụng Tải và phân tích CV**
+
+| Mục | Nội dung |
+| --- | --- |
+| Tác nhân | Ứng viên (chính); Gemini API (hệ thống ngoài) |
+| Mô tả | Ứng viên tải CV PDF để hệ thống trích xuất thông tin, nhận xét điểm mạnh và gợi ý cải thiện. |
+| Tiền điều kiện | Đã đăng nhập với vai trò ứng viên; tệp PDF không quá 10 MB. |
+| Luồng chính | 1. Ứng viên chọn tệp PDF và bấm tải lên.<br>2. Hệ thống kiểm tra định dạng, dung lượng và tính mã SHA-256.<br>3. Hệ thống trích văn bản bằng pdf-parse, lưu tệp, tạo CV ở trạng thái PENDING.<br>4. Hệ thống gửi văn bản kèm tệp PDF và ngày hiện tại cho Gemini, nhận JSON theo schema và hậu kiểm.<br>5. Hệ thống lưu kết quả, đặt trạng thái COMPLETED.<br>6. Hệ thống hiển thị nhận xét, gợi ý cải thiện và 5 việc làm phù hợp nhất. |
+| Luồng thay thế | 2a. Tệp không phải PDF hoặc vượt 10 MB: báo lỗi.<br>2b. Đã tải đúng tệp này và đã phân tích xong: trả kết quả cũ, không gọi AI.<br>3a. Văn bản dưới 40 ký tự (CV dạng ảnh): chỉ gửi tệp PDF để Gemini đọc trực tiếp.<br>4a. Gemini lỗi: lưu trạng thái FAILED, CV vẫn được giữ. |
+| Hậu điều kiện | Bản ghi CV có văn bản trích xuất, trạng thái và kết quả phân tích; tệp lưu trong uploads/cv. |
+
+**Bảng 3.4. Đặc tả ca sử dụng Ứng tuyển việc làm**
+
+| Mục | Nội dung |
+| --- | --- |
+| Tác nhân | Ứng viên (chính); Gemini API (hệ thống ngoài) |
+| Mô tả | Ứng viên nộp CV và thư giới thiệu cho một tin tuyển dụng. |
+| Tiền điều kiện | Đã đăng nhập với vai trò ứng viên; tin tuyển dụng tồn tại. |
+| Luồng chính | 1. Ứng viên mở chi tiết tin, xem điểm phù hợp.<br>2. Chọn tệp CV PDF, nhập thư giới thiệu, bấm Ứng tuyển.<br>3. Hệ thống kiểm tra chưa ứng tuyển tin này và tin còn mở.<br>4. Hệ thống lưu CV (dùng lại nếu trùng SHA-256) và tạo đơn PENDING.<br>5. Nếu CV chưa được phân tích, hệ thống gọi Gemini.<br>6. Hệ thống báo ứng tuyển thành công. |
+| Luồng thay thế | 3a. Đã ứng tuyển: báo "Bạn đã ứng tuyển công việc này".<br>3b. Tin không tồn tại hoặc đã đóng: báo lỗi, xóa tệp tạm.<br>5a. Gemini lỗi: CV có trạng thái FAILED, đơn vẫn giữ. |
+| Hậu điều kiện | Application liên kết ứng viên, tin và CV; chỉ mục unique {candidate, job} chặn đơn trùng. |
+
+**Bảng 3.5. Đặc tả ca sử dụng HR xử lý hồ sơ ứng tuyển**
+
+| Mục | Nội dung |
+| --- | --- |
+| Tác nhân | Nhà tuyển dụng (HR) |
+| Mô tả | HR xem đơn ứng tuyển, shortlist, CV gốc, ghi chú và cập nhật trạng thái. |
+| Tiền điều kiện | Đã đăng nhập với vai trò HR; có tin do HR tạo và có đơn ứng tuyển. |
+| Luồng chính | 1. HR mở trang Ứng viên.<br>2. Hệ thống hiển thị các đơn thuộc tin do HR tạo.<br>3. HR xem shortlist 5 ứng viên điểm cao nhất của một tin.<br>4. HR xem CV gốc.<br>5. HR nhập ghi chú (tối đa 2.000 ký tự), chọn trạng thái mới.<br>6. Hệ thống kiểm tra quyền sở hữu tin, trạng thái hợp lệ rồi lưu. |
+| Luồng thay thế | 4a. CV phân tích lỗi: HR bấm Phân tích lại.<br>6a. Không có quyền hoặc trạng thái sai: báo lỗi, không lưu. |
+| Hậu điều kiện | Trạng thái và ghi chú được cập nhật; ứng viên thấy trạng thái mới, ghi chú chỉ HR thấy. |
+
+**Bảng 3.6. Đặc tả ca sử dụng HR nhận xét hồ sơ bằng AI**
+
+| Mục | Nội dung |
+| --- | --- |
+| Tác nhân | Nhà tuyển dụng (chính); Gemini API (hệ thống ngoài) |
+| Mô tả | AI tóm tắt mức độ phù hợp, nêu điểm phù hợp và điểm cần làm rõ của hồ sơ so với tin. |
+| Tiền điều kiện | HR sở hữu tin; CV của đơn đã được phân tích thành công. |
+| Luồng chính | 1. HR bấm "Nhận xét hồ sơ bằng AI".<br>2. Hệ thống kiểm tra HR sở hữu tin.<br>3. Hệ thống tính điểm bằng matchCVToJob.<br>4. Hệ thống gửi Gemini hồ sơ đã bỏ họ tên, email, điện thoại, địa chỉ, kèm tin và điểm so khớp.<br>5. Gemini trả tóm tắt, tối đa 3 điểm phù hợp và 3 điểm cần làm rõ.<br>6. Hệ thống lưu vào Application.aiReview và hiển thị. |
+| Luồng thay thế | 1a. Đã có nhận xét: hiển thị bản đã lưu, không gọi AI; "Tạo lại" chạy lại từ bước 3.<br>2a. CV chưa phân tích: báo cần phân tích CV trước.<br>5a. Gemini lỗi: báo "AI chưa thể tạo nhận xét lúc này". |
+| Hậu điều kiện | aiReview lưu kèm matchScore, generatedAt; chỉ để tham khảo, không kết luận tuyển hay loại. |
+
+### 3.2.4. Sequence tải CV và phân tích AI
 
 Ứng viên tải PDF qua API có xác thực. Máy chủ nhận diện CV trùng theo ứng viên và SHA-256; CV đã phân tích thành công được trả lại mà không gọi AI lần nữa. Nếu Gemini lỗi, CV vẫn được lưu với trạng thái `FAILED` để có thể xử lý lại.
 
+**Hình 3.5. Sơ đồ tuần tự luồng tải và phân tích CV**
+
 ```mermaid
 sequenceDiagram
+  autonumber
   actor C as Ứng viên
   participant UI as Giao diện React
-  participant API as Express API
-  participant Auth as Middleware xác thực / vai trò
-  participant CV as CV Controller
-  participant Store as Dịch vụ lưu CV
-  participant FS as Hệ thống tệp
-  participant DB as MongoDB
-  participant PDF as PDF Service
-  participant AI as Gemini API
-
-  C->>UI: Chọn PDF và tải lên
-  UI->>UI: Kiểm tra dung lượng tối đa 10 MB
-  UI->>API: POST /api/cv/upload (PDF, JWT)
-  API->>Auth: Xác thực token và vai trò CANDIDATE
-  Auth-->>API: Cho phép yêu cầu
-  API->>CV: Chuyển tệp đã nhận
-  CV->>Store: Lưu CV cho ứng viên
-  Store->>FS: Đọc tệp tạm, tính SHA-256
-  Store->>DB: Tìm CV trùng theo ứng viên và hash
-
-  alt CV trùng đã phân tích thành công
-    DB-->>Store: Trả CV hiện có
-    Store->>FS: Xóa tệp tạm
-    Store-->>CV: CV hiện có, duplicate = true
-    CV-->>UI: 200, kết quả phân tích hiện có
-  else CV mới hoặc CV trùng chưa phân tích xong
-    opt CV mới
-      Store->>PDF: Trích xuất văn bản từ PDF
-      PDF-->>Store: Văn bản trích xuất (có thể rỗng)
-      Store->>FS: Chuyển tệp vào thư mục lưu CV
-      Store->>DB: Tạo CV, aiStatus = PENDING
-    end
-    Store-->>CV: CV cần phân tích
-    CV->>AI: Phân tích văn bản hoặc PDF
-    alt Gemini phân tích thành công
-      AI-->>CV: Kết quả JSON
-      CV->>DB: Lưu kết quả, aiStatus = COMPLETED
-    else Gemini lỗi
-      AI-->>CV: Lỗi phân tích
-      CV->>DB: Lưu aiStatus = FAILED
-    end
-    CV-->>UI: 201, CV và trạng thái phân tích
+  participant API as Máy chủ Express
+  participant AI as aiService
+  participant G as Gemini API
+  participant DB as MongoDB / tệp
+  C->>UI: Chọn tệp PDF
+  UI->>API: POST /api/cv/upload
+  API->>API: Xác thực JWT, quyền CANDIDATE,<br/>Multer kiểm tra PDF ≤ 10 MB
+  API->>DB: Tìm CV cùng ứng viên và SHA-256
+  alt Trùng và đã phân tích xong
+    API-->>UI: 200, kết quả cũ (không gọi AI)
+  else CV mới hoặc chưa phân tích
+    API->>API: pdf-parse trích văn bản
+    API->>DB: Lưu tệp, tạo CV (PENDING)
+    API->>AI: analyzeCV(văn bản, PDF, ngày)
+    AI->>G: Prompt + JSON schema<br/>+ văn bản + tệp PDF
+    G-->>AI: JSON kết quả phân tích
+    AI->>AI: verifyCVAnalysis() hậu kiểm
+    AI-->>API: aiAnalysis
+    API->>DB: Lưu kết quả, COMPLETED<br/>(lỗi: FAILED)
+    API-->>UI: 201, CV và kết quả
   end
-  UI-->>C: Hiển thị kết quả hoặc thông báo trạng thái
+  UI->>API: GET /api/cv/:id/recommendations
+  API->>DB: Lấy tin OPEN
+  API->>API: matchCVToJob, lấy top 5
+  API-->>UI: Việc làm gợi ý kèm điểm
+  UI-->>C: Hiển thị nhận xét và gợi ý
 ```
 
-### 3.2.3. Sequence ứng tuyển việc làm
+### 3.2.5. Sequence ứng tuyển việc làm
 
-Ứng viên gửi mã việc làm, CV PDF và thư giới thiệu. Máy chủ từ chối đơn trùng hoặc tin đã đóng; nếu hợp lệ, hệ thống tạo đơn trước khi phân tích CV. Phân tích AI thất bại không hủy đơn ứng tuyển.
+Máy chủ từ chối đơn trùng hoặc tin đã đóng; nếu hợp lệ, hệ thống tạo đơn trước khi phân tích CV. Phân tích AI thất bại không hủy đơn ứng tuyển.
+
+**Hình 3.6. Sơ đồ tuần tự luồng ứng tuyển việc làm**
 
 ```mermaid
 sequenceDiagram
+  autonumber
   actor C as Ứng viên
   participant UI as Giao diện React
-  participant API as Express API
-  participant Auth as Middleware xác thực / vai trò
-  participant Controller as Application Controller
-  participant Service as Application Service
-  participant DB as MongoDB
-  participant CVStore as Dịch vụ lưu CV
-  participant AI as Gemini API
-
-  C->>UI: Gửi hồ sơ ứng tuyển
-  UI->>API: POST /api/applications (jobId, CV, thư giới thiệu, JWT)
-  API->>Auth: Xác thực token và vai trò CANDIDATE
-  Auth-->>API: Cho phép yêu cầu
-  API->>Controller: Chuyển dữ liệu và tệp đã nhận
-  Controller->>Service: Tạo đơn ứng tuyển
-  Service->>DB: Kiểm tra đơn trùng của ứng viên với việc làm
-  alt Đã ứng tuyển trước đó
-    DB-->>Service: Tìm thấy đơn hiện có
-    Service-->>Controller: Lỗi đơn trùng
-    Controller-->>UI: 400, thông báo đã ứng tuyển
-  else Chưa có đơn
-    Service->>DB: Kiểm tra việc làm tồn tại và đang OPEN
+  participant API as Máy chủ Express
+  participant DB as MongoDB / tệp
+  participant G as Gemini API
+  C->>UI: Chọn CV, nhập thư, bấm Ứng tuyển
+  UI->>API: POST /api/applications
+  API->>API: Xác thực JWT, quyền CANDIDATE
+  API->>DB: Tìm đơn của ứng viên cho tin này
+  alt Đã ứng tuyển
+    API-->>UI: 400 "Bạn đã ứng tuyển công việc này"
+  else Chưa ứng tuyển
+    API->>DB: Kiểm tra tin tồn tại và OPEN
     alt Tin không tồn tại hoặc đã đóng
-      DB-->>Service: Không hợp lệ
-      Service-->>Controller: Lỗi việc làm
-      Controller-->>UI: 400, thông báo lỗi
+      API-->>UI: 400, xóa tệp tạm
     else Tin đang mở
-      Service->>CVStore: Lưu hoặc nhận diện CV trùng
-      CVStore-->>Service: CV đã lưu
-      Service->>DB: Tạo đơn ứng tuyển
-      opt CV chưa có kết quả phân tích thành công
-        Service->>AI: Phân tích nội dung CV
-        alt Phân tích thành công
-          AI-->>Service: Kết quả JSON
-          Service->>DB: Lưu kết quả và aiStatus = COMPLETED
-        else Phân tích thất bại
-          AI-->>Service: Lỗi
-          Service->>DB: Lưu aiStatus = FAILED
-        end
+      API->>DB: Lưu CV (dùng lại nếu trùng SHA-256)
+      API->>DB: Tạo Application<br/>(unique candidate + job)
+      opt CV chưa được phân tích
+        API->>G: Phân tích CV
+        G-->>API: JSON hoặc lỗi
+        API->>DB: aiStatus COMPLETED / FAILED
+        Note over API,DB: AI lỗi không hủy đơn đã tạo
       end
-      Service-->>Controller: Đơn ứng tuyển đã tạo
-      Controller-->>UI: 201, ứng tuyển thành công
+      API-->>UI: 201, ứng tuyển thành công
     end
   end
-  UI-->>C: Hiển thị kết quả thao tác
+  UI-->>C: Hiển thị kết quả
 ```
 
-### 3.2.4. Sequence HR xem và cập nhật hồ sơ
+### 3.2.6. Sequence HR xem và cập nhật hồ sơ
 
 HR chỉ xem các đơn thuộc tin do chính mình tạo. Khi cập nhật trạng thái, máy chủ kiểm tra quyền sở hữu tin và giá trị trạng thái trước khi lưu.
 
+**Hình 3.7. Sơ đồ tuần tự luồng HR xem và cập nhật hồ sơ**
+
 ```mermaid
 sequenceDiagram
-  actor H as Nhà tuyển dụng / HR
-  participant UI as Giao diện HR
-  participant API as Express API
-  participant Auth as Middleware xác thực / vai trò
-  participant Controller as Application Controller
-  participant Service as Application Service
+  autonumber
+  actor H as Nhà tuyển dụng
+  participant UI as Giao diện React
+  participant API as Máy chủ Express
   participant DB as MongoDB
-
-  H->>UI: Mở danh sách hồ sơ
-  UI->>API: GET /api/applications/hr (JWT)
-  API->>Auth: Xác thực token và vai trò HR
-  Auth-->>API: Cho phép yêu cầu
-  API->>Controller: Lấy danh sách hồ sơ
-  Controller->>Service: getApplicationsForHR(hrId)
-  Service->>DB: Tìm tin do HR tạo
-  DB-->>Service: Danh sách mã tin
-  Service->>DB: Tìm đơn ứng tuyển thuộc các tin đó
-  DB-->>Service: Đơn, ứng viên, tin và thông tin CV
-  Service-->>Controller: Danh sách hồ sơ
-  Controller-->>UI: 200, danh sách hồ sơ
-  UI-->>H: Hiển thị ứng viên
-
+  H->>UI: Mở trang Ứng viên
+  UI->>API: GET /api/applications/hr
+  API->>API: Xác thực JWT, quyền HR
+  API->>DB: Tìm tin do HR tạo,<br/>rồi tìm đơn thuộc các tin đó
+  API-->>UI: Danh sách đơn kèm CV
+  UI->>API: GET /api/applications/hr/shortlist/:jobId
+  API->>API: matchCVToJob cho từng đơn, lấy top 5
+  API-->>UI: Shortlist kèm điểm
   H->>UI: Chọn trạng thái mới
-  UI->>API: PATCH /api/applications/:id/status (status, JWT)
-  API->>Auth: Xác thực token và vai trò HR
-  Auth-->>API: Cho phép yêu cầu
-  API->>Controller: Cập nhật trạng thái
-  Controller->>Service: updateApplicationStatus(id, hrId, status)
-  Service->>DB: Tìm đơn và kiểm tra HR sở hữu tin
-  alt HR có quyền và trạng thái hợp lệ
-    Service->>DB: Lưu trạng thái mới
-    DB-->>Service: Đơn đã cập nhật
-    Service-->>Controller: Đơn đã cập nhật
-    Controller-->>UI: 200, cập nhật thành công
-  else Không có quyền hoặc trạng thái không hợp lệ
-    Service-->>Controller: Lỗi kiểm tra
-    Controller-->>UI: 400, thông báo lỗi
+  UI->>API: PATCH /api/applications/:id/status
+  API->>DB: Tìm đơn, kiểm tra HR sở hữu tin
+  alt Có quyền và trạng thái hợp lệ
+    API->>DB: Lưu trạng thái
+    API-->>UI: 200, đơn đã cập nhật
+  else Không có quyền hoặc trạng thái sai
+    API-->>UI: Thông báo lỗi
   end
-  UI-->>H: Cập nhật giao diện
+  H->>UI: Nhập ghi chú
+  UI->>API: PATCH /api/applications/:id/review-note
+  API->>DB: Lưu hrNote (≤ 2.000 ký tự)
+  API-->>UI: 200
+```
+
+### 3.2.7. Sequence HR nhận xét hồ sơ bằng AI
+
+Máy chủ loại bỏ họ tên, email, số điện thoại và địa chỉ trước khi gửi hồ sơ sang Gemini, và lưu kết quả để không gọi AI lại.
+
+**Hình 3.8. Sơ đồ tuần tự HR nhận xét hồ sơ bằng AI**
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor H as Nhà tuyển dụng
+  participant UI as Giao diện React
+  participant API as Máy chủ Express
+  participant AI as aiService
+  participant G as Gemini API
+  participant DB as MongoDB
+  H->>UI: Bấm "Nhận xét hồ sơ bằng AI"
+  UI->>API: POST /applications/hr/:id/ai-review
+  API->>DB: Lấy đơn kèm tin và CV
+  API->>API: Kiểm tra HR sở hữu tin
+  alt Đã có nhận xét, không yêu cầu tạo lại
+    API-->>UI: 200, aiReview đã lưu (không gọi AI)
+  else Chưa có hoặc HR bấm "Tạo lại"
+    API->>AI: matchCVToJob(aiAnalysis, job)
+    AI-->>API: Điểm, kỹ năng có và thiếu
+    API->>AI: generateApplicationReview()
+    AI->>AI: Bỏ họ tên, email,<br/>điện thoại, địa chỉ
+    AI->>G: Prompt + hồ sơ ẩn danh<br/>+ tin + điểm so khớp
+    G-->>AI: JSON: summary, strengths, concerns
+    AI-->>API: Nhận xét (tối đa 3 ý mỗi loại)
+    API->>DB: Lưu Application.aiReview
+    API-->>UI: 200, nhận xét mới
+  end
+  UI-->>H: Hiển thị tóm tắt, điểm phù hợp,<br/>điểm cần làm rõ
+```
+
+### 3.2.8. Sequence HR soạn mô tả công việc bằng AI
+
+Kết quả chỉ là bản nháp; HR chỉnh sửa trước khi đăng tin.
+
+**Hình 3.9. Sơ đồ tuần tự HR soạn mô tả công việc bằng AI**
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor H as Nhà tuyển dụng
+  participant UI as Giao diện React
+  participant API as Máy chủ Express
+  participant AI as aiService
+  participant G as Gemini API
+  participant DB as MongoDB
+  H->>UI: Nhập vị trí, công ty, lương, kỹ năng
+  H->>UI: Bấm "Soạn mô tả bằng AI"
+  UI->>API: POST /api/jobs/ai/generate
+  API->>API: Xác thực, quyền HR, kiểm tra vị trí
+  API->>AI: generateJobDescription(input)
+  AI->>G: Prompt (không bịa phúc lợi, không<br/>phân biệt đối xử) + JSON schema
+  alt Gemini trả kết quả
+    G-->>AI: Giới thiệu, nhiệm vụ,<br/>yêu cầu, quyền lợi
+    AI-->>API: Mô tả đã ghép các mục
+    API-->>UI: 200, bản nháp
+  else Gemini lỗi
+    API-->>UI: 503 "AI chưa thể tạo mô tả"
+  end
+  H->>UI: Chỉnh sửa bản nháp, bấm Đăng tin
+  UI->>API: POST /api/jobs
+  API->>DB: Lưu Job (OPEN)
+  API-->>UI: 201, tin đã đăng
+```
+
+### 3.2.9. Sơ đồ hoạt động
+
+**Hình 3.10. Sơ đồ hoạt động ứng tuyển việc làm**
+
+```mermaid
+%%{init: {"themeVariables": {"fontSize": "19px"}, "flowchart": {"rankSpacing": 24, "nodeSpacing": 40}}}%%
+flowchart TD
+  S((Bắt đầu)) --> A[Mở chi tiết việc làm,<br/>xem điểm phù hợp]
+  A --> B[Chọn CV PDF, nhập thư giới thiệu, gửi đơn]
+  B --> F{Đã ứng tuyển<br/>tin này?}
+  F -- Có --> X1[Báo lỗi: đã ứng tuyển]
+  F -- Chưa --> G{Tin còn mở?}
+  G -- Không --> X2[Báo lỗi: tin đã đóng]
+  G -- Có --> H[Lưu CV, dùng lại nếu trùng SHA-256;<br/>tạo đơn trạng thái PENDING]
+  H --> J{CV đã được<br/>phân tích AI?}
+  J -- Chưa --> L[Gọi Gemini phân tích CV]
+  L --> M{Phân tích<br/>thành công?}
+  M -- Có --> M1[aiStatus = COMPLETED]
+  M -- Không --> M2[aiStatus = FAILED,<br/>đơn vẫn được giữ]
+  J -- Rồi --> K[Báo ứng tuyển thành công]
+  M1 --> K
+  M2 --> K
+  K --> Z((Kết thúc))
+  X1 --> Z
+  X2 --> Z
+```
+
+**Hình 3.11. Sơ đồ hoạt động HR xử lý hồ sơ ứng tuyển**
+
+```mermaid
+%%{init: {"themeVariables": {"fontSize": "19px"}, "flowchart": {"rankSpacing": 24, "nodeSpacing": 40}}}%%
+flowchart TD
+  S((Bắt đầu)) --> A[Mở trang Ứng viên, chọn tin tuyển dụng]
+  A --> C[Xem shortlist 5 ứng viên điểm cao nhất]
+  C --> D[Chọn một đơn ứng tuyển]
+  D --> E{CV đã phân tích<br/>thành công?}
+  E -- Chưa --> E1[Bấm Phân tích lại] --> E
+  E -- Rồi --> F[Xem CV gốc]
+  F --> G{Cần nhận xét<br/>của AI?}
+  G -- Có --> G1[Nhận xét hồ sơ bằng AI:<br/>tóm tắt, điểm phù hợp, cần làm rõ]
+  G -- Không --> H[Ghi chú, chọn trạng thái mới]
+  G1 --> H
+  H --> J{HR sở hữu tin,<br/>trạng thái hợp lệ?}
+  J -- Không --> J1[Báo lỗi, không lưu]
+  J -- Có --> K[Lưu trạng thái và ghi chú]
+  K --> L{Còn đơn khác?}
+  L -- Có --> D
+  L -- Không --> Z((Kết thúc))
+  J1 --> Z
 ```
 
 ## 3.3. Thiết kế cơ sở dữ liệu
@@ -468,7 +691,7 @@ Hệ thống sử dụng MongoDB với bốn collection nghiệp vụ. Các bả
 
 ### 3.3.1. Collection `User`
 
-**Bảng 3.3. Mô tả collection User (người dùng)**
+**Bảng 3.7. Mô tả collection User (người dùng)**
 
 | STT | Thuộc tính  | Kiểu dữ liệu | Ràng buộc                                                             | Ý nghĩa                                                 |
 | --: | ----------- | ------------ | --------------------------------------------------------------------- | ------------------------------------------------------- |
@@ -482,7 +705,7 @@ Hệ thống sử dụng MongoDB với bốn collection nghiệp vụ. Các bả
 
 ### 3.3.2. Collection `Job`
 
-**Bảng 3.4. Mô tả collection Job (tin tuyển dụng)**
+**Bảng 3.8. Mô tả collection Job (tin tuyển dụng)**
 
 | STT | Thuộc tính       | Kiểu dữ liệu    | Ràng buộc                                                         | Ý nghĩa                                    |
 | --: | ---------------- | --------------- | ----------------------------------------------------------------- | ------------------------------------------ |
@@ -502,7 +725,7 @@ Hệ thống sử dụng MongoDB với bốn collection nghiệp vụ. Các bả
 
 ### 3.3.3. Collection `CV`
 
-**Bảng 3.5. Mô tả collection CV (hồ sơ ứng viên)**
+**Bảng 3.9. Mô tả collection CV (hồ sơ ứng viên)**
 
 | STT | Thuộc tính                          | Kiểu dữ liệu               | Ràng buộc                                                                            | Ý nghĩa                                                    |
 | --: | ----------------------------------- | -------------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
@@ -533,7 +756,7 @@ Các tệp PDF được lưu trong hệ thống tệp, không lưu nhị phân t
 
 ### 3.3.4. Collection `Application`
 
-**Bảng 3.6. Mô tả collection Application (đơn ứng tuyển)**
+**Bảng 3.10. Mô tả collection Application (đơn ứng tuyển)**
 
 | STT | Thuộc tính    | Kiểu dữ liệu | Ràng buộc                                                                              | Ý nghĩa                          |
 | --: | ------------- | ------------ | -------------------------------------------------------------------------------------- | -------------------------------- |
@@ -550,13 +773,57 @@ Các tệp PDF được lưu trong hệ thống tệp, không lưu nhị phân t
 
 Schema định nghĩa index unique `{ candidate: 1, job: 1 }`: mỗi ứng viên chỉ nộp một đơn cho một tin, kể cả khi hai yêu cầu được gửi gần như cùng lúc. HR chỉ được đọc và cập nhật đơn ứng tuyển thuộc các tin do chính HR tạo; quyền sở hữu được kiểm tra ở tầng service.
 
+**Hình 3.12. Mô hình dữ liệu và quan hệ giữa các collection**
+
 ```mermaid
 erDiagram
-  USER ||--o{ JOB : creates
-  USER ||--o{ CV : owns
-  USER ||--o{ APPLICATION : submits
-  JOB ||--o{ APPLICATION : receives
-  CV ||--o{ APPLICATION : attached_to
+  USER ||--o{ JOB : "đăng (createdBy)"
+  USER ||--o{ CV : "sở hữu (candidate)"
+  USER ||--o{ APPLICATION : "nộp (candidate)"
+  JOB ||--o{ APPLICATION : "nhận (job)"
+  CV ||--o{ APPLICATION : "đính kèm (cv)"
+  USER {
+    ObjectId _id
+    String name
+    String email "unique"
+    String password "đã băm bcrypt"
+    String role "ADMIN | HR | CANDIDATE"
+  }
+  JOB {
+    ObjectId _id
+    String title
+    String description
+    String company
+    String location
+    Number salaryMin
+    Number salaryMax
+    StringArray skills
+    String employmentType "FULL_TIME | PART_TIME | INTERNSHIP"
+    String status "OPEN | CLOSED"
+    ObjectId createdBy "ref User"
+  }
+  CV {
+    ObjectId _id
+    ObjectId candidate "ref User"
+    String originalName
+    String fileName
+    String filePath
+    String fileHash "SHA-256, index cùng candidate"
+    String extractedText
+    String aiStatus "PENDING | COMPLETED | FAILED"
+    Object aiAnalysis "kết quả Gemini"
+    Date uploadedAt
+  }
+  APPLICATION {
+    ObjectId _id
+    ObjectId candidate "ref User"
+    ObjectId job "ref Job"
+    ObjectId cv "ref CV"
+    String coverLetter
+    String status "5 trạng thái"
+    String hrNote "≤ 2.000 ký tự"
+    Object aiReview "nhận xét AI cho HR"
+  }
 ```
 
 ## 3.4. Thiết kế giao diện và luồng người dùng
@@ -573,9 +840,9 @@ Giao diện chính được tổ chức trong các trang `Home`, `JobList`, `Job
 
 ### 3.5.1. Các chức năng sử dụng AI
 
-Hệ thống có sáu chức năng liên quan đến AI, chia làm hai nhóm: ba chức năng gọi Gemini và ba chức năng dùng thuật toán do nhóm viết trên dữ liệu Gemini đã trích xuất. Bảng 3.7 liệt kê các chức năng cùng hàm xử lý và dữ liệu liên quan.
+Hệ thống có sáu chức năng liên quan đến AI, chia làm hai nhóm: ba chức năng gọi Gemini và ba chức năng dùng thuật toán do nhóm viết trên dữ liệu Gemini đã trích xuất. Bảng 3.11 liệt kê các chức năng cùng hàm xử lý và dữ liệu liên quan.
 
-**Bảng 3.7. Các chức năng sử dụng AI**
+**Bảng 3.11. Các chức năng sử dụng AI**
 
 | Chức năng                         | Gọi Gemini | Hàm chính (`server/src/services`)                     | API                                           | Dữ liệu đọc / ghi                                    |
 | --------------------------------- | ---------- | ----------------------------------------------------- | --------------------------------------------- | ---------------------------------------------------- |
@@ -598,9 +865,9 @@ Hệ thống có sáu chức năng liên quan đến AI, chia làm hai nhóm: ba
 
 ### 3.5.2. Thuật toán tính độ phù hợp
 
-Hàm `matchCVToJob` so sánh JSON kết quả phân tích CV (`CV.aiAnalysis`) với document tin tuyển dụng (`Job`) theo ba cặp trường ở Bảng 3.8. Bước này không gọi AI nên cùng một CV và một tin luôn cho cùng kết quả, chạy nhanh và giải thích được.
+Hàm `matchCVToJob` so sánh JSON kết quả phân tích CV (`CV.aiAnalysis`) với document tin tuyển dụng (`Job`) theo ba cặp trường ở Bảng 3.12. Bước này không gọi AI nên cùng một CV và một tin luôn cho cùng kết quả, chạy nhanh và giải thích được.
 
-**Bảng 3.8. Ghép cặp dữ liệu khi tính độ phù hợp**
+**Bảng 3.12. Ghép cặp dữ liệu khi tính độ phù hợp**
 
 | Tiêu chí     | Lấy từ `CV.aiAnalysis`                                                 | So với `Job`                                | Cách tính                                                        | Trọng số |
 | ------------ | ---------------------------------------------------------------------- | ------------------------------------------- | ---------------------------------------------------------------- | -------: |
@@ -612,7 +879,7 @@ Trước khi so, tên kỹ năng được chuẩn hóa: bỏ dấu, chữ thư�
 
 Trọng số do nhóm xác định theo lập luận, không học từ dữ liệu. Kỹ năng chiếm phần lớn vì là tiêu chí HR lọc đầu tiên và kiểm chứng được. Chức danh và kinh nghiệm là tiêu chí phụ, kém tin cậy hơn: tên chức danh khác nhau giữa các công ty, nhiều tin không ghi số năm, và nhiều năm chưa chắc phù hợp hơn. Điểm chỉ dùng để sắp xếp và gợi ý; quyết định cuối cùng thuộc về HR.
 
-**Bảng 3.9. Ví dụ tính điểm phù hợp**
+**Bảng 3.13. Ví dụ tính điểm phù hợp**
 
 | Tiêu chí    | Dữ liệu CV                                     | Dữ liệu tin                                              | Kết quả            | Điểm |
 | ----------- | ---------------------------------------------- | -------------------------------------------------------- | ------------------ | ---: |
@@ -622,6 +889,70 @@ Trọng số do nhóm xác định theo lập luận, không học từ dữ li�
 | **Tổng**    |                                                |                                                          | 60 × 0,7 + 50 × 0,15 + 50 × 0,15 | **57%** |
 
 Nếu tin không ghi số năm kinh nghiệm, điểm là (60 × 0,7 + 50 × 0,15) ÷ 0,85 ≈ 58%. Kết quả trả về gồm điểm tổng, điểm từng phần, danh sách kỹ năng có và thiếu, nên ứng viên và HR đều thấy được lý do của con số.
+
+**Hình 3.13. Lưu đồ thuật toán tính độ phù hợp**
+
+```mermaid
+flowchart TD
+  S((Bắt đầu)) --> A[Nhận CV.aiAnalysis và Job]
+  A --> B[Chuẩn hóa tên kỹ năng: bỏ dấu, chữ thường,<br/>gộp ReactJS = React.js = React]
+  B --> C[Kỹ năng: đếm kỹ năng của tin có bằng chứng<br/>trong skills, summary, workExperience]
+  C --> D[Chức danh: đếm từ khóa của title<br/>xuất hiện trong chức danh cũ]
+  D --> E{description có số năm<br/>gần chữ kinh nghiệm?}
+  E -- Có --> F[Kinh nghiệm = min 1, năm ứng viên / năm yêu cầu]
+  E -- Không --> G[Bỏ tiêu chí kinh nghiệm]
+  F --> H[Điểm = tổng điểm × trọng số<br/>kỹ năng 0,7, chức danh 0,15, kinh nghiệm 0,15]
+  G --> H
+  H --> I[Chia cho tổng trọng số của các tiêu chí có dữ liệu]
+  I --> J[Trả điểm, điểm từng phần,<br/>kỹ năng có và thiếu, câu tóm tắt]
+  J --> Z((Kết thúc))
+```
+
+## 3.6. Kiến trúc và mô hình triển khai
+
+Hệ thống theo kiến trúc client – server ba lớp (Hình 3.14). Ứng dụng React chạy trên trình duyệt, gọi REST API của máy chủ Express; máy chủ xử lý nghiệp vụ, lưu dữ liệu vào MongoDB, lưu tệp PDF trên đĩa và gọi Gemini API qua HTTPS. Khi triển khai (Hình 3.15), khóa Gemini và chuỗi kết nối MongoDB chỉ nằm trong biến môi trường của máy chủ, trình duyệt không truy cập trực tiếp cơ sở dữ liệu hay Gemini.
+
+**Hình 3.14. Kiến trúc tổng quan của hệ thống**
+
+```mermaid
+flowchart LR
+  subgraph Client["Trình duyệt"]
+    UI["Ứng dụng React<br/>(React Router, Axios, SCSS)"]
+  end
+  subgraph Server["Máy chủ Node.js / Express"]
+    MW["Middleware<br/>protect, authorize, Multer"]
+    CT["Controllers"]
+    SV["Services<br/>application, cvFile, pdf"]
+    AI["aiService<br/>Gemini + matchCVToJob"]
+  end
+  DB[("MongoDB<br/>User, Job, CV, Application")]
+  FS[("Thư mục uploads/cv")]
+  GM["Gemini API"]
+  UI -- "REST API, JWT" --> MW --> CT --> SV
+  SV --> AI
+  SV --> DB
+  SV --> FS
+  AI -- HTTPS --> GM
+```
+
+**Hình 3.15. Mô hình triển khai**
+
+```mermaid
+flowchart LR
+  U["Người dùng<br/>trình duyệt web"]
+  subgraph Host["Máy chủ ứng dụng"]
+    FE["Tệp tĩnh React<br/>(vite build)"]
+    BE["Node.js / Express<br/>cổng 3000"]
+    UP[("uploads/cv")]
+  end
+  DB[("MongoDB")]
+  GM["Google Gemini API"]
+  U -- "HTTP(S)" --> FE
+  U -- "HTTP(S) /api" --> BE
+  BE --> UP
+  BE -- "giao thức MongoDB" --> DB
+  BE -- "HTTPS, GEMINI_API_KEY" --> GM
+```
 
 # CHƯƠNG 4. HIỆN THỰC HỆ THỐNG
 
@@ -834,5 +1165,5 @@ Recall tăng vì mô hình trích được nhiều kỹ năng hơn. Precision gi
 2. Xác nhận chính xác quy trình nghiên cứu/phát triển mà nhóm đã thực hiện; không ghi Scrum nếu không có sprint/backlog thực tế.
 3. Chạy các ca kiểm thử thủ công TC-01 đến TC-12 trên giao diện và điền kết quả thực tế (bộ kiểm thử tự động đã chạy, xem mục 5.1); mở rộng bộ mẫu đánh giá AI ở mục 5.3 nếu có thêm CV.
 4. Chụp ảnh các màn hình, che dữ liệu cá nhân và cập nhật danh mục hình.
-5. Xuất các sơ đồ Mermaid tại mục 3.2 và sơ đồ ERD thành hình nếu mẫu báo cáo của trường yêu cầu.
+5. Các sơ đồ Mermaid ở mục 3.2, 3.3, 3.5 và 3.6 đã có bản ảnh tương ứng trong thuyết minh Word; nếu sửa sơ đồ ở đây thì cập nhật lại ảnh trong bản Word.
 6. Kiểm tra chính sách trích dẫn, định dạng trang, cỡ chữ và cách đánh số của khoa; tạo mục lục tự động sau cùng.

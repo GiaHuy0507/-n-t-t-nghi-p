@@ -23,14 +23,19 @@ const stripAccents = (text = "") =>
     .replace(/Đ/g, "D");
 
 const normalizeName = (name = "") =>
-  stripAccents(name).toLowerCase().replace(/[^a-z\s]/g, " ").replace(/\s+/g, " ").trim();
+  stripAccents(name)
+    .toLowerCase()
+    .replace(/[^a-z\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
 const normalizeEmail = (email = "") => String(email).trim().toLowerCase();
 
 // 0912 345 678, +84 912345678, 84-912-345-678 → 0912345678
 const normalizePhone = (phone = "") => {
   let digits = String(phone).replace(/\D/g, "");
-  if (digits.startsWith("84") && digits.length >= 11) digits = `0${digits.slice(2)}`;
+  if (digits.startsWith("84") && digits.length >= 11)
+    digits = `0${digits.slice(2)}`;
   return digits;
 };
 
@@ -45,7 +50,7 @@ const SKILL_ALIASES = {
   reactjs: "react",
   vuejs: "vue",
 };
-
+// Chuẩn hóa hàm
 // Cùng quy tắc với normalizeSkill trong aiService.js: ReactJS = React.js = React
 const normalizeSkill = (skill = "") =>
   stripAccents(
@@ -64,7 +69,9 @@ const normalizeSkill = (skill = "") =>
     .join(" ");
 
 const skillSet = (skills = []) =>
-  new Set((Array.isArray(skills) ? skills : []).map(normalizeSkill).filter(Boolean));
+  new Set(
+    (Array.isArray(skills) ? skills : []).map(normalizeSkill).filter(Boolean),
+  );
 
 // ---------- Chấm một CV ----------
 function scoreCV(label, analysis = {}) {
@@ -85,7 +92,8 @@ function scoreCV(label, analysis = {}) {
   const falseNegative = [...expected].filter((skill) => !predicted.has(skill));
 
   const experienceDiff = Math.abs(
-    (Number(analysis.experienceYears) || 0) - (Number(label.experienceYears) || 0),
+    (Number(analysis.experienceYears) || 0) -
+      (Number(label.experienceYears) || 0),
   );
   const experienceOk = experienceDiff <= 0.5;
 
@@ -118,7 +126,8 @@ function scoreCV(label, analysis = {}) {
 }
 
 // ---------- Tổng hợp thành Bảng 4.6 ----------
-const pct = (value) => (Number.isFinite(value) ? `${(value * 100).toFixed(1)}%` : "—");
+const pct = (value) =>
+  Number.isFinite(value) ? `${(value * 100).toFixed(1)}%` : "—";
 
 function buildTable(results) {
   const ok = results.filter((r) => !r.error);
@@ -134,7 +143,14 @@ function buildTable(results) {
   const errors = results.filter((r) => r.error);
 
   const rows = [
-    ["Họ tên", ok.length, count("nameOk"), pct(count("nameOk") / ok.length), "—", ""],
+    [
+      "Họ tên",
+      ok.length,
+      count("nameOk"),
+      pct(count("nameOk") / ok.length),
+      "—",
+      "",
+    ],
     [
       "Email, điện thoại",
       ok.length,
@@ -204,7 +220,9 @@ async function main() {
   }
   const labels = JSON.parse(fs.readFileSync(labelsPath, "utf8"));
 
-  console.log(`Mô hình: ${process.env.GEMINI_MODEL || "gemini-3.5-flash-lite (mặc định)"}`);
+  console.log(
+    `Mô hình: ${process.env.GEMINI_MODEL || "gemini-3.5-flash-lite (mặc định)"}`,
+  );
   console.log(`Số CV: ${labels.length}\n`);
 
   const results = [];
@@ -239,7 +257,10 @@ async function main() {
 
   const table = buildTable(results);
   fs.writeFileSync(path.join(EVAL_DIR, "results.md"), table);
-  fs.writeFileSync(path.join(EVAL_DIR, "results.json"), JSON.stringify(results, null, 2));
+  fs.writeFileSync(
+    path.join(EVAL_DIR, "results.json"),
+    JSON.stringify(results, null, 2),
+  );
 
   console.log(`\n${table}`);
   console.log("Đã lưu eval/results.md và eval/results.json");
@@ -252,4 +273,10 @@ if (require.main === module) {
   });
 }
 
-module.exports = { scoreCV, buildTable, normalizeSkill, normalizePhone, normalizeName };
+module.exports = {
+  scoreCV,
+  buildTable,
+  normalizeSkill,
+  normalizePhone,
+  normalizeName,
+};

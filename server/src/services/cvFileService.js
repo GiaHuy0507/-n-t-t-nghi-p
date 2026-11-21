@@ -87,7 +87,15 @@ const saveUploadedCV = async ({ candidate, file }) => {
 
     await fs.promises.mkdir(cvUploadDir, { recursive: true });
     permanentPath = path.join(cvUploadDir, file.filename);
-    await fs.promises.rename(file.path, permanentPath);
+    try {
+      await fs.promises.rename(file.path, permanentPath);
+    } catch (error) {
+      // Thư mục tạm và thư mục uploads nằm khác ổ đĩa: rename không chuyển
+      // được, phải chép rồi xóa file tạm.
+      if (error.code !== "EXDEV") throw error;
+      await fs.promises.copyFile(file.path, permanentPath);
+      await removeFile(file.path);
+    }
 
     if (duplicate) {
       console.warn(
